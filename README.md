@@ -1,3 +1,7 @@
+# 배포 페이지
+
+https://eternalreturn-lookup.netlify.app/
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
