@@ -56,14 +56,17 @@ const Figure = styled.figure`
 export default function CharacterCard(props) {
     const imgSize = '64px';
     const link = '/characters/' + props.data.Name_EN
+    const handleImgError = (e) => {
+        e.target.src = props.backgroundImagePath;
+    };
     return ( 
         <Card>
             <StyledLink to={link}>
                 <Figure>
                     <ImgBox>
-                        {props.data.Weekly_Free ? <Free src={props.rotationIconPath}/>:<></>}
+                        {props.data.Weekly_Free ? <Free src={props.rotationIconPath}/> : null}
                         <Img src={props.backgroundImagePath} alt="background image" height={imgSize} width={imgSize} />
-                        <Img src={props.data.ImagePath} alt="character image" height={imgSize} width={imgSize} />
+                        <Img src={props.data.ImagePath} onError={handleImgError} alt="character image" height={imgSize} width={imgSize} />
                     </ImgBox>
                     <Figcaption>{props.data.Name_KR}</Figcaption>
                 </Figure>
