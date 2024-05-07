@@ -1,7 +1,5 @@
 import { Outlet } from "react-router-dom";
 import { styled } from 'styled-components';
-import { useState } from "react";
-
 import Navigate from '../components/Navigate';
 
 const Page = styled.div`
@@ -24,29 +22,18 @@ const Content = styled(Outlet)`
 
 
 export default function Root(){
-    // const [searchText, setSearchText] = useState('');
-    const [characters, setCharacters] = useState([]);
-    const [sortByRotation, setSortByRotation] = useState(false);
 
     const links = [
         {link: '/characters', text: '실험체'},
         {link: '/users', text: '랭크'}
     ];
-    const charactersData = {
-        data: characters,
-        setData: setCharacters
-    };
-    const isRotation = {
-        state: sortByRotation,
-        setState: setSortByRotation
-    };
 
     return (
         <Page>
             <Header>
                 <StyledNav info={ links }></StyledNav>
             </Header>
-            <Content context={{charactersData, isRotation}}/>
+            <Content />
         </Page>
     )
 }

@@ -1,8 +1,11 @@
 import { styled } from 'styled-components';
-import { useState, useEffect } from 'react';
-import { useOutletContext, Outlet } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Outlet } from 'react-router-dom';
 import CharacterCard from '../components/CharacterCard';
 import supabase from '../supabase/supabase';
+import { useDispatch, useSelector } from 'react-redux';
+import { setData } from '../features/characterInfo/characterInfoSlice';
+import { setIsRotation, setState } from '../features/sortOption/sortOptionSlice';
 
 const StyledMain = styled.main`
     @media (min-width: 576px) {
@@ -66,11 +69,12 @@ const Ul = styled.ul`
 `;
 
 export default function CharactersView(){
-    const { charactersData, isRotation } = useOutletContext();
-    const [sortByState, setSortByState] = useState('release');
-    
-    useEffect(() => {
+    const dispatch = useDispatch();
+    const characterData = useSelector(state => state.characterData.data);
+    const isRotation = useSelector(state => state.sortOption.isRotation);
+    const sortState = useSelector(state => state.sortOption.state);
 
+    useEffect(() => {
         const getData = async() => {
             try {
                 const { data } = await supabase()
@@ -78,16 +82,16 @@ export default function CharactersView(){
                 .select('*')
                 .order('CharacterID', {ascending: true});
 
-                charactersData.setData(data);
+                dispatch(setData(data));
                 
             } catch(err) {
                 console.log(err);
             }
         }
-
-        if(charactersData.data.length === 0) getData();
-
-    },[charactersData]);
+        
+        if(!characterData) getData();
+        
+    },[characterData, dispatch]);
 
     const rotationFilter = (data) => {
 
@@ -104,7 +108,7 @@ export default function CharactersView(){
 
     const sortBy = (data) => {
         const tempData = [].concat(data);
-        switch (sortByState) {
+        switch (sortState) {
             case selectList.ord.value:
                 tempData.sort((a,b) => a.Name_KR.localeCompare(b.Name_KR, 'ko'));
                 break;
@@ -120,8 +124,8 @@ export default function CharactersView(){
     }
     
     const setCharacterCard = () => {
-        let newData = sortBy(charactersData.data);       
-        if(isRotation.state) newData = rotationFilter(newData);
+        let newData = sortBy(characterData);
+        if(isRotation) newData = rotationFilter(newData);
 
         return newData.map(
             (data, index) => 
@@ -132,15 +136,15 @@ export default function CharactersView(){
             );
     };
     
-    const handleOrdRule = (e) => setSortByState(e.target.value);
-    const handleRotation = () => isRotation.setState(!isRotation.state);
+    const handleOrdRule = (e) => dispatch(setState(e.target.value));
+    const handleRotation = () => dispatch(setIsRotation(!isRotation));
     
     const selectList = {
         release: {value: 'release', text: '출시 순'},
         ord: {value: 'order', text: '가나다 순'},
     };
 
-    const data = setCharacterCard();
+    const data = characterData && setCharacterCard();
 
     return (
         <StyledMain>
@@ -152,11 +156,11 @@ export default function CharactersView(){
                     </div>
                     <ConfigBox>
                         <CheckBox>
-                            <input type="checkbox" id='checkbox' onChange={handleRotation} checked={isRotation.state}/>
+                            <input type="checkbox" id='checkbox' onChange={handleRotation} checked={isRotation}/>
                             <label htmlFor="checkbox">로테이션부터 보기</label>
                         </CheckBox>
                         <div>
-                            <select onChange={handleOrdRule}>
+                            <select onChange={handleOrdRule} value={sortState}>
                                 <option value={selectList.release.value} >{selectList.release.text}</option>
                                 <option value={selectList.ord.value}>{selectList.ord.text}</option>
                             </select>
@@ -169,7 +173,7 @@ export default function CharactersView(){
                     </Ul>
                 </Container>
             </MainSection>
-            <Outlet />
+            <Outlet/>
         </StyledMain>
     )
 }
