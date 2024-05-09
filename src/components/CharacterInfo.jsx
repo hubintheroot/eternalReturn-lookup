@@ -31,17 +31,25 @@ const Ul = styled.ul`
     padding: 0;
 `;
 const Li = styled.li`
+    width: 84px;
+    height: 84px;
+    border: .1rem solid rgba(0, 0, 0, .2);
+    border-radius: .5rem;
+    overflow: hidden;
     &:hover {
         cursor: pointer;
+        border: .1rem solid #e460ff;
     }
 `;
 const Img = styled.img`
     object-fit: cover;
-    object-position: top;
-    width: ${props => props.$preview ? props.$preview : '512px'};
-    height: ${props => props.$preview ? props.$preview : '768px'};
+    object-position: ${props => props.$imgFull ? 'top': '-1px -1px'};
+    width: ${props => props.$preview ? `${props.$preview + 2}px` : '512px'};
+    height: ${props => props.$preview ? `${props.$preview}px` : '768px'};
     box-sizing: border-box;
-    border: 0.1rem solid rgba(0,0,0,.5);
+    background-image: url(${process.env.REACT_APP_BACKGROUND_IMAGE_PATH});
+    background-repeat: no-repeat;
+    background-size: cover;
 `;
 // TODO: preview 이미지를 클릭하면 full 이미지가 보여져야함, 기본적으로 보여지는 full 이미지는 default 이미지.
 // TODO: preview 이미지 왼쪽에 캐릭터 설명을 추가할 수 있다면 추가 
@@ -53,6 +61,10 @@ export default function CharacterInfo() {
     useEffect(() => {
         if (!data) navigate('/')
         },[data, navigate])
+
+    useEffect(() => {
+        setSelectedSkin('default');
+    }, [pathname]);
 
     if (!data) {
         return null;
@@ -68,10 +80,13 @@ export default function CharacterInfo() {
         return upperA === upperB ? 'default' : skinName.replace(`. ${characterName}`,'')
     };
     
-    const handleImgError = (e) => e.target.src = process.env.REACT_APP_BACKGROUND_IMAGE_PATH;
-    const handleSelectedImg = (e) => {
-        setSelectedSkin(folderName(e.target.alt));
-    }
+    const handleImgError = (e) => {
+        console.error(e.target.src);
+        e.target.src = process.env.REACT_APP_BACKGROUND_IMAGE_PATH;
+    };
+    const handleSelectedImg = (e) => setSelectedSkin(folderName(e.target.alt));
+
+
     // TODO: 이미지의 다양한 크기와 비율을 일관되게 바꾸는 방법 찾아 적용할 것.
     // 이미지가 너무 중구난방한 크기와 비율을 가지고 있음.
     // 1. 이미지 파일을 직접 정리하기
@@ -88,7 +103,7 @@ export default function CharacterInfo() {
                     src={`${process.env.REACT_APP_TEST}/${character.Name_EN}/${folderName(skin.Name_EN)}/Mini.png`}
                     alt={`${skin.Name_EN}`}
                     onError={handleImgError}
-                    $preview="84px"
+                    $preview={84}
                 />
             </Li>
         );
@@ -113,7 +128,12 @@ export default function CharacterInfo() {
                     <Ul>
                         {miniImgs}
                     </Ul>
-                    <Img src={imgSrc} alt={`${character.Name_EN} image`}/>
+                    <Img
+                        src={imgSrc}
+                        alt={`${character.Name_EN} image`}
+                        onError={handleImgError}
+                        $imgFull={true}
+                    />
                 </ImgDiv>
             </Container>
         </div>
