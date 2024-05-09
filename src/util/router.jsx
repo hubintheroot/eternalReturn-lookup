@@ -5,7 +5,6 @@ import ComingSoonView from '../pages/comingsoon';
 import RedirectHome from './RedirectHome';
 import CharacterInfo from '../components/CharacterInfo';
 
-const characterInfo = {text: '캐릭터 스킨 정보를 준비 중입니다.'};
 const userInfo = {text:'랭크 정보 페이지를 준비 중입니다.'};
 
 export const RouterInfo = [{
