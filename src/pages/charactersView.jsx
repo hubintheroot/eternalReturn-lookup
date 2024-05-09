@@ -2,7 +2,7 @@ import { styled } from 'styled-components';
 import { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import CharacterCard from '../components/CharacterCard';
-import supabase from '../supabase/supabase';
+import { supabase } from '../supabase/supabase';
 import { useDispatch, useSelector } from 'react-redux';
 import { setData } from '../features/characterInfo/characterInfoSlice';
 import { setIsRotation, setState } from '../features/sortOption/sortOptionSlice';
@@ -73,19 +73,30 @@ export default function CharactersView(){
     const characterData = useSelector(state => state.characterData.data);
     const isRotation = useSelector(state => state.sortOption.isRotation);
     const sortState = useSelector(state => state.sortOption.state);
-
+    
     useEffect(() => {
         const getData = async() => {
             try {
-                const { data } = await supabase()
+                const character = await supabase()
                 .from('Characters')
                 .select('*')
                 .order('CharacterID', {ascending: true});
 
+                const skin = await supabase()
+                .from('Skins')
+                .select('*')
+                .order('CharacterID', {ascending: true});
+
+                const data = character.data.map(charData => {
+                    const tempSkinData = skin.data.filter(skinData => charData.CharacterID === skinData.CharacterID);
+                    charData.skins =tempSkinData;
+                    return charData;
+                });
+
                 dispatch(setData(data));
                 
             } catch(err) {
-                console.log(err);
+                console.error(err);
             }
         }
         

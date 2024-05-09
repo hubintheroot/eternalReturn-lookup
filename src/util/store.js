@@ -5,6 +5,6 @@ import sortOptionSliceReducer from '../features/sortOption/sortOptionSlice';
 export default configureStore({
     reducer: {
         characterData: characterDataReducer,
-        sortOption: sortOptionSliceReducer
+        sortOption: sortOptionSliceReducer,
     }
 })
