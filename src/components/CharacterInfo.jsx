@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import ImageListItem from "./ImageListItem";
 
 
 const Div = styled.div`
@@ -30,17 +31,6 @@ const Ul = styled.ul`
     overflow-x: auto;
     margin: 0;
     padding: 0;
-`;
-const Li = styled.li`
-    width: 84px;
-    height: 84px;
-    border: .1rem solid rgba(0, 0, 0, .2);
-    border-radius: .5rem;
-    overflow: hidden;
-    &:hover {
-        cursor: pointer;
-        border: .1rem solid #e460ff;
-    }
 `;
 const TitleBox = styled.div`
     display: flex;
@@ -85,35 +75,41 @@ export default function CharacterInfo() {
 
     const folderName = (skinName) => {
         const upperA = characterName.toUpperCase();
-        const upperB = skinName.replaceAll(' ','').replaceAll('&','').toUpperCase();
+        const upperB = skinName && skinName.replaceAll(' ','').replaceAll('&','').toUpperCase();
         return upperA === upperB ? 'default' : skinName.replace(`. ${characterName}`,'')
     };
     
     const handleImgError = (e) => e.target.src = process.env.REACT_APP_BACKGROUND_IMAGE_PATH;
     const handleSelectedImg = (e) => setSelectedSkin(folderName(e.target.alt));
 
-
-    // TODO: 이미지의 다양한 크기와 비율을 일관되게 바꾸는 방법 찾아 적용할 것.
-    // 이미지가 너무 중구난방한 크기와 비율을 가지고 있음.
-    // 1. 이미지 파일을 직접 정리하기
-    // 2. 이미지 파일을 일관된 크기와 비율로 변환시키는 라이브러리 찾아 적용하기
-    // 3. 이미지 파일의 용량을 줄여서(png to webp) 로딩 속도를 개선함 << 적용한 것
-    
-    
-
-    // TODO: 스킨명을 담은 object로 스킨 full 이미지를 처리할 것
     const imgSrc = `${process.env.REACT_APP_TEST}/${character.Name_EN}/${folderName(selectedSkin)}/Full.webp`;
-
-    const miniImgs = character.skins.map((skin, index) =>
-                <Li key={index} onClick={handleSelectedImg}>
-                    <Img
-                        src={`${process.env.REACT_APP_TEST}/${character.Name_EN}/${folderName(skin.Name_EN)}/Mini.png`}
-                        alt={`${skin.Name_EN}`}
-                        onError={handleImgError}
-                        $preview={84}
-                    />
-                </Li>
+    
+    const miniImgs = character.skins
+            .map((skin, index) => 
+                <ImageListItem
+                    key={index}
+                    data={{
+                        src:`${process.env.REACT_APP_TEST}/${character.Name_EN}/${folderName(skin.Name_EN)}/Mini.png`,
+                        alt: `${skin.Name_EN}`,
+                        handler:{
+                            selectedImg: handleSelectedImg,
+                            onError: handleImgError
+                            },
+                        size:84
+                    }}
+                ></ImageListItem>
                 );
+                
+    // const miniImgs = character.skins.map((skin, index) =>
+    //             <Li key={index} onClick={handleSelectedImg}>
+    //                 <Img
+    //                     src={`${process.env.REACT_APP_TEST}/${character.Name_EN}/${folderName(skin.Name_EN)}/Mini.png`}
+    //                     alt={`${skin.Name_EN}`}
+    //                     onError={handleImgError}
+    //                     $preview={84}
+    //                 />
+    //             </Li>
+    //             );
 
     // TODO: 데이터 표시 필요
     return (
