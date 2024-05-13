@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
+
 const Div = styled.div`
     width: 18rem;
     word-break: keep-all;
@@ -16,7 +17,7 @@ const ImgDiv = styled.div`
     width: 40rem;
     margin-bottom: 4rem;
 `
-const Container = styled.section`
+const Container = styled.div`
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -41,6 +42,14 @@ const Li = styled.li`
         border: .1rem solid #e460ff;
     }
 `;
+const TitleBox = styled.div`
+    display: flex;
+    flex-direction: column;
+`;
+const CharName = styled.h1`
+    margin: 1rem 0 0;
+`;
+
 const Img = styled.img`
     object-fit: cover;
     object-position: ${props => props.$imgFull ? 'top': '-1px -1px'};
@@ -76,47 +85,48 @@ export default function CharacterInfo() {
 
     const folderName = (skinName) => {
         const upperA = characterName.toUpperCase();
-        const upperB = skinName.replaceAll(' ','').toUpperCase();
+        const upperB = skinName.replaceAll(' ','').replaceAll('&','').toUpperCase();
         return upperA === upperB ? 'default' : skinName.replace(`. ${characterName}`,'')
     };
     
-    const handleImgError = (e) => {
-        console.error(e.target.src);
-        e.target.src = process.env.REACT_APP_BACKGROUND_IMAGE_PATH;
-    };
+    const handleImgError = (e) => e.target.src = process.env.REACT_APP_BACKGROUND_IMAGE_PATH;
     const handleSelectedImg = (e) => setSelectedSkin(folderName(e.target.alt));
 
 
     // TODO: 이미지의 다양한 크기와 비율을 일관되게 바꾸는 방법 찾아 적용할 것.
     // 이미지가 너무 중구난방한 크기와 비율을 가지고 있음.
     // 1. 이미지 파일을 직접 정리하기
-    // 2. 이미지 파일을 일관된 크기와 비율로 변환시키는 라이브러리 찾아 적용하기 << 찾는 중..
+    // 2. 이미지 파일을 일관된 크기와 비율로 변환시키는 라이브러리 찾아 적용하기
+    // 3. 이미지 파일의 용량을 줄여서(png to webp) 로딩 속도를 개선함 << 적용한 것
+    
     
 
     // TODO: 스킨명을 담은 object로 스킨 full 이미지를 처리할 것
-    // const imgSrc = `${process.env.REACT_APP_TEST}/${character.Name_EN}/default/Full.png`;
-    const imgSrc = `${process.env.REACT_APP_TEST}/${character.Name_EN}/${folderName(selectedSkin)}/Full.png`;
+    const imgSrc = `${process.env.REACT_APP_TEST}/${character.Name_EN}/${folderName(selectedSkin)}/Full.webp`;
 
     const miniImgs = character.skins.map((skin, index) =>
-            <Li key={index} onClick={handleSelectedImg}>
-                <Img
-                    src={`${process.env.REACT_APP_TEST}/${character.Name_EN}/${folderName(skin.Name_EN)}/Mini.png`}
-                    alt={`${skin.Name_EN}`}
-                    onError={handleImgError}
-                    $preview={84}
-                />
-            </Li>
-        );
+                <Li key={index} onClick={handleSelectedImg}>
+                    <Img
+                        src={`${process.env.REACT_APP_TEST}/${character.Name_EN}/${folderName(skin.Name_EN)}/Mini.png`}
+                        alt={`${skin.Name_EN}`}
+                        onError={handleImgError}
+                        $preview={84}
+                    />
+                </Li>
+                );
+
     // TODO: 데이터 표시 필요
     return (
-        <div>
-            <h1>{character.Name_KR}</h1>
+        <section>
+            <TitleBox>
+                <CharName>{character.Name_KR}</CharName>
+                <p>“{character.Story_Title}”</p>
+            </TitleBox>
             {/* 난이도를 Name_KR 옆에 */}
             {/* <p>난이도: {character.Difficulty}</p> */}
             <Container>
                 <Div>
-                    <p>“{character.Story_Title}”</p>
-                    <h3>{character.Full_Name}</h3>
+                    <h3>이름: {character.Full_Name}</h3>
                     {/* fullname 아래에 성별, 나이, 키*/}
                     <p>성별: {character.Gender}</p>
                     <p>나이: {character.Age}</p>
@@ -130,12 +140,12 @@ export default function CharacterInfo() {
                     </Ul>
                     <Img
                         src={imgSrc}
-                        alt={`${character.Name_EN} image`}
+                        alt={`${character.Name_KR} 전신 이미지`}
                         onError={handleImgError}
                         $imgFull={true}
                     />
                 </ImgDiv>
             </Container>
-        </div>
+        </section>
     )
 }
