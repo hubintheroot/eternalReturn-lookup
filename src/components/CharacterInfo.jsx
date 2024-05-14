@@ -23,6 +23,7 @@ const ImgDiv = styled(FlexDiv)`
 const Container = styled(FlexDiv)`
     flex-direction: row;
     justify-content: space-between;
+    margin-top: 1rem;
 `
 const Ul = styled.ul`
     display: flex;
@@ -34,6 +35,7 @@ const Ul = styled.ul`
     padding: 0;
 `;
 const TitleBox = styled(FlexDiv)`
+    margin-top: 1.5rem;
     flex-direction: column;
     gap: .5rem;
 `;
@@ -73,6 +75,24 @@ const Difficulty = styled.div`
     height: 1.2rem;
     transform: skew(-20deg);
 `;
+const InfoContent = styled(FlexDiv)`
+    line-height: 2rem;
+    margin: .5rem 0;
+    gap: 1rem;
+`
+const InfoContentTitle = styled(FlexDiv)`
+    justify-content: center;
+    padding: 0 .5rem;
+    border: .1rem solid #000;
+    border-radius: .8rem;
+    width: 2rem;
+`
+const DescContent = styled.p`
+    margin: 2rem 0;
+    padding: 0;
+    white-space: pre-wrap;
+    line-height: 2rem;
+`
 
 export default function CharacterInfo() {
     const data = useSelector(state => state.characterData.data);
@@ -129,14 +149,10 @@ export default function CharacterInfo() {
 
     // TODO: 데이터 표시 필요
     
-    console.log(character);
-
     const Diff = [];
     for (let i = 0; i < 5; i++) {
-        Diff.push(character.Difficulty > i ? <Difficulty/>: <Difficulty $empty={true}/>);
+        Diff.push(character.Difficulty > i ? <Difficulty key={i}/>: <Difficulty key={i} $empty={true}/>);
     }
-
-    console.log(Diff);
 
     return (
         <section>
@@ -154,13 +170,11 @@ export default function CharacterInfo() {
             </TitleBox>
             <Container>
                 <InfoDiv>
-                    <h3>이름: {character.Full_Name}</h3>
-                    {/* fullname 아래에 성별, 나이, 키*/}
-                    <p>성별: {character.Gender}</p>
-                    <p>나이: {character.Age}</p>
-                    <p>키: {character.Height}</p>
-                    {/* 캐릭터 스토리 글자 간격 조절 필요 */}
-                    <p>{character.Story_Desc}</p>
+                    <InfoContent><InfoContentTitle>이름</InfoContentTitle> {character.Full_Name}</InfoContent>
+                    <InfoContent><InfoContentTitle>성별</InfoContentTitle> {character.Gender}</InfoContent>
+                    <InfoContent><InfoContentTitle>나이</InfoContentTitle> {character.Age}</InfoContent>
+                    <InfoContent><InfoContentTitle>키</InfoContentTitle> {character.Height}</InfoContent>
+                    <DescContent>{character.Story_Desc}</DescContent>
                 </InfoDiv>
                 <ImgDiv>
                     <Ul>
