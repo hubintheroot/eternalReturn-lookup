@@ -10,7 +10,7 @@ const Container = styled.div`
 `;
 const Input = styled.input`
     box-sizing: inherit;
-    height: ${(props) => props.height ? props.height : '24px'};
+    height: ${(props) => props.$height ? props.$height : '24px'};
 `;
 const Button = styled.button`
     box-sizing: inherit;
@@ -40,7 +40,7 @@ export default function InputBox(props) {
             <Container>
                 <Input 
                     type="text" 
-                    height= { props.data.height }
+                    $height= { props.data.height }
                     placeholder={ placeholderText }
                     value={ text }
                     onChange={ handleOnChange }
