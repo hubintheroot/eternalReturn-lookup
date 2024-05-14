@@ -5,6 +5,7 @@ import styled from "styled-components";
 import ImageListItem from "./ImageListItem";
 import { Img } from "./ImageListItem";
 import DifficultyBox from "./DifficultyBox";
+import ComingSoonView from "../pages/comingsoon";
 
 
 const FlexDiv = styled.div`
@@ -88,6 +89,8 @@ const DescContent = styled.p`
 
 export default function CharacterInfo() {
     const data = useSelector(state => state.characterData.data);
+    // eslint-disable-next-line
+    const [windowWidth, setWindowWidth] = useState();
     const [selectedSkin, setSelectedSkin] = useState('default');
     const { pathname } = useLocation();
     const navigate = useNavigate();
@@ -96,6 +99,13 @@ export default function CharacterInfo() {
         if (!data) navigate('/');
         setSelectedSkin('default');
     }, [pathname, data, navigate]);
+
+    useEffect(() => {
+        const handleResize = () => setWindowWidth(window.innerWidth);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    },[])
+
 
     if (!data) return null;
 
@@ -138,8 +148,8 @@ export default function CharacterInfo() {
     //                 />
     //             </Li>
     //             );
-
-    return (
+    
+    return window.innerWidth <= 768 ? <ComingSoonView data={{text: '모바일 페이지를 준비 중입니다.'}}/> : (
         <section>
             <TitleBox>
                 <CharName>
