@@ -13,11 +13,11 @@ const Li = styled.li`
     }
 `;
 
-const Img = styled.img`
+export const Img = styled.img`
     object-fit: cover;
-    object-position: ${props => props.$imgFull ? 'top': '-1px -1px'};
-    width: ${props => props.$preview ? `${props.$preview + 2}px` : '512px'};
-    height: ${props => props.$preview ? `${props.$preview}px` : '768px'};
+    object-position: -1px -1px;
+    width: ${props => props.$preview && `${props.$preview + 2}px`};
+    height: ${props => props.$preview && `${props.$preview}px`};
     box-sizing: border-box;
     background-image: url(${process.env.REACT_APP_BACKGROUND_IMAGE_PATH});
     background-repeat: no-repeat;

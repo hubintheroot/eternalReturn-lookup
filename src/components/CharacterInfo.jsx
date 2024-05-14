@@ -3,23 +3,24 @@ import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import ImageListItem from "./ImageListItem";
+import { Img } from "./ImageListItem";
 
-
-const Div = styled.div`
+const FlexDiv = styled.div`
+    display: flex;
+`;
+const InfoDiv = styled.div`
     width: 18rem;
     word-break: keep-all;
     word-wrap: break-word;
 `;
-const ImgDiv = styled.div`
-    display: flex;
+const ImgDiv = styled(FlexDiv)`
     flex-direction: row;
     justify-content: space-between;
     gap: 2rem;
     width: 40rem;
     margin-bottom: 4rem;
 `
-const Container = styled.div`
-    display: flex;
+const Container = styled(FlexDiv)`
     flex-direction: row;
     justify-content: space-between;
 `
@@ -32,46 +33,62 @@ const Ul = styled.ul`
     margin: 0;
     padding: 0;
 `;
-const TitleBox = styled.div`
-    display: flex;
+const TitleBox = styled(FlexDiv)`
     flex-direction: column;
+    gap: .5rem;
 `;
 const CharName = styled.h1`
     margin: 1rem 0 0;
 `;
-
-const Img = styled.img`
-    object-fit: cover;
-    object-position: ${props => props.$imgFull ? 'top': '-1px -1px'};
-    width: ${props => props.$preview ? `${props.$preview + 2}px` : '512px'};
-    height: ${props => props.$preview ? `${props.$preview}px` : '768px'};
-    box-sizing: border-box;
-    background-image: url(${process.env.REACT_APP_BACKGROUND_IMAGE_PATH});
-    background-repeat: no-repeat;
-    background-size: cover;
+const FullImg = styled(Img)`
+    object-position: top;
+    width: 512px;
+    height: 768px;
 `;
-// TODO: preview 이미지를 클릭하면 full 이미지가 보여져야함, 기본적으로 보여지는 full 이미지는 default 이미지.
-// TODO: preview 이미지 왼쪽에 캐릭터 설명을 추가할 수 있다면 추가 
+const Span = styled.span`
+    font-size: 1rem;
+    font-weight: 400;
+    margin-left: 1rem;
+    &::before{
+        content: '“';
+    };
+    &::after{
+        content: '”';
+    };
+`;
+const ControlDiffBox = styled(FlexDiv)`
+    flex-direction: row;
+    gap: 1rem;
+`
+const DiffBox = styled(FlexDiv)`
+    flex-direction: row;
+    gap: .1rem;
+`;
+const Difficulty = styled.div`
+    margin: 0 .1rem;
+    background-color: ${props => props.$empty ? 'lightgray': 'lightblue'};
+    box-sizing: border-box;
+    border: .1rem solid lightskyblue;
+    width: .8rem;
+    height: 1.2rem;
+    transform: skew(-20deg);
+`;
+
 export default function CharacterInfo() {
-    const navigate = useNavigate();
+    const data = useSelector(state => state.characterData.data);
     const [selectedSkin, setSelectedSkin] = useState('default');
     const { pathname } = useLocation();
-    const data = useSelector(state => state.characterData.data);
-    useEffect(() => {
-        if (!data) navigate('/')
-        },[data, navigate])
+    const navigate = useNavigate();
 
     useEffect(() => {
+        if (!data) navigate('/');
         setSelectedSkin('default');
-    }, [pathname]);
+    }, [pathname, data, navigate]);
 
-    if (!data) {
-        return null;
-    }
+    if (!data) return null;
 
     const characterName = pathname.replace('/characters/', '');
     const character = data.find(character => characterName === character.Name_EN);
-    
 
     const folderName = (skinName) => {
         const upperA = characterName.toUpperCase();
@@ -82,23 +99,22 @@ export default function CharacterInfo() {
     const handleImgError = (e) => e.target.src = process.env.REACT_APP_BACKGROUND_IMAGE_PATH;
     const handleSelectedImg = (e) => setSelectedSkin(folderName(e.target.alt));
 
-    const imgSrc = `${process.env.REACT_APP_TEST}/${character.Name_EN}/${folderName(selectedSkin)}/Full.webp`;
-    
     const miniImgs = character.skins
-            .map((skin, index) => 
-                <ImageListItem
-                    key={index}
-                    data={{
-                        src:`${process.env.REACT_APP_TEST}/${character.Name_EN}/${folderName(skin.Name_EN)}/Mini.png`,
-                        alt: `${skin.Name_EN}`,
-                        handler:{
-                            selectedImg: handleSelectedImg,
-                            onError: handleImgError
-                            },
-                        size:84
-                    }}
-                ></ImageListItem>
-                );
+    .map((skin, index) => 
+        <ImageListItem
+            key={index}
+            data={{
+                src:`${process.env.REACT_APP_TEST}/${character.Name_EN}/${folderName(skin.Name_EN)}/Mini.png`,
+                alt: `${skin.Name_EN}`,
+                handler:{
+                    selectedImg: handleSelectedImg,
+                    onError: handleImgError
+                },
+                size:84
+            }}
+            ></ImageListItem>
+        );
+    const imgSrc = `${process.env.REACT_APP_TEST}/${character.Name_EN}/${folderName(selectedSkin)}/Full.webp`;
                 
     // const miniImgs = character.skins.map((skin, index) =>
     //             <Li key={index} onClick={handleSelectedImg}>
@@ -112,16 +128,32 @@ export default function CharacterInfo() {
     //             );
 
     // TODO: 데이터 표시 필요
+    
+    console.log(character);
+
+    const Diff = [];
+    for (let i = 0; i < 5; i++) {
+        Diff.push(character.Difficulty > i ? <Difficulty/>: <Difficulty $empty={true}/>);
+    }
+
+    console.log(Diff);
+
     return (
         <section>
             <TitleBox>
-                <CharName>{character.Name_KR}</CharName>
-                <p>“{character.Story_Title}”</p>
+                <CharName>
+                    {character.Name_KR}
+                    <Span>{character.Story_Title}</Span>
+                </CharName>
+                <ControlDiffBox>
+                    조작 난이도:
+                    <DiffBox>
+                        {Diff}
+                    </DiffBox>
+                </ControlDiffBox>
             </TitleBox>
-            {/* 난이도를 Name_KR 옆에 */}
-            {/* <p>난이도: {character.Difficulty}</p> */}
             <Container>
-                <Div>
+                <InfoDiv>
                     <h3>이름: {character.Full_Name}</h3>
                     {/* fullname 아래에 성별, 나이, 키*/}
                     <p>성별: {character.Gender}</p>
@@ -129,16 +161,15 @@ export default function CharacterInfo() {
                     <p>키: {character.Height}</p>
                     {/* 캐릭터 스토리 글자 간격 조절 필요 */}
                     <p>{character.Story_Desc}</p>
-                </Div>
+                </InfoDiv>
                 <ImgDiv>
                     <Ul>
                         {miniImgs}
                     </Ul>
-                    <Img
+                    <FullImg
                         src={imgSrc}
                         alt={`${character.Name_KR} 전신 이미지`}
                         onError={handleImgError}
-                        $imgFull={true}
                     />
                 </ImgDiv>
             </Container>
