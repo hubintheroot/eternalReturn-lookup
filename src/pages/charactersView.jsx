@@ -88,6 +88,7 @@ export default function CharactersView(){
                 .order('CharacterID', {ascending: true});
 
                 const data = character.data.map(charData => {
+                    charData.Story_Desc = charData.Story_Desc.replaceAll('\\n', '\n');
                     const tempSkinData = skin.data.filter(skinData => charData.CharacterID === skinData.CharacterID);
                     charData.skins =tempSkinData;
                     return charData;
