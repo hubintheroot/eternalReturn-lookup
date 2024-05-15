@@ -1,5 +1,5 @@
 import { styled } from 'styled-components';
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import CharacterCard from '../components/CharacterCard';
 import { supabase } from '../supabase/supabase';
@@ -70,13 +70,16 @@ const Ul = styled.ul`
 
 export default function CharactersView(){
     const dispatch = useDispatch();
+    const [loading, setLoading] = useState(true);
     const characterData = useSelector(state => state.characterData.data);
     const isRotation = useSelector(state => state.sortOption.isRotation);
     const sortState = useSelector(state => state.sortOption.state);
+    const cnt = useRef(0);
     
     useEffect(() => {
         const getData = async() => {
             try {
+                setLoading(true);
                 const character = await supabase()
                 .from('Characters')
                 .select('*')
@@ -95,18 +98,19 @@ export default function CharactersView(){
                 });
 
                 dispatch(setData(data));
-                
+
             } catch(err) {
                 console.error(err);
             }
         }
-        
+
         if(!characterData) getData();
+        else setLoading(false);
         
     },[characterData, dispatch]);
 
-    const rotationFilter = (data) => {
 
+    const rotationFilter = (data) => {
         const rotation = [];
         const other = [];
 
@@ -117,7 +121,6 @@ export default function CharactersView(){
 
         return rotation.concat(other);
     };
-
     const sortBy = (data) => {
         const tempData = [].concat(data);
         switch (sortState) {
@@ -134,29 +137,33 @@ export default function CharactersView(){
         }
         return tempData;
     }
-    
-    const setCharacterCard = () => {
-        let newData = sortBy(characterData);
-        if(isRotation) newData = rotationFilter(newData);
 
-        return newData.map(
-            (data, index) => 
-            <CharacterCard  data={data}
-                            backgroundImagePath={process.env.REACT_APP_BACKGROUND_IMAGE_PATH}
-                            rotationIconPath={process.env.REACT_APP_UNLOCK_ICON_PATH}
-                            key={index}/>
-            );
-    };
-    
-    const handleOrdRule = (e) => dispatch(setState(e.target.value));
-    const handleRotation = () => dispatch(setIsRotation(!isRotation));
-    
     const selectList = {
         release: {value: 'release', text: '출시 순'},
         ord: {value: 'order', text: '가나다 순'},
     };
 
-    const data = characterData && setCharacterCard();
+    const setCharacterCard = () => {
+        let newData = sortBy(characterData);
+        if(isRotation) newData = rotationFilter(newData);
+
+        const maxLength = newData.length;
+        const result = newData.map(
+            (data, index) => 
+                <CharacterCard  data={data}
+                                maxLength={maxLength}
+                                cnt={cnt}
+                                backgroundImagePath={process.env.REACT_APP_BACKGROUND_IMAGE_PATH}
+                                rotationIconPath={process.env.REACT_APP_UNLOCK_ICON_PATH}
+                                key={index}/>
+            );
+        return result;
+    };
+
+    const handleOrdRule = (e) => dispatch(setState(e.target.value));
+    const handleRotation = () => dispatch(setIsRotation(!isRotation));
+
+    const data = !loading && setCharacterCard()
 
     return (
         <StyledMain>

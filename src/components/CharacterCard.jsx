@@ -1,5 +1,7 @@
-import styled from "styled-components"
+import styled, { keyframes } from "styled-components"
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { setCharListLoaded } from "../features/imageLoaded/imageLoadedSlice";
 
 const StyledLink = styled(Link)`
     text-decoration: none;
@@ -53,24 +55,64 @@ const Figure = styled.figure`
     }
 `;
 
+const pulseKeyFrame = keyframes`
+    0% {
+        opacity: .5;
+    }
+    50% {
+        opacity: .3;
+    }
+    100% {
+        opacity: .5;
+    }
+`;
+const SkelStyledLink = styled(StyledLink)`
+    animation: ${pulseKeyFrame} 1.5s ease-in-out infinite;
+`;
+const SkelFigcaption = styled(Figcaption)`
+    background-color: lightgrey;
+    height: 12px;
+    width: 100%;
+`;
+const SkelImgBox = styled(ImgBox)`
+    background-color: lightgrey;
+`;
+
 export default function CharacterCard(props) {
+    const loading = useSelector(state => state.imageLoaded.charListLoaded);
+    const dispatch = useDispatch();
     const imgSize = '64px';
     const link = '/characters/' + props.data.Name_EN
-    const handleImgError = (e) => {
-        e.target.src = props.backgroundImagePath;
+    const handleImgError = (e) => e.target.src = props.backgroundImagePath;
+    const handleImgOnload = () => {
+        props.cnt.current = props.cnt.current + 1;
+        if (props.maxLength === props.cnt.current) dispatch(setCharListLoaded(false));
     };
+
+
     return ( 
-        <Card>
-            <StyledLink to={link}>
-                <Figure>
-                    <ImgBox>
-                        {props.data.Weekly_Free ? <Free src={props.rotationIconPath}/> : null}
-                        <Img src={props.backgroundImagePath} alt="background image" height={imgSize} width={imgSize} />
-                        <Img src={props.data.ImagePath} onError={handleImgError} alt="character image" height={imgSize} width={imgSize} />
-                    </ImgBox>
-                    <Figcaption>{props.data.Name_KR}</Figcaption>
-                </Figure>
-            </StyledLink>
-        </Card>
-    )
+                <Card>
+                    {/* skeleton ui */}
+                    <SkelStyledLink style={{ display: loading ? 'block':'none'}}>
+                        <Figure>
+                            <SkelImgBox>
+                                <Img  height={imgSize} width={imgSize} />
+                            </SkelImgBox>
+                            <SkelFigcaption></SkelFigcaption>
+                        </Figure>
+                    </SkelStyledLink>
+
+                    {/* content */}
+                    <StyledLink to={link} style={{ display: loading ? 'none':'block'}}>
+                        <Figure>
+                            <ImgBox>
+                                {props.data.Weekly_Free ? <Free src={props.rotationIconPath}/> : null}
+                                <Img src={props.backgroundImagePath} alt="background image" height={imgSize} width={imgSize} />
+                                <Img src={props.data.ImagePath} onError={handleImgError} onLoad={handleImgOnload} alt="character image" height={imgSize} width={imgSize} />
+                            </ImgBox>
+                            <Figcaption>{props.data.Name_KR}</Figcaption>
+                        </Figure>
+                    </StyledLink>
+                </Card>
+            )
 }
