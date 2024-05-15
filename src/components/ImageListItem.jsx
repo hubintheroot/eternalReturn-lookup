@@ -34,7 +34,7 @@ export default function ImageListItem({data}){
             <Img
                 src={data.src}
                 alt={data.alt}
-                onError={data.handler.onError}
+                // onError={data.handler.onError}
                 $preview={data.size}
             />
         </Li>
