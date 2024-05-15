@@ -57,7 +57,6 @@ export default function CharacterCard(props) {
     const imgSize = '64px';
     const link = '/characters/' + props.data.Name_EN
     const handleImgError = (e) => {
-        console.log(e.target.src);
         e.target.src = props.backgroundImagePath;
     };
     return ( 
