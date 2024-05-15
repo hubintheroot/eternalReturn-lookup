@@ -123,7 +123,10 @@ export default function CharacterInfo() {
 
     const miniImgs = character.skins
     .map((skin, index) => 
-        <ImageListItem
+        {
+            console.log(character.Name_EN, skin.Name_EN, folderName(skin.Name_EN));
+
+        return (<ImageListItem
             key={index}
             data={{
                 src:`${process.env.REACT_APP_TEST}/${character.Name_EN}/${folderName(skin.Name_EN)}/Mini.png`,
@@ -134,7 +137,8 @@ export default function CharacterInfo() {
                 },
                 size:84
             }}
-            ></ImageListItem>
+            ></ImageListItem>)
+        }
         );
     const imgSrc = `${process.env.REACT_APP_TEST}/${character.Name_EN}/${folderName(selectedSkin)}/Full.webp`;
                 
