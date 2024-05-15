@@ -106,7 +106,7 @@ export default function CharacterCard(props) {
                     <StyledLink to={link} style={{ display: loading ? 'none':'block'}}>
                         <Figure>
                             <ImgBox>
-                                {props.data.Weekly_Free ? <Free src={props.rotationIconPath}/> : null}
+                                {props.data.Weekly_Free ? <Free src={props.rotationIconPath} alt="free rotation character flag"/> : null}
                                 <Img src={props.backgroundImagePath} alt="background image" height={imgSize} width={imgSize} />
                                 <Img src={props.data.ImagePath} onError={handleImgError} onLoad={handleImgOnload} alt="character image" height={imgSize} width={imgSize} />
                             </ImgBox>
