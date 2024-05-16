@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 
 export const imageLoadedSlice = createSlice({
-    name: 'characterData',
+    name: 'imageLoaded',
     initialState:{
         charListLoaded: true,
     },

@@ -12,7 +12,6 @@ const Li = styled.li`
         border: .1rem solid #e460ff;
     }
 `;
-
 export const Img = styled.img`
     object-fit: cover;
     object-position: -1px -1px;
@@ -24,20 +23,31 @@ export const Img = styled.img`
     background-size: cover;
 `;
 
+const Skel = styled(Li)`
+    background-color: lightgrey;
+    border: none;
+    &:hover {
+        cursor: default;
+        border: none;
+    }
+`
+
 export default function ImageListItem({data}){
     const imgExists = useImageExists(data.src);
 
-    if (!imgExists) return null;
-
-    return (
-        <Li onClick={data.handler.selectedImg}>
-            <Img
-                src={data.src}
-                alt={data.alt}
-                onError={data.handler.onError}
-                $preview={data.size}
-            />
-        </Li>
+    return !imgExists ? null :( 
+        <>
+            <Skel style={{display: data.loading ? 'block': 'none'}}></Skel>
+            <Li onClick={data.handler.selectedImg} style={{display: data.loading ? 'none': 'block'}}>
+                <Img
+                    src={data.src}
+                    alt={data.alt}
+                    onError={data.handler.onError}
+                    onLoad={data.handler.onLoad}
+                    $preview={data.size}
+                />
+            </Li>
+        </>
     )
 
 }

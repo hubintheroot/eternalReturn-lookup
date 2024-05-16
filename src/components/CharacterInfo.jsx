@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import ImageListItem from "./ImageListItem";
-import { Img } from "./ImageListItem";
 import DifficultyBox from "./DifficultyBox";
 import ComingSoonView from "../pages/comingsoon";
+import CharImgFull from "./CharImgFull";
 
 
 const FlexDiv = styled.div`
@@ -15,6 +15,21 @@ const InfoDiv = styled.div`
     width: 18rem;
     word-break: keep-all;
     word-wrap: break-word;
+
+    & > div, p{
+        background-color: ${props => props.$isLoading ? 'lightgrey': null};
+        border-radius: ${props => props.$isLoading ? '5px': null};
+    }
+
+    & > div {
+        width: ${props => props.$isLoading ? '14rem': null};
+        height: ${props => props.$isLoading ? '2rem': null};
+    }
+
+    & > p {
+        width: ${props => props.$isLoading ? '18rem': null};
+        height: ${props => props.$isLoading ? '25rem': null};
+    }
 `;
 const ImgDiv = styled(FlexDiv)`
     flex-direction: row;
@@ -41,14 +56,22 @@ const TitleBox = styled(FlexDiv)`
     margin-top: 1.5rem;
     flex-direction: column;
     gap: .5rem;
-`;
+
+    & > h1, div {
+        background-color: ${props => props.$isLoading ? 'lightgrey': null};
+        border-radius: ${props => props.$isLoading ? '5px': null};
+    }
+    & > h1 {
+        width: ${props => props.$isLoading ? '38rem': null};
+        height: ${props => props.$isLoading ? '2rem': null};
+    }
+    & > div {
+        width: ${props => props.$isLoading ? '11rem': null};
+        height: ${props => props.$isLoading ? '1.2rem': null};
+    }
+    `;
 const CharName = styled.h1`
     margin: 1rem 0 0;
-`;
-const FullImg = styled(Img)`
-    object-position: top;
-    width: 512px;
-    height: 768px;
 `;
 const Span = styled.span`
     font-size: 1rem;
@@ -88,12 +111,15 @@ const DescContent = styled.p`
 `;
 
 export default function CharacterInfo() {
-    const data = useSelector(state => state.characterData.data);
-    // eslint-disable-next-line
-    const [windowWidth, setWindowWidth] = useState();
-    const [selectedSkin, setSelectedSkin] = useState('default');
     const { pathname } = useLocation();
     const navigate = useNavigate();
+    const data = useSelector(state => state.characterData.data);
+    const [selectedSkin, setSelectedSkin] = useState('default');
+    const [windowWidth, setWindowWidth] = useState();
+    // eslint-disable-next-line
+    const [loading, setLoading] = useState(true);
+    const maxImgLoadCnt = useRef(0);
+    const imgLoadCnt = useRef(0);
 
     useEffect(() => {
         if (!data) navigate('/');
@@ -120,23 +146,33 @@ export default function CharacterInfo() {
     
     const handleImgError = (e) => e.target.src = process.env.REACT_APP_BACKGROUND_IMAGE_PATH;
     const handleSelectedImg = (e) => setSelectedSkin(folderName(e.target.alt));
+    const handleImgOnload = () => {
+        imgLoadCnt.current = imgLoadCnt.current + 1;
+        if (maxImgLoadCnt.current === imgLoadCnt.current) {
+            setLoading(false);
+            imgLoadCnt.current = 0;
+        }
+    }
 
     const miniImgs = character.skins
     .map((skin, index) => 
             <ImageListItem
-            key={index}
-            data={{
-                src:`${process.env.REACT_APP_TEST}/${character.Name_EN}/${folderName(skin.Name_EN)}/Mini.png`,
-                alt: `${skin.Name_EN}`,
-                handler:{
-                    selectedImg: handleSelectedImg,
-                    onError: handleImgError
-                },
-                size:84
-            }}
+                key={index}
+                data={{
+                    src:`${process.env.REACT_APP_TEST}/${character.Name_EN}/${folderName(skin.Name_EN)}/Mini.png`,
+                    alt: `${skin.Name_EN}`,
+                    handler:{
+                        selectedImg: handleSelectedImg,
+                        onError: handleImgError,
+                        onLoad: handleImgOnload
+                    },
+                    loading: loading,
+                    size:84
+                }}
             ></ImageListItem>
         );
-        
+
+    maxImgLoadCnt.current = miniImgs.length + 1;
     const imgSrc = `${process.env.REACT_APP_TEST}/${character.Name_EN}/${folderName(selectedSkin)}/Full.webp`;
                 
     // const miniImgs = character.skins.map((skin, index) =>
@@ -149,36 +185,68 @@ export default function CharacterInfo() {
     //                 />
     //             </Li>
     //             );
-    
-    return window.innerWidth <= 768 ? <ComingSoonView data={{text: '모바일 페이지를 준비 중입니다.'}}/> : (
+
+
+    return windowWidth <= 768 ? <ComingSoonView data={{text: '모바일 페이지를 준비 중입니다.'}}/> : (
         <section>
-            <TitleBox>
-                <CharName>
-                    {character.Name_KR}
-                    <Span>{character.Story_Title}</Span>
-                </CharName>
-                <ControlDiffBox>
-                    조작 난이도
-                    <DifficultyBox difficulty={character.Difficulty} maxDifficulty={5}/>
-                </ControlDiffBox>
+            <TitleBox $isLoading={loading}>
+                { loading ?
+                <>
+                    <CharName/>
+                    <ControlDiffBox/>
+                </>
+                :
+                <>
+                    <CharName>{character.Name_KR}
+                        <Span>{character.Story_Title}</Span>
+                    </CharName>
+                    <ControlDiffBox>조작 난이도
+                        <DifficultyBox difficulty={character.Difficulty} maxDifficulty={5}/>
+                    </ControlDiffBox>
+                </>
+                }
             </TitleBox>
             <Container>
-                <InfoDiv>
-                    <InfoContent><InfoContentTitle>이름</InfoContentTitle> {character.Full_Name}</InfoContent>
-                    <InfoContent><InfoContentTitle>성별</InfoContentTitle> {character.Gender}</InfoContent>
-                    <InfoContent><InfoContentTitle>나이</InfoContentTitle> {character.Age}</InfoContent>
-                    <InfoContent><InfoContentTitle>키</InfoContentTitle> {character.Height}</InfoContent>
-                    <DescContent>{character.Story_Desc}</DescContent>
+                <InfoDiv $isLoading={loading}>
+                    { loading ?
+                    <>
+                        <InfoContent></InfoContent>
+                        <InfoContent></InfoContent>
+                        <InfoContent></InfoContent>
+                        <InfoContent></InfoContent>
+                        <DescContent></DescContent>
+                    </>
+                    :
+                    <>
+                        <InfoContent><InfoContentTitle>이름</InfoContentTitle>{character.Full_Name}</InfoContent>
+                        <InfoContent><InfoContentTitle>성별</InfoContentTitle> {character.Gender}</InfoContent>
+                        <InfoContent><InfoContentTitle>나이</InfoContentTitle> {character.Age}</InfoContent>
+                        <InfoContent><InfoContentTitle>키</InfoContentTitle> {character.Height}</InfoContent>
+                        <DescContent>{character.Story_Desc}</DescContent>
+                    </>
+                    }
                 </InfoDiv>
                 <ImgDiv>
                     <Ul>
                         {miniImgs}
                     </Ul>
-                    <FullImg
+                    <CharImgFull
+                        data={{
+                            src : imgSrc,
+                            alt : `${character.Name_KR} 전신 이미지`,
+                            handler : {
+                                onError:handleImgError,
+                                onLoad:handleImgOnload
+                            },
+                            loading : loading
+                        }}
+                    />
+                    {/* <FullImg
                         src={imgSrc}
                         alt={`${character.Name_KR} 전신 이미지`}
                         onError={handleImgError}
-                    />
+                        onLoad={handleImgOnload}
+                    /> */}
                 </ImgDiv>
             </Container>
         </section>
