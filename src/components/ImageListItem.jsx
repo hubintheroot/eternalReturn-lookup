@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import useImageExists from "../hooks/useImageExists";
+import { useSelector } from "react-redux";
 
 const Li = styled.li`
     width: 84px;
@@ -34,11 +35,12 @@ const Skel = styled(Li)`
 
 export default function ImageListItem({data}){
     const imgExists = useImageExists(data.src);
+    const loading = useSelector(state => state.imageLoaded.detailLoaded);
 
     return !imgExists ? null :( 
         <>
-            <Skel style={{display: data.loading ? 'block': 'none'}}></Skel>
-            <Li onClick={data.handler.selectedImg} style={{display: data.loading ? 'none': 'block'}}>
+            <Skel style={{display: loading ? 'block': 'none'}}></Skel>
+            <Li onClick={data.handler.selectedImg} style={{display: loading ? 'none': 'block'}}>
                 <Img
                     src={data.src}
                     alt={data.alt}

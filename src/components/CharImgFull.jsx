@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { Img } from "./ImageListItem";
+import { useEffect, useState } from "react";
 
 const FullImg = styled(Img)`
     object-position: top;
@@ -13,14 +14,22 @@ const Skel = styled(FullImg)`
 `
 
 export default function CharImgFull({data}){
-    return ( data.loading ?
-        <Skel style={{display: data.loading ? 'block' : 'none'}}/>
-        :
-        <FullImg style={{display: data.loading ? 'none' : 'block'}}
-            src={data.src}
-            alt={data.alt}
-            onError={data.handler.onError}
-            onLoad={data.handler.onLoad}
-        />
+    const [loading, setLoading] = useState(true);
+    useEffect(() => {
+        setLoading(true);
+    },[data.src])
+
+    const onLoad = () => setLoading(false);
+    
+    return (
+        <>
+            <Skel style={{display: loading ? 'block' : 'none'}}/>
+            <FullImg style={{display: loading ? 'none' : 'block'}}
+                src={data.src}
+                alt={data.alt}
+                onError={data.handler.onError}
+                onLoad={onLoad}
+            />
+        </>
     )
 }

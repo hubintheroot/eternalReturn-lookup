@@ -1,11 +1,12 @@
-import { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import ImageListItem from "./ImageListItem";
 import DifficultyBox from "./DifficultyBox";
 import ComingSoonView from "../pages/comingsoon";
 import CharImgFull from "./CharImgFull";
+import { setCharDetailLoaded } from "../features/imageLoaded/imageLoadedSlice";
 
 
 const FlexDiv = styled.div`
@@ -113,18 +114,17 @@ const DescContent = styled.p`
 export default function CharacterInfo() {
     const { pathname } = useLocation();
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const loading = useSelector(state => state.imageLoaded.detailLoaded);
     const data = useSelector(state => state.characterData.data);
     const [selectedSkin, setSelectedSkin] = useState('default');
     const [windowWidth, setWindowWidth] = useState();
-    // eslint-disable-next-line
-    const [loading, setLoading] = useState(true);
-    const maxImgLoadCnt = useRef(0);
-    const imgLoadCnt = useRef(0);
 
     useEffect(() => {
         if (!data) navigate('/');
         setSelectedSkin('default');
-    }, [pathname, data, navigate]);
+        dispatch(setCharDetailLoaded(true));
+    }, [pathname, dispatch, data, navigate]);
 
     useEffect(() => {
         const handleResize = () => setWindowWidth(window.innerWidth);
@@ -133,7 +133,7 @@ export default function CharacterInfo() {
     },[])
 
 
-    if (!data) return null;
+    if (!data) return;
 
     const characterName = pathname.replace('/characters/', '');
     const character = data.find(character => characterName === character.Name_EN);
@@ -144,17 +144,11 @@ export default function CharacterInfo() {
         return upperA === upperB ? 'default' : skinName.replace(`. ${characterName}`,'')
     };
     
-    const handleImgError = (e) => e.target.src = process.env.REACT_APP_BACKGROUND_IMAGE_PATH;
     const handleSelectedImg = (e) => setSelectedSkin(folderName(e.target.alt));
-    const handleImgOnload = () => {
-        imgLoadCnt.current = imgLoadCnt.current + 1;
-        if (maxImgLoadCnt.current === imgLoadCnt.current) {
-            setLoading(false);
-            imgLoadCnt.current = 0;
-        }
-    }
+    const handleImgError = (e) => e.target.src = process.env.REACT_APP_BACKGROUND_IMAGE_PATH;
+    const handleImgOnload = () => { dispatch(setCharDetailLoaded(false))}
 
-    const miniImgs = character.skins
+    const miniImgs = () => character.skins
     .map((skin, index) => 
             <ImageListItem
                 key={index}
@@ -164,15 +158,14 @@ export default function CharacterInfo() {
                     handler:{
                         selectedImg: handleSelectedImg,
                         onError: handleImgError,
-                        onLoad: handleImgOnload
+                        onLoad: handleImgOnload,
+                        
                     },
-                    loading: loading,
                     size:84
                 }}
             ></ImageListItem>
         );
 
-    maxImgLoadCnt.current = miniImgs.length + 1;
     const imgSrc = `${process.env.REACT_APP_TEST}/${character.Name_EN}/${folderName(selectedSkin)}/Full.webp`;
                 
     // const miniImgs = character.skins.map((skin, index) =>
@@ -228,7 +221,7 @@ export default function CharacterInfo() {
                 </InfoDiv>
                 <ImgDiv>
                     <Ul>
-                        {miniImgs}
+                        {miniImgs()}
                     </Ul>
                     <CharImgFull
                         data={{
@@ -241,12 +234,6 @@ export default function CharacterInfo() {
                             loading : loading
                         }}
                     />
-                    {/* <FullImg
-                        src={imgSrc}
-                        alt={`${character.Name_KR} 전신 이미지`}
-                        onError={handleImgError}
-                        onLoad={handleImgOnload}
-                    /> */}
                 </ImgDiv>
             </Container>
         </section>
