@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import styled from "styled-components";
+import styled, { keyframes, css } from "styled-components";
 import DifficultyBox from "./DifficultyBox";
 import MiniSizeImage from "./MiniSizeImage";
 import FullSizeImage from "./FullSizeImage";
@@ -9,6 +9,20 @@ import { setCharDetailLoaded } from "../features/imageLoaded/imageLoadedSlice";
 import ComingSoonView from "../pages/comingsoon";
 
 
+const Section = styled.section`
+    ${props => props.$isLoading ? css`animation: ${skelAnimation} 1.5s ease-in-out infinite`:null};
+`;
+const skelAnimation = keyframes`
+    0% {
+        opacity: .6;
+    }
+    50% {
+        opacity: .3;
+    }
+    100% {
+        opacity: .6;
+    }
+`;
 const FlexDiv = styled.div`
     display: flex;
 `;
@@ -194,8 +208,6 @@ export default function CharacterInfo() {
                 key={index}/>
         );
 
-    const imgSrc = `${process.env.REACT_APP_TEST}/${character.Name_EN}/${folderName(selectedSkin)}/Full.webp`;
-                
     // const miniSizeImgs = character.skins.map((skin, index) =>
     //             <Li key={index} onClick={handleSelectedImg}>
     //                 <Img
@@ -207,9 +219,8 @@ export default function CharacterInfo() {
     //             </Li>
     //             );
 
-
     return windowWidth <= 768 ? <ComingSoonView data={{text: '모바일 페이지를 준비 중입니다.'}}/> : (
-        <section>
+        <Section $isLoading={loading}>
             <TitleBox $isLoading={loading}>
                 { loading ?
                 <>
@@ -256,6 +267,6 @@ export default function CharacterInfo() {
                     </FullBox>
                 </ImgDiv>
             </Container>
-        </section>
+        </Section>
     )
 }
