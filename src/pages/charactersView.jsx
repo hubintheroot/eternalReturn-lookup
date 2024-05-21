@@ -88,11 +88,12 @@ export default function CharactersView(){
                 const skin = await supabase()
                 .from('Skins')
                 .select('*')
-                .order('CharacterID', {ascending: true});
+                .order('character_id', {ascending: true})
+                .order('skin_id', {ascending: true});
 
                 const data = character.data.map(charData => {
                     charData.Story_Desc = charData.Story_Desc.replaceAll('\\n', '\n');
-                    const tempSkinData = skin.data.filter(skinData => charData.CharacterID === skinData.CharacterID);
+                    const tempSkinData = skin.data.filter(skinData => charData.CharacterID === skinData.character_id);
                     charData.skins =tempSkinData;
                     return charData;
                 });

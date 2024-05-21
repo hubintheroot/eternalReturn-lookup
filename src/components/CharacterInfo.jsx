@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import ImageListItem from "./ImageListItem";
 import DifficultyBox from "./DifficultyBox";
-import ComingSoonView from "../pages/comingsoon";
-import CharImgFull from "./CharImgFull";
+import MiniSizeImage from "./MiniSizeImage";
+import FullSizeImage from "./FullSizeImage";
 import { setCharDetailLoaded } from "../features/imageLoaded/imageLoadedSlice";
+import ComingSoonView from "../pages/comingsoon";
 
 
 const FlexDiv = styled.div`
@@ -110,6 +110,10 @@ const DescContent = styled.p`
     white-space: pre-wrap;
     line-height: 2rem;
 `;
+const FullBox = styled.div`
+    position: relative;
+    width: 512px;
+`;
 
 export default function CharacterInfo() {
     const { pathname } = useLocation();
@@ -119,16 +123,20 @@ export default function CharacterInfo() {
     const data = useSelector(state => state.characterData.data);
     const [selectedSkin, setSelectedSkin] = useState('default');
     const [windowWidth, setWindowWidth] = useState();
+    const imageLoadedCount = useRef(0);
 
     useEffect(() => {
         if (!data) navigate('/');
         setSelectedSkin('default');
+        imageLoadedCount.current = 0;
         dispatch(setCharDetailLoaded(true));
+
     }, [pathname, dispatch, data, navigate]);
 
     useEffect(() => {
         const handleResize = () => setWindowWidth(window.innerWidth);
         window.addEventListener('resize', handleResize);
+
         return () => window.removeEventListener('resize', handleResize);
     },[])
 
@@ -138,6 +146,11 @@ export default function CharacterInfo() {
     const characterName = pathname.replace('/characters/', '');
     const character = data.find(character => characterName === character.Name_EN);
 
+    const skins = character.skins
+            .filter(skin => skin.mini_size);
+
+    const imageMaxCount = skins.length * 2 - 1;
+
     const folderName = (skinName) => {
         const upperA = characterName.toUpperCase();
         const upperB = skinName && skinName.replaceAll(' ','').replaceAll('&','').toUpperCase();
@@ -145,34 +158,49 @@ export default function CharacterInfo() {
     };
     
     const handleSelectedImg = (e) => setSelectedSkin(folderName(e.target.alt));
-    const handleImgError = (e) => e.target.src = process.env.REACT_APP_BACKGROUND_IMAGE_PATH;
-    const handleImgOnload = () => { dispatch(setCharDetailLoaded(false))}
+    const handleImgError = (e) => {console.log(e.target.src); e.target.src = process.env.REACT_APP_BACKGROUND_IMAGE_PATH;}
+    const handleImgOnload = () => {
+        if (imageLoadedCount.current === imageMaxCount){
+            dispatch(setCharDetailLoaded(false));
+            imageLoadedCount.current = 0;
+            return;
+        }
+        imageLoadedCount.current += 1;
+    }
 
-    const miniImgs = () => character.skins
-    .map((skin, index) => 
-            <ImageListItem
+    const miniSizeImgs = () => skins
+        .map((skin, index) =>
+            <MiniSizeImage
                 key={index}
                 data={{
-                    src:`${process.env.REACT_APP_TEST}/${character.Name_EN}/${folderName(skin.Name_EN)}/Mini.png`,
-                    alt: `${skin.Name_EN}`,
+                    src: `${process.env.REACT_APP_TEST}/${character.Name_EN}/${folderName(skin.name_en)}/Mini.webp`,
+                    alt: `${skin.name_en}`,
                     handler:{
                         selectedImg: handleSelectedImg,
                         onError: handleImgError,
                         onLoad: handleImgOnload,
-                        
                     },
                     size:84
                 }}
-            ></ImageListItem>
+            ></MiniSizeImage>
+        );
+    const fullSizeImgs = () => skins
+        .map((skin, index) => 
+            <FullSizeImage 
+                src={`${process.env.REACT_APP_TEST}/${character.Name_EN}/${folderName(skin.name_en)}/Full.webp`}
+                select={selectedSkin}
+                loading={loading}
+                handler={{onLoad: handleImgOnload}}
+                key={index}/>
         );
 
     const imgSrc = `${process.env.REACT_APP_TEST}/${character.Name_EN}/${folderName(selectedSkin)}/Full.webp`;
                 
-    // const miniImgs = character.skins.map((skin, index) =>
+    // const miniSizeImgs = character.skins.map((skin, index) =>
     //             <Li key={index} onClick={handleSelectedImg}>
     //                 <Img
-    //                     src={`${process.env.REACT_APP_TEST}/${character.Name_EN}/${folderName(skin.Name_EN)}/Mini.png`}
-    //                     alt={`${skin.Name_EN}`}
+    //                     src={`${process.env.REACT_APP_TEST}/${character.name_en}/${folderName(skin.name_en)}/Mini.png`}
+    //                     alt={`${skin.name_en}`}
     //                     onError={handleImgError}
     //                     $preview={84}
     //                 />
@@ -221,19 +249,11 @@ export default function CharacterInfo() {
                 </InfoDiv>
                 <ImgDiv>
                     <Ul>
-                        {miniImgs()}
+                        {data && miniSizeImgs()}
                     </Ul>
-                    <CharImgFull
-                        data={{
-                            src : imgSrc,
-                            alt : `${character.Name_KR} 전신 이미지`,
-                            handler : {
-                                onError:handleImgError,
-                                onLoad:handleImgOnload
-                            },
-                            loading : loading
-                        }}
-                    />
+                    <FullBox>
+                        {data && fullSizeImgs()}
+                    </FullBox>
                 </ImgDiv>
             </Container>
         </section>
