@@ -154,25 +154,12 @@ export default function CharacterInfo() {
         return () => window.removeEventListener('resize', handleResize);
     },[])
 
-
     if (!data) return;
 
-    const characterName = pathname.replace('/characters/', '');
-    const character = data.find(character => characterName === character.Name_EN);
-
-    const skins = character.skins
-            .filter(skin => skin.mini_size);
-
-    const imageMaxCount = skins.length * 2 - 1;
-
-    const folderName = (skinName) => {
-        const upperA = characterName.toUpperCase();
-        const upperB = skinName && skinName.replaceAll(' ','').replaceAll('&','').toUpperCase();
-        return upperA === upperB ? 'default' : skinName.replace(`. ${characterName}`,'')
+    const handleSelectedImg = (e) => {
+        const skin_name = e.target.src.split('/')[6].replaceAll('%20',' ');
+        setSelectedSkin(setFolderName(skin_name));
     };
-    
-    const handleSelectedImg = (e) => setSelectedSkin(folderName(e.target.alt));
-    const handleImgError = (e) => {console.log(e.target.src); e.target.src = process.env.REACT_APP_BACKGROUND_IMAGE_PATH;}
     const handleImgOnload = () => {
         if (imageLoadedCount.current === imageMaxCount){
             dispatch(setCharDetailLoaded(false));
@@ -182,91 +169,97 @@ export default function CharacterInfo() {
         imageLoadedCount.current += 1;
     }
 
+    const characterName = pathname.replace('/characters/', '');
+    const character = data.find(character => characterName === character.Name_EN);
+    const skins = character.skins.filter(skin => skin.mini_size && skin.full_size);
+    
+    const imageMaxCount = skins.length * 2 - 1;
+
+    const setFolderName = (skinName) => {
+        const upperA = characterName.toUpperCase();
+        const upperB = skinName && skinName.replaceAll(' ','').replaceAll('&','').toUpperCase();
+        return upperA === upperB ? 'default' : skinName.replace(`. ${characterName}`,'')
+    };
+    
     const miniSizeImgs = () => skins
         .map((skin, index) =>
             <MiniSizeImage
                 key={index}
-                data={{
-                    src: `${process.env.REACT_APP_TEST}/${character.Name_EN}/${folderName(skin.name_en)}/Mini.webp`,
-                    alt: `${skin.name_en}`,
-                    handler:{
-                        selectedImg: handleSelectedImg,
-                        onError: handleImgError,
-                        onLoad: handleImgOnload,
-                    },
-                    size:84
-                }}
+                src={`${process.env.REACT_APP_TEST}/${character.Name_EN}/${setFolderName(skin.name_en)}/Mini.webp`}
+                alt={`${skin.name_en} mini size image`}
+                handler={{ selectedImg: handleSelectedImg, onLoad: handleImgOnload,}}
+                size={84}
             ></MiniSizeImage>
         );
+
     const fullSizeImgs = () => skins
         .map((skin, index) => 
             <FullSizeImage 
-                src={`${process.env.REACT_APP_TEST}/${character.Name_EN}/${folderName(skin.name_en)}/Full.webp`}
+                src={`${process.env.REACT_APP_TEST}/${character.Name_EN}/${setFolderName(skin.name_en)}/Full.webp`}
+                alt={`${skin.name_en} full size image`}
                 select={selectedSkin}
-                loading={loading}
                 handler={{onLoad: handleImgOnload}}
                 key={index}/>
         );
 
-    // const miniSizeImgs = character.skins.map((skin, index) =>
-    //             <Li key={index} onClick={handleSelectedImg}>
-    //                 <Img
-    //                     src={`${process.env.REACT_APP_TEST}/${character.name_en}/${folderName(skin.name_en)}/Mini.png`}
-    //                     alt={`${skin.name_en}`}
-    //                     onError={handleImgError}
-    //                     $preview={84}
-    //                 />
-    //             </Li>
-    //             );
 
     return windowWidth <= 768 ? <ComingSoonView data={{text: '모바일 페이지를 준비 중입니다.'}}/> : (
         <Section $isLoading={loading}>
-            <TitleBox $isLoading={loading}>
-                { loading ?
+            { loading ? 
+                // skeleton ui
                 <>
-                    <CharName/>
-                    <ControlDiffBox/>
+                    <TitleBox $isLoading={loading}>
+                        <CharName/>
+                        <ControlDiffBox/>
+                    </TitleBox>
+                    <Container>
+                        <InfoDiv $isLoading={loading}>
+                            <InfoContent></InfoContent>
+                            <InfoContent></InfoContent>
+                            <InfoContent></InfoContent>
+                            <InfoContent></InfoContent>
+                            <DescContent></DescContent>
+                        </InfoDiv>
+                        <ImgDiv>
+                            <Ul>
+                                {data && miniSizeImgs()}
+                            </Ul>
+                            <FullBox>
+                                {data && fullSizeImgs()}
+                            </FullBox>
+                        </ImgDiv>
+                    </Container>
                 </>
                 :
+                // Content
                 <>
-                    <CharName>{character.Name_KR}
-                        <Span>{character.Story_Title}</Span>
-                    </CharName>
-                    <ControlDiffBox>조작 난이도
-                        <DifficultyBox difficulty={character.Difficulty} maxDifficulty={5}/>
-                    </ControlDiffBox>
+                    <TitleBox>
+                        <CharName>{character.Name_KR}
+                            <Span>{character.Story_Title}</Span>
+                        </CharName>
+                        <ControlDiffBox>조작 난이도
+                            <DifficultyBox difficulty={character.Difficulty} maxDifficulty={5}/>
+                        </ControlDiffBox>
+                    </TitleBox>
+                    <Container>
+                        <InfoDiv>
+                            <InfoContent><InfoContentTitle>이름</InfoContentTitle>{character.Full_Name}</InfoContent>
+                            <InfoContent><InfoContentTitle>성별</InfoContentTitle> {character.Gender}</InfoContent>
+                            <InfoContent><InfoContentTitle>나이</InfoContentTitle> {character.Age}</InfoContent>
+                            <InfoContent><InfoContentTitle>키</InfoContentTitle> {character.Height}</InfoContent>
+                            <DescContent>{character.Story_Desc}</DescContent>
+                        </InfoDiv>
+                        <ImgDiv>
+                            <Ul>
+                                {data && miniSizeImgs()}
+                            </Ul>
+                            <FullBox>
+                                {data && fullSizeImgs()}
+                            </FullBox>
+                        </ImgDiv>
+                    </Container>
                 </>
-                }
-            </TitleBox>
-            <Container>
-                <InfoDiv $isLoading={loading}>
-                    { loading ?
-                    <>
-                        <InfoContent></InfoContent>
-                        <InfoContent></InfoContent>
-                        <InfoContent></InfoContent>
-                        <InfoContent></InfoContent>
-                        <DescContent></DescContent>
-                    </>
-                    :
-                    <>
-                        <InfoContent><InfoContentTitle>이름</InfoContentTitle>{character.Full_Name}</InfoContent>
-                        <InfoContent><InfoContentTitle>성별</InfoContentTitle> {character.Gender}</InfoContent>
-                        <InfoContent><InfoContentTitle>나이</InfoContentTitle> {character.Age}</InfoContent>
-                        <InfoContent><InfoContentTitle>키</InfoContentTitle> {character.Height}</InfoContent>
-                        <DescContent>{character.Story_Desc}</DescContent>
-                    </>
-                    }
-                </InfoDiv>
-                <ImgDiv>
-                    <Ul>
-                        {data && miniSizeImgs()}
-                    </Ul>
-                    <FullBox>
-                        {data && fullSizeImgs()}
-                    </FullBox>
-                </ImgDiv>
-            </Container>
+            }
         </Section>
     )
 }
