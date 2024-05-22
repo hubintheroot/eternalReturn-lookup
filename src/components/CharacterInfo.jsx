@@ -189,7 +189,7 @@ export default function CharacterInfo() {
                 alt={`${skin.name_en} mini size image`}
                 handler={{ selectedImg: handleSelectedImg, onLoad: handleImgOnload,}}
                 size={84}
-            ></MiniSizeImage>
+            />
         );
 
     const fullSizeImgs = () => skins
