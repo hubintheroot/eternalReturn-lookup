@@ -17,9 +17,9 @@ const StyledLink = styled(Link)`
     }
 `
 
-export default function Navigate(props) {
+export default function Navigate({info}) {
 
-    const menus = props.info.map((info, index) => <StyledLink to={ info.link } key={ index }><p>{info.text}</p></StyledLink>);
+    const menus = info.map((info, index) => <StyledLink to={ info.link } key={ index }><p>{info.text}</p></StyledLink>);
 
     return (
         <Nav>

@@ -15,7 +15,7 @@ const Skel = styled(FullImg)`
     background-image: none;
 `
 
-export default function FullSizeImage({src, select, handler, }){
+export default function FullSizeImage({src, alt, handler, select}){
     const loading = useSelector(state => state.imageLoaded.detailLoaded);
     
     return (
@@ -24,6 +24,7 @@ export default function FullSizeImage({src, select, handler, }){
             <div style={{display: loading ? 'none' : 'block'}}>
                 <FullImg style={{display: select === src.split('/')[4] ? 'block' : 'none'}}
                     src={src}
+                    alt={alt}
                     onLoad={handler.onLoad}
                 />
             </div>

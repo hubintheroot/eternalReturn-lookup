@@ -33,19 +33,18 @@ const Skel = styled(Li)`
     }
 `
 
-export default function MiniSizeImage({data}){
+export default function MiniSizeImage({src, alt, handler, size}){
     const loading = useSelector(state => state.imageLoaded.detailLoaded);
 
     return ( 
         <>
             <Skel style={{display: loading ? 'block': 'none'}}></Skel>
-            <Li onClick={data.handler.selectedImg} style={{display: loading ? 'none': 'block'}}>
+            <Li onClick={handler.selectedImg} style={{display: loading ? 'none': 'block'}}>
                 <Img
-                    src={data.src}
-                    alt={data.alt}
-                    onError={data.handler.onError}
-                    onLoad={data.handler.onLoad}
-                    $preview={data.size}
+                    src={src}
+                    alt={alt}
+                    onLoad={handler.onLoad}
+                    $preview={size}
                 />
             </Li>
         </>
