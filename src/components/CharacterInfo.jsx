@@ -57,6 +57,7 @@ const Container = styled(FlexDiv)`
     flex-direction: row;
     justify-content: space-between;
     margin-top: 1rem;
+    min-height: 856px;
 `;
 const Ul = styled.ul`
     display: flex;
@@ -119,7 +120,7 @@ const InfoContentTitle = styled(FlexDiv)`
     font-weight: 800;
 `;
 const DescContent = styled.p`
-    margin: 2rem 0;
+    margin: 1rem 0 0;
     padding: 0;
     white-space: pre-wrap;
     line-height: 2rem;
@@ -136,7 +137,7 @@ export default function CharacterInfo() {
     const loading = useSelector(state => state.imageLoaded.detailLoaded);
     const data = useSelector(state => state.characterData.data);
     const [selectedSkin, setSelectedSkin] = useState('default');
-    const [windowWidth, setWindowWidth] = useState();
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
     const imageLoadedCount = useRef(0);
 
     useEffect(() => {
@@ -150,18 +151,19 @@ export default function CharacterInfo() {
     useEffect(() => {
         const handleResize = () => setWindowWidth(window.innerWidth);
         window.addEventListener('resize', handleResize);
-
+        
         return () => window.removeEventListener('resize', handleResize);
     },[])
-
+    
     if (!data) return;
+    if (windowWidth < 1000) return <ComingSoonView data={{text: '모바일 페이지를 준비 중입니다.'}}/>
 
     const handleSelectedImg = (e) => {
         const skin_name = e.target.src.split('/')[6].replaceAll('%20',' ');
         setSelectedSkin(setFolderName(skin_name));
     };
     const handleImgOnload = () => {
-        if (imageLoadedCount.current === imageMaxCount){
+        if (imageLoadedCount.current === skins.length * 2 - 1){
             dispatch(setCharDetailLoaded(false));
             imageLoadedCount.current = 0;
             return;
@@ -173,7 +175,6 @@ export default function CharacterInfo() {
     const character = data.find(character => characterName === character.Name_EN);
     const skins = character.skins.filter(skin => skin.mini_size && skin.full_size);
     
-    const imageMaxCount = skins.length * 2 - 1;
 
     const setFolderName = (skinName) => {
         const upperA = characterName.toUpperCase();
@@ -203,7 +204,7 @@ export default function CharacterInfo() {
         );
 
 
-    return windowWidth <= 768 ? <ComingSoonView data={{text: '모바일 페이지를 준비 중입니다.'}}/> : (
+    return (
         <Section $isLoading={loading}>
             { loading ? 
                 // skeleton ui
