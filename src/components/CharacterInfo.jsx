@@ -10,6 +10,12 @@ import ComingSoonView from "../pages/comingsoon";
 
 
 const Section = styled.section`
+
+    @media screen and (max-width: 767px){
+        width: calc(100vw - 2rem);
+        padding: 0 1rem;
+    }
+
     ${props => props.$isLoading ? css`animation: ${skelAnimation} 1.5s ease-in-out infinite`:null};
 `;
 const skelAnimation = keyframes`
@@ -30,6 +36,7 @@ const InfoDiv = styled.div`
     width: 18rem;
     word-break: keep-all;
     word-wrap: break-word;
+    
 
     & > div, p{
         background-color: ${props => props.$isLoading ? 'lightgrey': null};
@@ -45,28 +52,58 @@ const InfoDiv = styled.div`
         width: ${props => props.$isLoading ? '18rem': null};
         height: ${props => props.$isLoading ? '25rem': null};
     }
+
+    @media screen and (max-width: 767px){
+        width: calc(100vw - 2rem);
+    }
 `;
 const ImgDiv = styled(FlexDiv)`
     flex-direction: row;
-    justify-content: space-between;
+    /* justify-content: space-between; */
     gap: 2rem;
     width: 40rem;
     margin-bottom: 4rem;
+    
+    @media screen and (max-width: 767px){
+        flex-direction: column-reverse;
+        max-width: 382px;
+        margin: 0 auto 4rem;
+        margin-top: 1rem;
+        gap: 1rem;
+        height: 653px;
+        justify-content: flex-start;
+    }
+    @media screen and (max-width: 429px){
+        width: 100%;
+    }
 `;
 const Container = styled(FlexDiv)`
     flex-direction: row;
     justify-content: space-between;
     margin-top: 1rem;
     min-height: 856px;
+    
+    @media screen and (max-width: 767px){
+        flex-direction: column;
+        gap: 2rem;
+        justify-content: flex-start;
+    }
 `;
 const Ul = styled.ul`
     display: flex;
     flex-direction: column;
     gap: 1rem;
     list-style: none;
-    overflow-x: auto;
     margin: 0;
     padding: 0;
+
+    @media screen and (max-width: 767px){
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+        width: 100%;
+        gap: .2rem;
+        
+    }
 `;
 const TitleBox = styled(FlexDiv)`
     margin-top: 1.5rem;
@@ -78,7 +115,7 @@ const TitleBox = styled(FlexDiv)`
         border-radius: ${props => props.$isLoading ? '5px': null};
     }
     & > h1 {
-        width: ${props => props.$isLoading ? '38rem': null};
+        width: ${props => props.$isLoading ? '20rem': null};
         height: ${props => props.$isLoading ? '2rem': null};
     }
     & > div {
@@ -127,7 +164,11 @@ const DescContent = styled.p`
 `;
 const FullBox = styled.div`
     position: relative;
-    width: 512px;
+    width: 100%;
+    height: 100%;
+    @media screen and (min-width: 767px) {
+        margin-bottom: 2rem;
+    }
 `;
 
 export default function CharacterInfo() {
@@ -156,7 +197,8 @@ export default function CharacterInfo() {
     },[])
     
     if (!data) return;
-    if (windowWidth < 1000) return <ComingSoonView data={{text: '모바일 페이지를 준비 중입니다.'}}/>
+    const testing = false;
+    if (testing && windowWidth <= 768) return <ComingSoonView data={{text: '모바일 페이지를 준비 중입니다.'}}/>
 
     const handleSelectedImg = (e) => {
         const skin_name = e.target.src.split('/')[6].replaceAll('%20',' ');
@@ -181,18 +223,16 @@ export default function CharacterInfo() {
         const upperB = skinName && skinName.replaceAll(' ','').replaceAll('&','').toUpperCase();
         return upperA === upperB ? 'default' : skinName.replace(`. ${characterName}`,'')
     };
-    
     const miniSizeImgs = () => skins
         .map((skin, index) =>
             <MiniSizeImage
-                key={index}
                 src={`${process.env.REACT_APP_TEST}/${character.Name_EN}/${setFolderName(skin.name_en)}/Mini.webp`}
                 alt={`${skin.name_en} mini size image`}
                 handler={{ selectedImg: handleSelectedImg, onLoad: handleImgOnload,}}
-                size={84}
+                size={windowWidth <= 768 ? 64:84}
+                key={index}
             />
         );
-
     const fullSizeImgs = () => skins
         .map((skin, index) => 
             <FullSizeImage 
@@ -200,7 +240,8 @@ export default function CharacterInfo() {
                 alt={`${skin.name_en} full size image`}
                 select={selectedSkin}
                 handler={{onLoad: handleImgOnload}}
-                key={index}/>
+                key={index}
+            />
         );
 
 

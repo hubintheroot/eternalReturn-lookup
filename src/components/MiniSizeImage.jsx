@@ -3,8 +3,13 @@ import { useSelector } from "react-redux";
 
 const Li = styled.li`
     display: flex;
-    width: 84px;
-    height: 84px;
+    
+    ${props => props.$preview && `
+            width: ${props.$preview + 2}px;
+            height: ${props.$preview}px;
+        `}
+
+    box-sizing: border-box;
     border: .1rem solid rgba(0, 0, 0, .2);
     border-radius: .5rem;
     overflow: hidden;
@@ -12,12 +17,16 @@ const Li = styled.li`
         cursor: pointer;
         border: .1rem solid #e460ff;
     }
+    & > img{
+        ${props => props.$preview && `
+            width: ${props.$preview + 2}px;
+            height: ${props.$preview}px;
+        `}
+    }
 `;
 export const Img = styled.img`
     object-fit: cover;
     object-position: -1px -1px;
-    width: ${props => props.$preview && `${props.$preview + 2}px`};
-    height: ${props => props.$preview && `${props.$preview}px`};
     box-sizing: border-box;
     background-image: url(${process.env.REACT_APP_BACKGROUND_IMAGE_PATH});
     background-repeat: no-repeat;
@@ -39,12 +48,15 @@ export default function MiniSizeImage({src, alt, handler, size}){
     return ( 
         <>
             <Skel style={{display: loading ? 'block': 'none'}}></Skel>
-            <Li onClick={handler.selectedImg} style={{display: loading ? 'none': 'block'}}>
+            <Li 
+                onClick={handler.selectedImg}
+                style={{display: loading ? 'none': 'block'}}
+                $preview={size}>
                 <Img
                     src={src}
                     alt={alt}
                     onLoad={handler.onLoad}
-                    $preview={size}
+                    // $preview={size}
                 />
             </Li>
         </>
