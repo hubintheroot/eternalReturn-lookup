@@ -6,8 +6,6 @@ import DifficultyBox from "./DifficultyBox";
 import MiniSizeImage from "./MiniSizeImage";
 import FullSizeImage from "./FullSizeImage";
 import { setCharDetailLoaded } from "../features/imageLoaded/imageLoadedSlice";
-import ComingSoonView from "../pages/comingsoon";
-
 
 const Section = styled.section`
 
@@ -197,8 +195,6 @@ export default function CharacterInfo() {
     },[])
     
     if (!data) return;
-    const testing = false;
-    if (testing && windowWidth <= 768) return <ComingSoonView data={{text: '모바일 페이지를 준비 중입니다.'}}/>
 
     const handleSelectedImg = (e) => {
         const skin_name = e.target.src.split('/')[6].replaceAll('%20',' ');
