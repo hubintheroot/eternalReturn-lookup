@@ -3,10 +3,13 @@ import { useSelector } from "react-redux";
 
 const Li = styled.li`
     display: flex;
-    
-    ${props => props.$preview && `
-            width: ${props.$preview + 2}px;
-            height: ${props.$preview}px;
+    ${props => props.$size && `
+            width: ${props.$size + 2}px;
+            height: ${props.$size}px;
+            & > img{
+                width: ${props.$size + 2}px;
+                height: ${props.$size}px;
+            }
         `}
 
     box-sizing: border-box;
@@ -17,12 +20,6 @@ const Li = styled.li`
         cursor: pointer;
         border: .1rem solid #e460ff;
     }
-    & > img{
-        ${props => props.$preview && `
-            width: ${props.$preview + 2}px;
-            height: ${props.$preview}px;
-        `}
-    }
 `;
 export const Img = styled.img`
     object-fit: cover;
@@ -32,7 +29,6 @@ export const Img = styled.img`
     background-repeat: no-repeat;
     background-size: cover;
 `;
-
 const Skel = styled(Li)`
     background-color: lightgrey;
     border: none;
@@ -40,23 +36,25 @@ const Skel = styled(Li)`
         cursor: default;
         border: none;
     }
-`
+`;
 
 export default function MiniSizeImage({src, alt, handler, size}){
     const loading = useSelector(state => state.imageLoaded.detailLoaded);
 
     return ( 
         <>
-            <Skel style={{display: loading ? 'block': 'none'}}></Skel>
+            <Skel
+                style={{display: loading ? 'block': 'none'}}
+                $size={size}
+            />
             <Li 
-                onClick={handler.selectedImg}
+                onClick={handler.setSelect}
                 style={{display: loading ? 'none': 'block'}}
-                $preview={size}>
+                $size={size}>
                 <Img
                     src={src}
                     alt={alt}
-                    onLoad={handler.onLoad}
-                    // $preview={size}
+                    onLoad={handler.loadEvent}
                 />
             </Li>
         </>

@@ -105,11 +105,10 @@ export default function CharactersView(){
             }
         }
 
-        if(!characterData) getData();
-        else setLoading(false);
-        
-    },[characterData, dispatch]);
+        if (!characterData) getData();
+        else if (loading)   setLoading(false);
 
+    },[characterData, loading, dispatch]);
 
     const rotationFilter = (data) => {
         const rotation = [];
@@ -122,6 +121,7 @@ export default function CharactersView(){
 
         return rotation.concat(other);
     };
+    
     const sortBy = (data) => {
         const tempData = [].concat(data);
         switch (sortState) {
@@ -148,21 +148,29 @@ export default function CharactersView(){
         let newData = sortBy(characterData);
         if(isRotation) newData = rotationFilter(newData);
 
+        const size = {
+            height: 64,
+            width: 64
+        }
         const maxLength = newData.length;
         const result = newData.map(
             (data, index) => 
                 <CharacterCard  data={data}
                                 maxLength={maxLength}
+                                size={size}
                                 cnt={cnt}
-                                backgroundImagePath={process.env.REACT_APP_BACKGROUND_IMAGE_PATH}
-                                rotationIconPath={process.env.REACT_APP_UNLOCK_ICON_PATH}
+                                link={`/characters/${data.Name_EN}`}
+                                bgPath={process.env.REACT_APP_BACKGROUND_IMAGE_PATH}
+                                freeIconPath={process.env.REACT_APP_UNLOCK_ICON_PATH}
                                 key={index}/>
             );
         return result;
     };
 
-    const handleOrdRule = (e) => dispatch(setState(e.target.value));
-    const handleRotation = () => dispatch(setIsRotation(!isRotation));
+    const handler = {
+        setOrd: (e) => dispatch(setState(e.target.value)),
+        getRotation: () => dispatch(setIsRotation(!isRotation))
+    };
 
     const data = !loading && setCharacterCard()
 
@@ -176,11 +184,11 @@ export default function CharactersView(){
                     </div>
                     <ConfigBox>
                         <CheckBox>
-                            <input type="checkbox" id='checkbox' onChange={handleRotation} checked={isRotation}/>
+                            <input type="checkbox" id='checkbox' onChange={handler.getRotation} checked={isRotation}/>
                             <label htmlFor="checkbox">로테이션부터 보기</label>
                         </CheckBox>
                         <div>
-                            <select onChange={handleOrdRule} value={sortState}>
+                            <select onChange={handler.setOrd} value={sortState}>
                                 <option value={selectList.release.value} >{selectList.release.text}</option>
                                 <option value={selectList.ord.value}>{selectList.ord.text}</option>
                             </select>

@@ -6,17 +6,15 @@ import DifficultyBox from "./DifficultyBox";
 import MiniSizeImage from "./MiniSizeImage";
 import FullSizeImage from "./FullSizeImage";
 import { setCharDetailLoaded } from "../features/imageLoaded/imageLoadedSlice";
-import ComingSoonView from "../pages/comingsoon";
-
 
 const Section = styled.section`
-
+    box-sizing: border-box;
+    ${props => props.$isLoading ? css`animation: ${skelAnimation} 1.5s ease-in-out infinite`:null};
+    
     @media screen and (max-width: 767px){
-        width: calc(100vw - 2rem);
+        width: 100%;
         padding: 0 1rem;
     }
-
-    ${props => props.$isLoading ? css`animation: ${skelAnimation} 1.5s ease-in-out infinite`:null};
 `;
 const skelAnimation = keyframes`
     0% {
@@ -36,30 +34,27 @@ const InfoDiv = styled.div`
     width: 18rem;
     word-break: keep-all;
     word-wrap: break-word;
-    
-
-    & > div, p{
-        background-color: ${props => props.$isLoading ? 'lightgrey': null};
-        border-radius: ${props => props.$isLoading ? '5px': null};
-    }
-
-    & > div {
-        width: ${props => props.$isLoading ? '14rem': null};
-        height: ${props => props.$isLoading ? '2rem': null};
-    }
-
-    & > p {
-        width: ${props => props.$isLoading ? '18rem': null};
-        height: ${props => props.$isLoading ? '25rem': null};
-    }
-
+    ${props => props.$isLoading ? `
+        & > div, p {
+            background-color: lightgrey;
+            border-radius: 5px;
+        }
+        & > div {
+            width: 14rem;
+            height: 2rem;
+        }
+        & > p {
+            width: 18rem;
+            height: 25rem;
+        }
+    `
+    : null }
     @media screen and (max-width: 767px){
-        width: calc(100vw - 2rem);
+        width: 100%
     }
 `;
 const ImgDiv = styled(FlexDiv)`
     flex-direction: row;
-    /* justify-content: space-between; */
     gap: 2rem;
     width: 40rem;
     margin-bottom: 4rem;
@@ -102,7 +97,6 @@ const Ul = styled.ul`
         grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
         width: 100%;
         gap: .2rem;
-        
     }
 `;
 const TitleBox = styled(FlexDiv)`
@@ -110,18 +104,20 @@ const TitleBox = styled(FlexDiv)`
     flex-direction: column;
     gap: .5rem;
 
-    & > h1, div {
-        background-color: ${props => props.$isLoading ? 'lightgrey': null};
-        border-radius: ${props => props.$isLoading ? '5px': null};
-    }
-    & > h1 {
-        width: ${props => props.$isLoading ? '20rem': null};
-        height: ${props => props.$isLoading ? '2rem': null};
-    }
-    & > div {
-        width: ${props => props.$isLoading ? '11rem': null};
-        height: ${props => props.$isLoading ? '1.2rem': null};
-    }
+    ${props => props.$isLoading ? `
+        & > h1, div {
+            background-color: lightgrey;
+            border-radius: 5px;
+        }
+        & > h1 {
+            width: 20rem;
+            height: 2rem;
+        }
+        & > div {
+            width: 11rem;
+            height: 1.2rem;
+        }
+    ` : null}
     `;
 const CharName = styled.h1`
     margin: 1rem 0 0;
@@ -196,39 +192,39 @@ export default function CharacterInfo() {
         return () => window.removeEventListener('resize', handleResize);
     },[])
     
-    if (!data) return;
-    const testing = false;
-    if (testing && windowWidth <= 768) return <ComingSoonView data={{text: '모바일 페이지를 준비 중입니다.'}}/>
+    if (!data) return null;
 
-    const handleSelectedImg = (e) => {
-        const skin_name = e.target.src.split('/')[6].replaceAll('%20',' ');
-        setSelectedSkin(setFolderName(skin_name));
+    const handler = {
+        setSelect: (e) => {
+            const skin_name = e.target.src.split('/')[6].replaceAll('%20',' ');
+            setSelectedSkin(setFolderName(skin_name));
+        },
+        loadEvent: () => {
+            if (imageLoadedCount.current === skins.length * 2 - 1){
+                dispatch(setCharDetailLoaded(false));
+                imageLoadedCount.current = 0;
+                return;
+            }
+            imageLoadedCount.current += 1;
+        },
     };
-    const handleImgOnload = () => {
-        if (imageLoadedCount.current === skins.length * 2 - 1){
-            dispatch(setCharDetailLoaded(false));
-            imageLoadedCount.current = 0;
-            return;
-        }
-        imageLoadedCount.current += 1;
-    }
 
     const characterName = pathname.replace('/characters/', '');
     const character = data.find(character => characterName === character.Name_EN);
     const skins = character.skins.filter(skin => skin.mini_size && skin.full_size);
-    
 
     const setFolderName = (skinName) => {
         const upperA = characterName.toUpperCase();
         const upperB = skinName && skinName.replaceAll(' ','').replaceAll('&','').toUpperCase();
         return upperA === upperB ? 'default' : skinName.replace(`. ${characterName}`,'')
     };
+
     const miniSizeImgs = () => skins
         .map((skin, index) =>
             <MiniSizeImage
                 src={`${process.env.REACT_APP_TEST}/${character.Name_EN}/${setFolderName(skin.name_en)}/Mini.webp`}
                 alt={`${skin.name_en} mini size image`}
-                handler={{ selectedImg: handleSelectedImg, onLoad: handleImgOnload,}}
+                handler={handler}
                 size={windowWidth <= 768 ? 64:84}
                 key={index}
             />
@@ -239,11 +235,10 @@ export default function CharacterInfo() {
                 src={`${process.env.REACT_APP_TEST}/${character.Name_EN}/${setFolderName(skin.name_en)}/Full.webp`}
                 alt={`${skin.name_en} full size image`}
                 select={selectedSkin}
-                handler={{onLoad: handleImgOnload}}
+                handler={handler}
                 key={index}
             />
         );
-
 
     return (
         <Section $isLoading={loading}>

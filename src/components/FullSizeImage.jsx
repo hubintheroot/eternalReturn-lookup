@@ -31,7 +31,7 @@ export default function FullSizeImage({src, alt, handler, select}){
                     style={{display: select === src.split('/')[4] ? 'block' : 'none'}}
                     src={src}
                     alt={alt}
-                    onLoad={handler.onLoad}
+                    onLoad={handler.loadEvent}
                 />
             </Container>
         </>
