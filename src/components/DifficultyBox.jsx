@@ -25,7 +25,8 @@ export default function DifficultyBox({difficulty, maxDifficulty}){
     const createDiffBox = () => {
         let diffbox = [];
         for (let i =0; i < maxDifficulty; i++) {
-            const diffBox = diff > i ?
+            const diffBox = diff > i
+                    ?
                     <Difficulty key={i}/>
                     :
                     <Difficulty key={i} $empty={true}/>;

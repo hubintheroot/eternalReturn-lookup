@@ -78,17 +78,16 @@ const SkelImgBox = styled(ImgBox)`
     background-color: lightgrey;
 `;
 
-export default function CharacterCard(props) {
+export default function CharacterCard({data, maxLength, cnt, size, link, bgPath, freeIconPath}) {
     const loading = useSelector(state => state.imageLoaded.charListLoaded);
     const dispatch = useDispatch();
-    const imgSize = '64px';
-    const link = '/characters/' + props.data.Name_EN
-    const handleImgError = (e) => e.target.src = props.backgroundImagePath;
-    const handleImgOnload = () => {
-        props.cnt.current = props.cnt.current + 1;
-        if (props.maxLength === props.cnt.current) dispatch(setCharListLoaded(false));
-    };
-
+    const handler = {
+        imgError: (e) => e.target.src = bgPath,
+        imgOnload: () => {
+            cnt.current += 1;
+            if (maxLength === cnt.current) dispatch(setCharListLoaded(false));
+        }
+    }
 
     return ( 
                 <Card>
@@ -96,7 +95,7 @@ export default function CharacterCard(props) {
                     <SkelStyledLink style={{ display: loading ? 'block':'none'}}>
                         <Figure>
                             <SkelImgBox>
-                                <Img  height={imgSize} width={imgSize} />
+                                <Img  height={`${size.height}px`} width={`${size.width}px`} />
                             </SkelImgBox>
                             <SkelFigcaption></SkelFigcaption>
                         </Figure>
@@ -106,11 +105,11 @@ export default function CharacterCard(props) {
                     <StyledLink to={link} style={{ display: loading ? 'none':'block'}}>
                         <Figure>
                             <ImgBox>
-                                {props.data.Weekly_Free ? <Free src={props.rotationIconPath} alt="free rotation character flag"/> : null}
-                                <Img src={props.backgroundImagePath} alt="background image" height={imgSize} width={imgSize} />
-                                <Img src={props.data.ImagePath} onError={handleImgError} onLoad={handleImgOnload} alt="character image" height={imgSize} width={imgSize} />
+                                {data.Weekly_Free ? <Free src={freeIconPath} alt="free rotation character flag"/> : null}
+                                <Img src={bgPath} alt="background image" height={size.height} width={size.width}/>
+                                <Img src={data.ImagePath} onError={handler.imgError} onLoad={handler.imgOnload} alt="character image"  height={size.height} width={size.width}/>
                             </ImgBox>
-                            <Figcaption>{props.data.Name_KR}</Figcaption>
+                            <Figcaption>{data.Name_KR}</Figcaption>
                         </Figure>
                     </StyledLink>
                 </Card>

@@ -19,7 +19,16 @@ const StyledLink = styled(Link)`
 
 export default function Navigate({info}) {
 
-    const menus = info.map((info, index) => <StyledLink to={ info.link } key={ index }><p>{info.text}</p></StyledLink>);
+    const menus = info.map((info, index) => 
+        <StyledLink
+            to={ info.link }
+            key={ index }
+            >
+                <p>
+                    {info.text}
+                </p>
+        </StyledLink>
+        );
 
     return (
         <Nav>
