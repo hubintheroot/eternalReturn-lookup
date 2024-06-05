@@ -7,15 +7,6 @@ import MiniSizeImage from "./MiniSizeImage";
 import FullSizeImage from "./FullSizeImage";
 import { setCharDetailLoaded } from "../features/imageLoaded/imageLoadedSlice";
 
-const Section = styled.section`
-    box-sizing: border-box;
-    ${props => props.$isLoading ? css`animation: ${skelAnimation} 1.5s ease-in-out infinite`:null};
-    
-    @media screen and (max-width: 767px){
-        width: 100%;
-        padding: 0 1rem;
-    }
-`;
 const skelAnimation = keyframes`
     0% {
         opacity: .6;
@@ -25,6 +16,18 @@ const skelAnimation = keyframes`
     }
     100% {
         opacity: .6;
+    }
+`;
+const animation = css`
+    animation: ${skelAnimation} 1.5s ease-in-out infinite;
+`;
+const Section = styled.section`
+    box-sizing: border-box;
+    ${props => props.$isLoading ? animation:null};
+    
+    @media screen and (max-width: 767px){
+        width: 100%;
+        padding: 0 1rem;
     }
 `;
 const FlexDiv = styled.div`
