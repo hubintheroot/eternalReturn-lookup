@@ -237,6 +237,7 @@ export default function CharacterInfo() {
             <FullSizeImage 
                 src={`${process.env.REACT_APP_TEST}/${character.Name_EN}/${setFolderName(skin.name_en)}/Full.webp`}
                 alt={`${skin.name_en} full size image`}
+                name={{kr:skin.name_kr, en:skin.name_en}}
                 select={selectedSkin}
                 handler={handler}
                 key={index}
