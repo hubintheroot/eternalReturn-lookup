@@ -89,10 +89,11 @@ export default function CharacterCard({data, maxLength, cnt, size, link, bgPath,
             cnt.current += 1;
             e.target.src = bgPath;
             setDisabled(true);
+            handler.disableSkelUI();
         },
         imgOnload: () => {
             cnt.current += 1;
-            if (maxLength === cnt.current) dispatch(setCharListLoaded(false));
+            handler.disableSkelUI();
         },
         disableLink: (e) => {
             if (disabled){
@@ -102,6 +103,9 @@ export default function CharacterCard({data, maxLength, cnt, size, link, bgPath,
         },
         setStyle: (e) => {
             e.target.style.cursor = disabled ? 'not-allowed' : 'pointer';
+        },
+        disableSkelUI: () => {
+            if (maxLength === cnt.current) dispatch(setCharListLoaded(false));
         },
     }
 
