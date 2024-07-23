@@ -1,34 +1,48 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { Img } from "./MiniSizeImage";
 import { useSelector } from "react-redux";
+
+const visibleStyle = css`
+    ${props => props.$visible ? `display: block` : `display: none;`}
+`
 
 const Container = styled.div`
     width: 100%;
     height: 100%;
     position: absolute;
+    ${visibleStyle}
 `;
 const FullImg = styled(Img)`
     object-position: top;
     width: 100%;
     height: 100%;
-    position: absolute;
-    top: 0;
+    ${visibleStyle}
 `;
-const Skel = styled(FullImg)`
+const Skel = styled(Container)`
     background-color: lightgrey;
     border-radius: 5px;
     background-image: none;
 `;
-
-export default function FullSizeImage({src, alt, handler, select}){
+const Title = styled.span`
+    position: absolute;
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-style: italic;
+    top: -2rem;
+    ${visibleStyle}
+`;
+export default function FullSizeImage({src, alt, handler, select, name}){
     const loading = useSelector(state => state.imageLoaded.detailLoaded);
-    
+    const isLoaded = !loading
+    const isSelected = select === src.split('/')[4]
+
     return (
         <>
-            <Skel style={{display: loading ? 'block' : 'none'}}/>
-            <Container style={{display: loading ? 'none' : 'block'}}>
+            <Skel/>
+            <Container $visible={isLoaded}>
+                <Title $visible={isSelected}>{name.kr}</Title>
                 <FullImg
-                    style={{display: select === src.split('/')[4] ? 'block' : 'none'}}
+                    $visible={isSelected}
                     src={src}
                     alt={alt}
                     onLoad={handler.loadEvent}

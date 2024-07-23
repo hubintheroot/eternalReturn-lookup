@@ -2,6 +2,7 @@ import styled, { keyframes } from "styled-components"
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setCharListLoaded } from "../features/imageLoaded/imageLoadedSlice";
+import { useState } from "react";
 
 const StyledLink = styled(Link)`
     text-decoration: none;
@@ -79,14 +80,29 @@ const SkelImgBox = styled(ImgBox)`
 `;
 
 export default function CharacterCard({data, maxLength, cnt, size, link, bgPath, freeIconPath}) {
+    const [disabled, setDisabled] = useState(false);
     const loading = useSelector(state => state.imageLoaded.charListLoaded);
     const dispatch = useDispatch();
+
     const handler = {
-        imgError: (e) => e.target.src = bgPath,
+        imgError: (e) => {
+            cnt.current += 1;
+            e.target.src = bgPath;
+            setDisabled(true);
+        },
         imgOnload: () => {
             cnt.current += 1;
             if (maxLength === cnt.current) dispatch(setCharListLoaded(false));
-        }
+        },
+        disableLink: (e) => {
+            if (disabled){
+                e.preventDefault();
+                alert('데이터를 준비중입니다.')
+            }
+        },
+        setStyle: (e) => {
+            e.target.style.cursor = disabled ? 'not-allowed' : 'pointer';
+        },
     }
 
     return ( 
@@ -102,7 +118,7 @@ export default function CharacterCard({data, maxLength, cnt, size, link, bgPath,
                     </SkelStyledLink>
 
                     {/* content */}
-                    <StyledLink to={link} style={{ display: loading ? 'none':'block'}}>
+                    <StyledLink to={link} style={{ display: loading ? 'none':'block'}} onClick={handler.disableLink} onMouseOver={handler.setStyle}>
                         <Figure>
                             <ImgBox>
                                 {data.Weekly_Free ? <Free src={freeIconPath} alt="free rotation character flag"/> : null}
