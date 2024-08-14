@@ -40,7 +40,6 @@ const Skel = styled(Li)`
 
 export default function MiniSizeImage({src, alt, handler, size}){
     const loading = useSelector(state => state.imageLoaded.detailLoaded);
-
     return ( 
         <>
             <Skel
