@@ -304,7 +304,6 @@ export default function CharacterInfo() {
             character.Name_EN
           }/${setFolderName(skin.name_en)}/Full.webp`}
           alt={`${skin.name_en} full size image`}
-          character={{ kr: character.Name_KR, ne: character.Name_EN }}
           name={{ kr: skin.name_kr, en: skin.name_en }}
           select={selectedSkin}
           handler={handler}
