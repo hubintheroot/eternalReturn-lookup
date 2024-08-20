@@ -40,17 +40,21 @@ const InfoDiv = styled.div`
   ${(props) =>
     props.$isLoading
       ? `
-        & > div, p {
-            background-color: lightgrey;
-            border-radius: 5px;
+        pointer-events: none;
+        cursor: default;
+        & .content {
+          max-width: fit-content;
+          background-color: lightgrey;
+          border-radius: 5px;
         }
-        & > div {
-            width: 14rem;
-            height: 2rem;
+
+        & .content > .story-desc {
+          width: 18rem;
+          height: 25rem;
         }
-        & > p {
-            width: 18rem;
-            height: 25rem;
+
+        & .content > div {
+            opacity: 0;
         }
     `
       : null}
@@ -112,28 +116,33 @@ const TitleBox = styled(FlexDiv)`
   ${(props) =>
     props.$isLoading
       ? `
-        & > h1, div {
-            background-color: lightgrey;
-            border-radius: 5px;
+        pointer-events: none;
+        cursor: default;
+        & .content {
+          max-width: fit-content;
+          background-color: lightgrey;
+          border-radius: 5px;
         }
-        & > h1 {
-            width: 20rem;
-            height: 2rem;
-        }
-        & > div {
-            width: 11rem;
-            height: 1.2rem;
+        & .content > * {
+        opacity: 0;
         }
     `
       : null}
 `;
-const CharName = styled.h1`
+const CharNameBox = styled.div`
+  display: flex;
   margin: 1rem 0 0;
 `;
+const CharName = styled.h1`
+  margin: 0;
+`;
+
 const Span = styled.span`
   font-size: 1rem;
   font-weight: 400;
   margin-left: 1rem;
+  display: flex;
+  align-items: end;
   &::before {
     content: "“";
   }
@@ -160,11 +169,13 @@ const InfoContentTitle = styled(FlexDiv)`
   width: 2rem;
   font-weight: 800;
 `;
-const DescContent = styled.p`
+const DescContent = styled.div`
   margin: 1rem 0 0;
-  padding: 0;
   white-space: pre-wrap;
-  line-height: 2rem;
+  & > p {
+    padding: 0;
+    line-height: 2rem;
+  }
 `;
 const FullBox = styled.div`
   position: relative;
@@ -232,7 +243,9 @@ export default function CharacterInfo() {
   //   }, [pathname]);
 
   useEffect(() => {
-    const handleResize = () => setWindowWidth(window.innerWidth);
+    const eventHandler = {
+      resizing: () => setWindowWidth(window.innerWidth),
+    };
     // TODO: VoicePlayer 준비중
     //   const handleReloadBlock = (e) => {
     //     if (e.key === "F5") {
@@ -240,11 +253,11 @@ export default function CharacterInfo() {
     //       e.stopPropagation();
     //     }
     //   };
-    window.addEventListener("resize", handleResize);
+    window.addEventListener("resize", eventHandler.resizing);
     //   window.addEventListener("keydown", handleReloadBlock);
 
     return () => {
-      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("resize", eventHandler.resizing);
       //   window.removeEventListener("keydown", handleReloadBlock);
     };
   }, []);
@@ -254,16 +267,24 @@ export default function CharacterInfo() {
     const handler = {
       setSelect: (e) => {
         const skin_name = e.target.src.split("/")[6].replaceAll("%20", " ");
-        setSelectedSkin(setFolderName(skin_name));
+        setSelectedSkin(handler.getImagePath(skin_name));
       },
-      loadEvent: (e) => {
+      loadEvent: () => {
         imageLoadedCount.current += 1;
 
         if (imageLoadedCount.current === skins.length * 2) {
           dispatch(setCharDetailLoaded(false));
           imageLoadedCount.current = 0;
-          return;
         }
+      },
+      getImagePath: (skinName) => {
+        const upperA = characterName.toUpperCase();
+        const upperB =
+          skinName &&
+          skinName.replaceAll(" ", "").replaceAll("&", "").toUpperCase();
+        return upperA === upperB
+          ? "default"
+          : skinName.replace(`. ${characterName}`, "");
       },
     };
 
@@ -275,105 +296,101 @@ export default function CharacterInfo() {
       (skin) => skin.mini_size && skin.full_size
     );
 
-    const setFolderName = (skinName) => {
-      const upperA = characterName.toUpperCase();
-      const upperB =
-        skinName &&
-        skinName.replaceAll(" ", "").replaceAll("&", "").toUpperCase();
-      return upperA === upperB
-        ? "default"
-        : skinName.replace(`. ${characterName}`, "");
-    };
-
-    const miniSizeImgs = () =>
-      skins.map((skin) => (
-        <MiniSizeImage
-          src={`${process.env.REACT_APP_TEST}/${
-            character.Name_EN
-          }/${setFolderName(skin.name_en)}/Mini.webp`}
-          alt={`${skin.name_en} mini size image`}
-          handler={handler}
-          size={windowWidth <= 768 ? 64 : 84}
-          key={skin.skin_id}
-        />
-      ));
-    const fullSizeImgs = () =>
-      skins.map((skin) => (
-        <FullSizeImage
-          src={`${process.env.REACT_APP_TEST}/${
-            character.Name_EN
-          }/${setFolderName(skin.name_en)}/Full.webp`}
-          alt={`${skin.name_en} full size image`}
-          name={{ kr: skin.name_kr, en: skin.name_en }}
-          select={selectedSkin}
-          handler={handler}
-          key={skin.skin_id}
-        />
-      ));
+    const textContents = [
+      {
+        id: 1,
+        title: "이름",
+        content: character.Full_Name,
+        isStory: false,
+      },
+      {
+        id: 2,
+        title: "성별",
+        content: character.Gender,
+        isStory: false,
+      },
+      {
+        id: 3,
+        title: "나이",
+        content: character.Age,
+        isStory: false,
+      },
+      {
+        id: 4,
+        title: "키",
+        content: character.Height,
+        isStory: false,
+      },
+      {
+        id: 5,
+        title: "",
+        content: character.Story_Desc,
+        isStory: true,
+      },
+    ];
 
     return (
       <Section $isLoading={loading}>
-        {loading ? (
-          // skeleton ui
-          <>
-            <TitleBox $isLoading={loading}>
-              <CharName />
-              <ControlDiffBox />
-            </TitleBox>
-            <Container>
-              <InfoDiv $isLoading={loading}>
-                <InfoContent></InfoContent>
-                <InfoContent></InfoContent>
-                <InfoContent></InfoContent>
-                <InfoContent></InfoContent>
-                <DescContent></DescContent>
-              </InfoDiv>
-              <ImgDiv>
-                <Ul>{miniSizeImgs()}</Ul>
-                <FullBox>{fullSizeImgs()}</FullBox>
-              </ImgDiv>
-            </Container>
-          </>
-        ) : (
-          // Content
-          <>
-            <TitleBox>
-              <CharName>
-                {character.Name_KR}
-                <Span>{character.Story_Title}</Span>
-              </CharName>
-              <ControlDiffBox>
-                조작 난이도
-                <DifficultyBox
-                  difficulty={character.Difficulty}
-                  maxDifficulty={5}
+        <TitleBox $isLoading={loading}>
+          <CharNameBox className="content">
+            <CharName>{character.Name_KR}</CharName>
+            <Span>{character.Story_Title}</Span>
+          </CharNameBox>
+          <ControlDiffBox className="content">
+            <div>조작 난이도</div>
+            <DifficultyBox
+              difficulty={character.Difficulty}
+              maxDifficulty={5}
+            />
+          </ControlDiffBox>
+        </TitleBox>
+        <Container>
+          <InfoDiv $isLoading={loading}>
+            {textContents.map((info) => (
+              <InfoContent className="content" key={info.id}>
+                {info.isStory ? (
+                  <DescContent className="story-desc">
+                    <p>{info.content}</p>
+                  </DescContent>
+                ) : (
+                  <>
+                    <InfoContentTitle>{info.title}</InfoContentTitle>
+                    <div>{info.content}</div>
+                  </>
+                )}
+              </InfoContent>
+            ))}
+          </InfoDiv>
+          <ImgDiv>
+            <Ul>
+              {skins.map((skin) => (
+                <MiniSizeImage
+                  src={`${process.env.REACT_APP_TEST}/${
+                    character.Name_EN
+                  }/${handler.getImagePath(skin.name_en)}/Mini.webp`}
+                  alt={`${skin.name_en} mini size image`}
+                  handler={handler}
+                  size={windowWidth <= 768 ? 64 : 84}
+                  key={skin.skin_id}
                 />
-              </ControlDiffBox>
-            </TitleBox>
-            <Container>
-              <InfoDiv>
-                <InfoContent>
-                  <InfoContentTitle>이름</InfoContentTitle>
-                  {character.Full_Name}
-                </InfoContent>
-                <InfoContent>
-                  <InfoContentTitle>성별</InfoContentTitle> {character.Gender}
-                </InfoContent>
-                <InfoContent>
-                  <InfoContentTitle>나이</InfoContentTitle> {character.Age}
-                </InfoContent>
-                <InfoContent>
-                  <InfoContentTitle>키</InfoContentTitle> {character.Height}
-                </InfoContent>
-                <DescContent>{character.Story_Desc}</DescContent>
-              </InfoDiv>
-              <ImgDiv>
-                <Ul>{miniSizeImgs()}</Ul>
-                <FullBox>{fullSizeImgs()}</FullBox>
-              </ImgDiv>
-            </Container>
-          </>
-        )}
+              ))}
+            </Ul>
+            <FullBox>
+              {skins.map((skin) => (
+                <FullSizeImage
+                  src={`${process.env.REACT_APP_TEST}/${
+                    character.Name_EN
+                  }/${handler.getImagePath(skin.name_en)}/Full.webp`}
+                  alt={`${skin.name_en} full size image`}
+                  name={{ kr: skin.name_kr, en: skin.name_en }}
+                  select={selectedSkin}
+                  handler={handler}
+                  key={skin.skin_id}
+                />
+              ))}
+            </FullBox>
+          </ImgDiv>
+        </Container>
       </Section>
     );
   }
