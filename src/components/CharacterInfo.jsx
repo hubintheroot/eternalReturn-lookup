@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import styled, { keyframes, css } from "styled-components";
@@ -197,12 +197,11 @@ export default function CharacterInfo() {
   const imageLoadedCount = useRef(0);
   //   const voiceRef = useRef(null);
 
-  useEffect(() => {
-    if (!data) navigate("/");
+  useLayoutEffect(() => {
     setSelectedSkin("default");
     imageLoadedCount.current = 0;
     dispatch(setCharDetailLoaded(true));
-  }, [pathname, dispatch, data, navigate]);
+  }, [pathname, dispatch]);
 
   // TODO: VoicePlayer 준비중
   //   useEffect(() => {
@@ -262,7 +261,7 @@ export default function CharacterInfo() {
     };
   }, []);
 
-  if (!data) return null;
+  if (!data) navigate("/");
   else {
     const handler = {
       setSelect: (e) => {
