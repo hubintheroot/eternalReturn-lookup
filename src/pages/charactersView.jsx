@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import { useLayoutEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Outlet } from "react-router-dom";
 import CharacterCard from "../components/CharacterCard";
 import { supabase } from "../supabase/supabase";
@@ -78,7 +78,7 @@ export default function CharactersView() {
   const cnt = useRef(0);
   const getDataCnt = useRef(0);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const getData = async () => {
       try {
         const character = await supabase()

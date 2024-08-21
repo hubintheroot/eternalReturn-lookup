@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import styled, { keyframes, css } from "styled-components";
@@ -197,7 +197,7 @@ export default function CharacterInfo() {
   const imageLoadedCount = useRef(0);
   //   const voiceRef = useRef(null);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     setSelectedSkin("default");
     imageLoadedCount.current = 0;
     dispatch(setCharDetailLoaded(true));
