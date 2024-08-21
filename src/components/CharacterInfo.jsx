@@ -198,11 +198,10 @@ export default function CharacterInfo() {
   //   const voiceRef = useRef(null);
 
   useEffect(() => {
-    if (!data) navigate("/");
     setSelectedSkin("default");
     imageLoadedCount.current = 0;
     dispatch(setCharDetailLoaded(true));
-  }, [pathname, dispatch, data, navigate]);
+  }, [pathname, dispatch]);
 
   // TODO: VoicePlayer 준비중
   //   useEffect(() => {
@@ -262,7 +261,7 @@ export default function CharacterInfo() {
     };
   }, []);
 
-  if (!data) return null;
+  if (!data) navigate("/");
   else {
     const handler = {
       setSelect: (e) => {
