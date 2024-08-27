@@ -40,7 +40,7 @@ const SkelTitle = styled(Title)`
 `;
 export default function FullSizeImage({ src, alt, handler, select, name }) {
   const loading = useSelector((state) => state.imageLoaded.detailLoaded);
-  const isSelected = select === src.split("/")[4];
+  const isSelected = select === src.split("/")[8];
 
   return (
     <>

@@ -79,7 +79,7 @@ export default function CharactersView() {
   const getDataCnt = useRef(0);
 
   useEffect(() => {
-    const getData = async () => {
+    async function getData() {
       try {
         const character = await supabase()
           .from("Characters")
@@ -107,7 +107,7 @@ export default function CharactersView() {
       } catch (err) {
         console.error(err);
       }
-    };
+    }
 
     if (!characterData && getDataCnt.current === 0) {
       getDataCnt.current = 1;
