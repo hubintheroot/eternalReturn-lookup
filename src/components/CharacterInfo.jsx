@@ -265,7 +265,7 @@ export default function CharacterInfo() {
   else {
     const handler = {
       setSelect: (e) => {
-        const skin_name = e.target.src.split("/")[6].replaceAll("%20", " ");
+        const skin_name = e.target.src.split("/")[8].replaceAll("%20", " ");
         setSelectedSkin(handler.getImagePath(skin_name));
       },
       loadEvent: () => {
@@ -286,6 +286,9 @@ export default function CharacterInfo() {
           : skinName.replace(`. ${characterName}`, "");
       },
     };
+
+    const jsDelivr =
+      "https://cdn.jsdelivr.net/gh/hubintheroot/eternalreturn_contents@main/img";
 
     const characterName = pathname.replace("/characters/", "");
     const character = data.find(
@@ -364,10 +367,10 @@ export default function CharacterInfo() {
             <Ul>
               {skins.map((skin) => (
                 <MiniSizeImage
-                  src={`${process.env.REACT_APP_TEST}/${
-                    character.Name_EN
-                  }/${handler.getImagePath(skin.name_en)}/Mini.webp`}
-                  alt={`${skin.name_en} mini size image`}
+                  src={`${jsDelivr}/${character.Name_EN}/${handler.getImagePath(
+                    skin.name_en
+                  )}/Mini.webp`}
+                  alt={`${skin.name_en}`}
                   handler={handler}
                   size={windowWidth <= 768 ? 64 : 84}
                   key={skin.skin_id}
@@ -377,10 +380,13 @@ export default function CharacterInfo() {
             <FullBox>
               {skins.map((skin) => (
                 <FullSizeImage
-                  src={`${process.env.REACT_APP_TEST}/${
-                    character.Name_EN
-                  }/${handler.getImagePath(skin.name_en)}/Full.webp`}
-                  alt={`${skin.name_en} full size image`}
+                  // src={`${process.env.REACT_APP_TEST}/${
+                  //   character.Name_EN
+                  // }/${handler.getImagePath(skin.name_en)}/Full.webp`}
+                  src={`${jsDelivr}/${character.Name_EN}/${handler.getImagePath(
+                    skin.name_en
+                  )}/Full.webp`}
+                  alt={`${skin.name_en}`}
                   name={{ kr: skin.name_kr, en: skin.name_en }}
                   select={selectedSkin}
                   handler={handler}
