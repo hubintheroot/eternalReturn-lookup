@@ -287,9 +287,6 @@ export default function CharacterInfo() {
       },
     };
 
-    const jsDelivr =
-      "https://cdn.jsdelivr.net/gh/hubintheroot/eternalreturn_contents@main/img";
-
     const characterName = pathname.replace("/characters/", "");
     const character = data.find(
       (character) => characterName === character.Name_EN
@@ -367,9 +364,7 @@ export default function CharacterInfo() {
             <Ul>
               {skins.map((skin) => (
                 <MiniSizeImage
-                  src={`${jsDelivr}/${character.Name_EN}/${handler.getImagePath(
-                    skin.name_en
-                  )}/Mini.webp`}
+                  src={skin.mini_size}
                   alt={`${skin.name_en}`}
                   handler={handler}
                   size={windowWidth <= 768 ? 64 : 84}
@@ -380,12 +375,7 @@ export default function CharacterInfo() {
             <FullBox>
               {skins.map((skin) => (
                 <FullSizeImage
-                  // src={`${process.env.REACT_APP_TEST}/${
-                  //   character.Name_EN
-                  // }/${handler.getImagePath(skin.name_en)}/Full.webp`}
-                  src={`${jsDelivr}/${character.Name_EN}/${handler.getImagePath(
-                    skin.name_en
-                  )}/Full.webp`}
+                  src={skin.full_size}
                   alt={`${skin.name_en}`}
                   name={{ kr: skin.name_kr, en: skin.name_en }}
                   select={selectedSkin}
