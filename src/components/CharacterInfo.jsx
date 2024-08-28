@@ -6,6 +6,7 @@ import DifficultyBox from "./DifficultyBox";
 import MiniSizeImage from "./MiniSizeImage";
 import FullSizeImage from "./FullSizeImage";
 import { setCharDetailLoaded } from "../features/imageLoaded/imageLoadedSlice";
+import NotFoundView from "../pages/notfoundView";
 
 const skelAnimation = keyframes`
     0% {
@@ -203,6 +204,27 @@ export default function CharacterInfo() {
     dispatch(setCharDetailLoaded(true));
   }, [pathname, dispatch]);
 
+  useEffect(() => {
+    const eventHandler = {
+      resizing: () => setWindowWidth(window.innerWidth),
+    };
+    // TODO: VoicePlayer 준비중
+    //   const handleReloadBlock = (e) => {
+    //     if (e.key === "F5") {
+    //       e.preventDefault();
+    //       e.stopPropagation();
+    //     }
+    //   };
+
+    window.addEventListener("resize", eventHandler.resizing);
+    //   window.addEventListener("keydown", handleReloadBlock);
+
+    return () => {
+      window.removeEventListener("resize", eventHandler.resizing);
+      //   window.removeEventListener("keydown", handleReloadBlock);
+    };
+  }, []);
+
   // TODO: VoicePlayer 준비중
   //   useEffect(() => {
   //     const getVoicePath = () => {
@@ -241,31 +263,20 @@ export default function CharacterInfo() {
   //     voicePlayer();
   //   }, [pathname]);
 
-  useEffect(() => {
-    const eventHandler = {
-      resizing: () => setWindowWidth(window.innerWidth),
-    };
-    // TODO: VoicePlayer 준비중
-    //   const handleReloadBlock = (e) => {
-    //     if (e.key === "F5") {
-    //       e.preventDefault();
-    //       e.stopPropagation();
-    //     }
-    //   };
-    window.addEventListener("resize", eventHandler.resizing);
-    //   window.addEventListener("keydown", handleReloadBlock);
+  const chars = data.map((char) => char.Name_EN);
+  const charName = pathname.replace("/characters/", "");
+  const isChar = chars.includes(charName);
+  if (!isChar) {
+    return <NotFoundView message={`캐릭터 ${charName}`} />;
+  }
 
-    return () => {
-      window.removeEventListener("resize", eventHandler.resizing);
-      //   window.removeEventListener("keydown", handleReloadBlock);
-    };
-  }, []);
-
-  if (!data) navigate("/");
-  else {
+  if (!data) {
+    navigate("/");
+  } else {
     const handler = {
       setSelect: (e) => {
-        const skin_name = e.target.src.split("/")[8].replaceAll("%20", " ");
+        let skin_name = e.target.alt.replaceAll("%20", " ");
+        // const skin_name = e.target.src.split("/")[8].replaceAll("%20", " ");
         setSelectedSkin(handler.getImagePath(skin_name));
       },
       loadEvent: () => {

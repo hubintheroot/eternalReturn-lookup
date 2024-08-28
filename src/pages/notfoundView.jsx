@@ -6,16 +6,16 @@ const ErrorContainer = styled.div`
   min-height: calc(100vh - 64px);
   justify-content: center;
   align-items: center;
-  background-color: black;
-  color: white;
+  background-color: #fff;
+  color: #000;
 `;
 
-export default function NotFoundView() {
+export default function NotFoundView({ message = "페이지" }) {
   return (
     <ErrorContainer>
       <h1>Code-404</h1>
       <div>
-        <p>페이지를 찾을 수 없습니다.</p>
+        <p>{message}를 찾을 수 없습니다.</p>
       </div>
     </ErrorContainer>
   );
