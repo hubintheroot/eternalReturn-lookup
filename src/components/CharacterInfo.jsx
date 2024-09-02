@@ -275,7 +275,7 @@ export default function CharacterInfo() {
   } else {
     const handler = {
       setSelect: (e) => {
-        let skin_name = e.target.alt.replaceAll("%20", " ");
+        let skin_name = e.target.alt.replace(/\%20/, " ");
         // const skin_name = e.target.src.split("/")[8].replaceAll("%20", " ");
         setSelectedSkin(handler.getImagePath(skin_name));
       },
