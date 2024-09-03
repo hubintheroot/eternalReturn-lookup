@@ -86,14 +86,14 @@ export default function CharacterInfo() {
     };
   }, []);
 
-  const chars = data.map((char) => char.Name_EN);
-  if (!chars.includes(charName)) {
-    return <NotFoundView message={`캐릭터 ${charName}`} />;
-  }
-
   if (!data) {
     navigate("/");
   } else {
+    const chars = data.map((char) => char.Name_EN);
+    if (!chars.includes(charName)) {
+      return <NotFoundView message={`캐릭터 ${charName}`} />;
+    }
+
     const handler = {
       setSelect: (e) => {
         if (e.target.alt) {
