@@ -1,12 +1,188 @@
 import { useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { setCharDetailLoaded } from "../features/imageLoaded/imageLoadedSlice";
 import styled, { keyframes, css } from "styled-components";
+import NotFoundView from "../pages/notfoundView";
 import DifficultyBox from "./DifficultyBox";
 import MiniSizeImage from "./MiniSizeImage";
 import FullSizeImage from "./FullSizeImage";
-import { setCharDetailLoaded } from "../features/imageLoaded/imageLoadedSlice";
-import NotFoundView from "../pages/notfoundView";
+
+export default function CharacterInfo() {
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const loading = useSelector((state) => state.imageLoaded.detailLoaded);
+  const data = useSelector((state) => state.characterData.data);
+  const [selectedSkin, setSelectedSkin] = useState();
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [charName, setCharName] = useState();
+  const [character, setCharacter] = useState();
+  const [skins, setSkins] = useState();
+  const [textContents, setTextContents] = useState();
+  const imageLoadedCount = useRef(0);
+
+  useEffect(() => {
+    setSelectedSkin("default");
+    imageLoadedCount.current = 0;
+    dispatch(setCharDetailLoaded(true));
+
+    setCharName(pathname.replace("/characters/", ""));
+  }, [data, pathname, dispatch]);
+
+  useEffect(() => {
+    setCharacter(data.find((character) => charName === character.Name_EN));
+  }, [data, charName]);
+
+  useEffect(() => {
+    if (character) {
+      setSkins(
+        character.skins.filter((skin) => skin.mini_size && skin.full_size)
+      );
+      setTextContents([
+        {
+          id: 1,
+          title: "이름",
+          content: character.Full_Name,
+          isStory: false,
+        },
+        {
+          id: 2,
+          title: "성별",
+          content: character.Gender,
+          isStory: false,
+        },
+        {
+          id: 3,
+          title: "나이",
+          content: character.Age,
+          isStory: false,
+        },
+        {
+          id: 4,
+          title: "키",
+          content: character.Height,
+          isStory: false,
+        },
+        {
+          id: 5,
+          title: "",
+          content: character.Story_Desc,
+          isStory: true,
+        },
+      ]);
+    }
+  }, [character]);
+
+  useEffect(() => {
+    const eventHandler = {
+      resizing: () => setWindowWidth(window.innerWidth),
+    };
+
+    window.addEventListener("resize", eventHandler.resizing);
+
+    return () => {
+      window.removeEventListener("resize", eventHandler.resizing);
+    };
+  }, []);
+
+  const chars = data.map((char) => char.Name_EN);
+  if (!chars.includes(charName)) {
+    return <NotFoundView message={`캐릭터 ${charName}`} />;
+  }
+
+  if (!data) {
+    navigate("/");
+  } else {
+    const handler = {
+      setSelect: (e) => {
+        if (e.target.alt) {
+          let skin_name = e.target.alt.replace(/%20/, " ");
+          setSelectedSkin(handler.getImagePath(skin_name));
+        }
+      },
+      loadEvent: () => {
+        imageLoadedCount.current += 1;
+
+        if (imageLoadedCount.current === skins.length * 2) {
+          dispatch(setCharDetailLoaded(false));
+          imageLoadedCount.current = 0;
+        }
+      },
+      getImagePath: (skinName) => {
+        const upperA = charName.toUpperCase();
+        const upperB = skinName && skinName.replace(/[\s&]/g, "").toUpperCase();
+
+        return upperA === upperB
+          ? "default"
+          : skinName.replace(`. ${charName}`, "");
+      },
+    };
+
+    if (skins) {
+      return (
+        <Section $isLoading={loading}>
+          <TitleBox $isLoading={loading}>
+            <CharNameBox className="content">
+              <CharName>{character.Name_KR}</CharName>
+              <Span>{character.Story_Title}</Span>
+            </CharNameBox>
+            <ControlDiffBox className="content">
+              <div>조작 난이도</div>
+              <DifficultyBox
+                difficulty={character.Difficulty}
+                maxDifficulty={5}
+              />
+            </ControlDiffBox>
+          </TitleBox>
+          <Container>
+            <InfoDiv $isLoading={loading}>
+              {textContents.map((info) => (
+                <InfoContent className="content" key={info.id}>
+                  {info.isStory ? (
+                    <DescContent className="story-desc">
+                      <p>{info.content}</p>
+                    </DescContent>
+                  ) : (
+                    <>
+                      <InfoContentTitle>{info.title}</InfoContentTitle>
+                      <div>{info.content}</div>
+                    </>
+                  )}
+                </InfoContent>
+              ))}
+            </InfoDiv>
+            <ImgDiv>
+              <Ul>
+                {skins.map((skin) => (
+                  <MiniSizeImage
+                    src={skin.mini_size}
+                    alt={`${skin.name_en}`}
+                    handler={handler}
+                    size={windowWidth <= 768 ? 64 : 84}
+                    key={skin.skin_id}
+                  />
+                ))}
+              </Ul>
+              <FullBox>
+                {skins.map((skin) => (
+                  <FullSizeImage
+                    src={skin.full_size}
+                    alt={`${skin.name_en}`}
+                    name={{ kr: skin.name_kr, en: skin.name_en }}
+                    select={selectedSkin}
+                    handler={handler}
+                    key={skin.skin_id}
+                  />
+                ))}
+              </FullBox>
+            </ImgDiv>
+          </Container>
+        </Section>
+      );
+    }
+  }
+}
 
 const skelAnimation = keyframes`
     0% {
@@ -187,217 +363,41 @@ const FullBox = styled.div`
   }
 `;
 
-export default function CharacterInfo() {
-  const { pathname } = useLocation();
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const loading = useSelector((state) => state.imageLoaded.detailLoaded);
-  const data = useSelector((state) => state.characterData.data);
-  const [selectedSkin, setSelectedSkin] = useState();
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const imageLoadedCount = useRef(0);
-  //   const voiceRef = useRef(null);
+//   const voiceRef = useRef(null);
+// TODO: VoicePlayer 준비중
+//   useEffect(() => {
+//     const getVoicePath = () => {
+//       const character = pathname.replace("/characters/", "");
+//       const voicePath = require(`../assets/charactersVoice/${character}/selected.wav`);
+//       return voicePath;
+//     };
+//     const play = () => {
+//       try {
+//         voiceRef.current.play();
+//       } catch (error) {
+//         console.log(error.message);
+//       }
+//     };
+//     const voicePlayer = () => {
+//       try {
+//         const voicePath = getVoicePath();
+//         if (voiceRef.current) {
+//           voiceRef.current.src = voicePath;
+//         } else {
+//           const voice = new Audio(voicePath);
+//           voiceRef.current = voice;
+//         }
+//         voiceRef.current.addEventListener("canplaythrough", play);
+//       } catch (error) {
+//         if (voiceRef.current) {
+//           voiceRef.current.pause();
+//         }
+//         // console.log(`no voice for character: ${error.message}`);
+//       }
+//       return () => {
+//         voiceRef.current.removeEventListener("canplaythrough", play);
+//       };
+//     };
 
-  useEffect(() => {
-    setSelectedSkin("default");
-    imageLoadedCount.current = 0;
-    dispatch(setCharDetailLoaded(true));
-  }, [pathname, dispatch]);
-
-  useEffect(() => {
-    const eventHandler = {
-      resizing: () => setWindowWidth(window.innerWidth),
-    };
-    // TODO: VoicePlayer 준비중
-    //   const handleReloadBlock = (e) => {
-    //     if (e.key === "F5") {
-    //       e.preventDefault();
-    //       e.stopPropagation();
-    //     }
-    //   };
-
-    window.addEventListener("resize", eventHandler.resizing);
-    //   window.addEventListener("keydown", handleReloadBlock);
-
-    return () => {
-      window.removeEventListener("resize", eventHandler.resizing);
-      //   window.removeEventListener("keydown", handleReloadBlock);
-    };
-  }, []);
-
-  // TODO: VoicePlayer 준비중
-  //   useEffect(() => {
-  //     const getVoicePath = () => {
-  //       const character = pathname.replace("/characters/", "");
-  //       const voicePath = require(`../assets/charactersVoice/${character}/selected.wav`);
-  //       return voicePath;
-  //     };
-  //     const play = () => {
-  //       try {
-  //         voiceRef.current.play();
-  //       } catch (error) {
-  //         console.log(error.message);
-  //       }
-  //     };
-  //     const voicePlayer = () => {
-  //       try {
-  //         const voicePath = getVoicePath();
-  //         if (voiceRef.current) {
-  //           voiceRef.current.src = voicePath;
-  //         } else {
-  //           const voice = new Audio(voicePath);
-  //           voiceRef.current = voice;
-  //         }
-  //         voiceRef.current.addEventListener("canplaythrough", play);
-  //       } catch (error) {
-  //         if (voiceRef.current) {
-  //           voiceRef.current.pause();
-  //         }
-  //         // console.log(`no voice for character: ${error.message}`);
-  //       }
-  //       return () => {
-  //         voiceRef.current.removeEventListener("canplaythrough", play);
-  //       };
-  //     };
-
-  //     voicePlayer();
-  //   }, [pathname]);
-
-  const chars = data.map((char) => char.Name_EN);
-  const charName = pathname.replace("/characters/", "");
-  const isChar = chars.includes(charName);
-  if (!isChar) {
-    return <NotFoundView message={`캐릭터 ${charName}`} />;
-  }
-
-  if (!data) {
-    navigate("/");
-  } else {
-    const handler = {
-      setSelect: (e) => {
-        let skin_name = e.target.alt.replace(/\%20/, " ");
-        // const skin_name = e.target.src.split("/")[8].replaceAll("%20", " ");
-        setSelectedSkin(handler.getImagePath(skin_name));
-      },
-      loadEvent: () => {
-        imageLoadedCount.current += 1;
-
-        if (imageLoadedCount.current === skins.length * 2) {
-          dispatch(setCharDetailLoaded(false));
-          imageLoadedCount.current = 0;
-        }
-      },
-      getImagePath: (skinName) => {
-        const upperA = characterName.toUpperCase();
-        const upperB =
-          skinName &&
-          skinName.replaceAll(" ", "").replaceAll("&", "").toUpperCase();
-        return upperA === upperB
-          ? "default"
-          : skinName.replace(`. ${characterName}`, "");
-      },
-    };
-
-    const characterName = pathname.replace("/characters/", "");
-    const character = data.find(
-      (character) => characterName === character.Name_EN
-    );
-    const skins = character.skins.filter(
-      (skin) => skin.mini_size && skin.full_size
-    );
-
-    const textContents = [
-      {
-        id: 1,
-        title: "이름",
-        content: character.Full_Name,
-        isStory: false,
-      },
-      {
-        id: 2,
-        title: "성별",
-        content: character.Gender,
-        isStory: false,
-      },
-      {
-        id: 3,
-        title: "나이",
-        content: character.Age,
-        isStory: false,
-      },
-      {
-        id: 4,
-        title: "키",
-        content: character.Height,
-        isStory: false,
-      },
-      {
-        id: 5,
-        title: "",
-        content: character.Story_Desc,
-        isStory: true,
-      },
-    ];
-
-    return (
-      <Section $isLoading={loading}>
-        <TitleBox $isLoading={loading}>
-          <CharNameBox className="content">
-            <CharName>{character.Name_KR}</CharName>
-            <Span>{character.Story_Title}</Span>
-          </CharNameBox>
-          <ControlDiffBox className="content">
-            <div>조작 난이도</div>
-            <DifficultyBox
-              difficulty={character.Difficulty}
-              maxDifficulty={5}
-            />
-          </ControlDiffBox>
-        </TitleBox>
-        <Container>
-          <InfoDiv $isLoading={loading}>
-            {textContents.map((info) => (
-              <InfoContent className="content" key={info.id}>
-                {info.isStory ? (
-                  <DescContent className="story-desc">
-                    <p>{info.content}</p>
-                  </DescContent>
-                ) : (
-                  <>
-                    <InfoContentTitle>{info.title}</InfoContentTitle>
-                    <div>{info.content}</div>
-                  </>
-                )}
-              </InfoContent>
-            ))}
-          </InfoDiv>
-          <ImgDiv>
-            <Ul>
-              {skins.map((skin) => (
-                <MiniSizeImage
-                  src={skin.mini_size}
-                  alt={`${skin.name_en}`}
-                  handler={handler}
-                  size={windowWidth <= 768 ? 64 : 84}
-                  key={skin.skin_id}
-                />
-              ))}
-            </Ul>
-            <FullBox>
-              {skins.map((skin) => (
-                <FullSizeImage
-                  src={skin.full_size}
-                  alt={`${skin.name_en}`}
-                  name={{ kr: skin.name_kr, en: skin.name_en }}
-                  select={selectedSkin}
-                  handler={handler}
-                  key={skin.skin_id}
-                />
-              ))}
-            </FullBox>
-          </ImgDiv>
-        </Container>
-      </Section>
-    );
-  }
-}
+//     voicePlayer();
+//   }, [pathname]);

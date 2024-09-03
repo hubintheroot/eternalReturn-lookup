@@ -1,30 +1,10 @@
-import { styled } from "styled-components";
 import { useEffect, useRef } from "react";
-import { Outlet } from "react-router-dom";
-import { supabase } from "../supabase/supabase";
 import { useDispatch, useSelector } from "react-redux";
+import { Outlet } from "react-router-dom";
 import { setData } from "../features/characterInfo/characterInfoSlice";
+import { styled } from "styled-components";
+import { supabase } from "../supabase/supabase";
 import CharacterList from "../components/CharacterList";
-
-const StyledMain = styled.main`
-  @media (min-width: 576px) {
-    max-width: 540px;
-  }
-  @media (min-width: 768px) {
-    max-width: 720px;
-  }
-  @media (min-width: 992px) {
-    max-width: 960px;
-  }
-
-  max-height: calc(100vh - 64px);
-  width: 100%;
-  margin: 20px auto 0;
-`;
-const PageTitle = styled.h2`
-  margin-top: 0;
-  margin-bottom: 20px;
-`;
 
 export default function CharactersView() {
   const dispatch = useDispatch();
@@ -47,7 +27,6 @@ export default function CharactersView() {
 
         const data = character.data.map((charData) => {
           charData.Story_Desc = charData.Story_Desc.replace(/\\n/g, "\n");
-          //   charData.Story_Desc = charData.Story_Desc.replaceAll("\\n", "\n");
           const tempSkinData = skin.data.filter(
             (skinData) => charData.CharacterID === skinData.character_id
           );
@@ -77,3 +56,23 @@ export default function CharactersView() {
     );
   }
 }
+
+const StyledMain = styled.main`
+  @media (min-width: 576px) {
+    max-width: 540px;
+  }
+  @media (min-width: 768px) {
+    max-width: 720px;
+  }
+  @media (min-width: 992px) {
+    max-width: 960px;
+  }
+
+  max-height: calc(100vh - 64px);
+  width: 100%;
+  margin: 20px auto 0;
+`;
+const PageTitle = styled.h2`
+  margin-top: 0;
+  margin-bottom: 20px;
+`;

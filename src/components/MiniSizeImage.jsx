@@ -1,5 +1,22 @@
-import styled from "styled-components";
 import { useSelector } from "react-redux";
+import styled from "styled-components";
+
+export default function MiniSizeImage({ src, alt, handler, size }) {
+  const loading = useSelector((state) => state.imageLoaded.detailLoaded);
+
+  return (
+    <>
+      <Skel style={{ display: loading ? "block" : "none" }} $size={size} />
+      <Li
+        onClick={handler.setSelect}
+        style={{ display: loading ? "none" : "block" }}
+        $size={size}
+      >
+        <Img src={src} alt={alt} onLoad={handler.loadEvent} />
+      </Li>
+    </>
+  );
+}
 
 const Li = styled.li`
   ${(props) =>
@@ -38,19 +55,3 @@ const Skel = styled(Li)`
     border: none;
   }
 `;
-
-export default function MiniSizeImage({ src, alt, handler, size }) {
-  const loading = useSelector((state) => state.imageLoaded.detailLoaded);
-  return (
-    <>
-      <Skel style={{ display: loading ? "block" : "none" }} $size={size} />
-      <Li
-        onClick={handler.setSelect}
-        style={{ display: loading ? "none" : "block" }}
-        $size={size}
-      >
-        <Img src={src} alt={alt} onLoad={handler.loadEvent} />
-      </Li>
-    </>
-  );
-}
