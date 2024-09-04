@@ -1,5 +1,42 @@
 import { styled } from "styled-components";
-import SeasonBox from "../components/seasonBox";
+import SeasonBox from "../components/SeasonBox";
+
+export default function RankView() {
+  // TODO: canvas로 랭크 점수에 따른 티어를 표로 정리할 수 있나?
+  // 점수를 입력하고 목표 티어까지의 점수를 계산하는 것 만들어보기
+  // 기초 데이터는 supabase에다가 직접 입력해둘 것
+
+  return (
+    <Section>
+      <SeasonBox />
+      {/* <div className="rank-info-container">
+        <div className="rank-point-bar">{bar}</div>
+      </div> */}
+    </Section>
+  );
+}
+
+const tiers = [
+  { id: 10, tier: "Immortal" },
+  { id: 9, tier: "Titan" },
+  { id: 8, tier: "Mithril" },
+  { id: 7, tier: "Meteor" },
+  { id: 6, tier: "Diamond" },
+  { id: 5, tier: "Platinum" },
+  { id: 4, tier: "Gold" },
+  { id: 3, tier: "Silver" },
+  { id: 2, tier: "Bronze" },
+  { id: 1, tier: "Iron" },
+];
+// eslint-disable-next-line
+const bar = tiers.map((item) => (
+  <div className={item.tier.toLowerCase()} key={item.id}>
+    <img
+      src={`https://cdn.jsdelivr.net/gh/hubintheroot/eternalreturn_contents@main/tier/${item.tier}.webp`}
+      alt={`${item.tier} tier`}
+    />
+  </div>
+));
 
 const Section = styled.section`
   display: flex;
@@ -61,41 +98,3 @@ const Section = styled.section`
     }
   }
 `;
-export default function RankView() {
-  // TODO: canvas로 랭크 점수에 따른 티어를 표로 정리할 수 있나?
-  // 점수를 입력하고 목표 티어까지의 점수를 계산하는 것 만들어보기
-  // 기초 데이터는 supabase에다가 직접 입력해둘 것
-
-  const tiers = [
-    { id: 10, tier: "Immortal" },
-    { id: 9, tier: "Titan" },
-    { id: 8, tier: "Mithril" },
-    { id: 7, tier: "Meteor" },
-    { id: 6, tier: "Diamond" },
-    { id: 5, tier: "Platinum" },
-    { id: 4, tier: "Gold" },
-    { id: 3, tier: "Silver" },
-    { id: 2, tier: "Bronze" },
-    { id: 1, tier: "Iron" },
-  ];
-  const bar = tiers.map((item) => (
-    <div className={item.tier.toLowerCase()} key={item.id}>
-      <img
-        src={`https://cdn.jsdelivr.net/gh/hubintheroot/eternalreturn_contents@main/tier/${item.tier}.webp`}
-        alt={`rank tier image: ${item.tier}`}
-      ></img>
-    </div>
-  ));
-  return (
-    <Section>
-      <div>
-        <h3>Test area</h3>
-        <SeasonBox />
-      </div>
-
-      <div className="rank-info-container">
-        <div className="rank-point-bar">{bar}</div>
-      </div>
-    </Section>
-  );
-}

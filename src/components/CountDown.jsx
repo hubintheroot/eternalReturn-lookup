@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import styled from "styled-components";
+import FlipCountClock from "./FlipCountClock";
 
 export default function CountDown({ endDate }) {
   // 종료일을 Date 객체로 변환
@@ -35,11 +37,99 @@ export default function CountDown({ endDate }) {
   const { days, hours, minutes, seconds } = calculateTimeLeft();
 
   return (
-    <div>
-      <h2>남은 시간</h2>
-      <p>
-        {days} 일 {hours} 시간 {minutes} 분 {seconds} 초
-      </p>
-    </div>
+    <Container>
+      <ClockBox>
+        <SubTitle>
+          <h3>{date.days.en}</h3>
+        </SubTitle>
+        <Clock>
+          <FlipCountClock counter={Math.floor(days / 10)} />
+          <FlipCountClock counter={days % 10} />
+        </Clock>
+      </ClockBox>
+      <ClockBox>
+        <SubTitle>
+          <h3>{date.hours.en}</h3>
+        </SubTitle>
+        <Clock>
+          <FlipCountClock counter={Math.floor(hours / 10)} />
+          <FlipCountClock counter={hours % 10} />
+        </Clock>
+      </ClockBox>
+      <ClockBox>
+        <SubTitle>
+          <h3>{date.minutes.en}</h3>
+        </SubTitle>
+        <Clock>
+          <FlipCountClock counter={Math.floor(minutes / 10)} />
+          <FlipCountClock counter={minutes % 10} />
+        </Clock>
+      </ClockBox>
+      <ClockBox>
+        <SubTitle>
+          <h3>{date.seconds.en}</h3>
+        </SubTitle>
+        <Clock>
+          <FlipCountClock counter={Math.floor(seconds / 10)} />
+          <FlipCountClock counter={seconds % 10} />
+        </Clock>
+      </ClockBox>
+    </Container>
   );
 }
+
+const date = {
+  days: { en: "Days", kr: "일" },
+  hours: { en: "Hours", kr: "시간" },
+  minutes: { en: "Minutes", kr: "분" },
+  seconds: { en: "Seconds", kr: "초" },
+};
+
+const Container = styled.div`
+  @media screen and (min-width: 768px) {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    & :last-child {
+      margin-right: 0;
+    }
+  }
+`;
+const SubTitle = styled.div`
+  & > h3 {
+    font-weight: bold;
+    font-size: 1.5rem;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+  }
+`;
+const ClockBox = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  align-items: end;
+  width: 60vw;
+  margin: 1rem auto;
+
+  @media screen and (min-width: 768px) {
+    display: block;
+    width: auto;
+    margin: 0 2.5rem 0 0;
+  }
+`;
+const Clock = styled.div`
+  display: flex;
+  flex-direction: row;
+  @media screen and (min-width: 768px) {
+    justify-content: center;
+    margin-right: 2rem;
+
+    & > ul {
+      width: 60px;
+      height: 90px;
+    }
+  }
+`;
