@@ -86,7 +86,7 @@ const date = {
 };
 
 const Container = styled.div`
-  @media screen and (min-width: 768px) {
+  @media screen and (min-width: 990px) {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -117,7 +117,10 @@ const ClockBox = styled.div`
   @media screen and (min-width: 768px) {
     display: block;
     width: auto;
-    margin: 0 2.5rem 0 0;
+    margin: 0;
+  }
+  @media screen and (min-width: 990px) {
+    margin-right: 2rem;
   }
 `;
 const Clock = styled.div`
@@ -125,11 +128,15 @@ const Clock = styled.div`
   flex-direction: row;
   @media screen and (min-width: 768px) {
     justify-content: center;
-    margin-right: 2rem;
+    margin-right: 0;
 
     & > ul {
       width: 60px;
       height: 90px;
     }
+  }
+
+  @media screen and (min-width: 990px) {
+    margin-right: 2rem;
   }
 `;
