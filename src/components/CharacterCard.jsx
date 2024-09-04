@@ -1,83 +1,8 @@
-import styled, { keyframes } from "styled-components";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setCharListLoaded } from "../features/imageLoaded/imageLoadedSlice";
-import { useState } from "react";
-
-const StyledLink = styled(Link)`
-  text-decoration: none;
-  color: black;
-  font-size: 1.2rem;
-  margin: 0 1rem;
-`;
-const Card = styled.li`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-const ImgBox = styled.div`
-  position: relative;
-  width: 64px;
-  height: 64px;
-  margin-bottom: 4px;
-`;
-const Free = styled.img`
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  z-index: 999;
-  top: -5px;
-  left: -5px;
-`;
-const Img = styled.img`
-  position: absolute;
-  top: 0;
-  left: 0;
-`;
-const Figcaption = styled.figcaption`
-  font-size: 12px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-weight: 500;
-`;
-const Figure = styled.figure`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 0;
-  padding: 0;
-
-  &:hover {
-    cursor: pointer;
-  }
-  &:hover > ${Figcaption} {
-    color: rgb(153, 153, 153);
-  }
-`;
-
-const pulseKeyFrame = keyframes`
-    0% {
-        opacity: .5;
-    }
-    50% {
-        opacity: .3;
-    }
-    100% {
-        opacity: .5;
-    }
-`;
-const SkelStyledLink = styled(StyledLink)`
-  animation: ${pulseKeyFrame} 1.5s ease-in-out infinite;
-`;
-const SkelFigcaption = styled(Figcaption)`
-  background-color: lightgrey;
-  height: 12px;
-  width: 100%;
-`;
-const SkelImgBox = styled(ImgBox)`
-  background-color: lightgrey;
-`;
+import styled, { keyframes } from "styled-components";
 
 export default function CharacterCard({
   data,
@@ -162,3 +87,78 @@ export default function CharacterCard({
     </Card>
   );
 }
+
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  color: black;
+  font-size: 1.2rem;
+  margin: 0 1rem;
+`;
+const Card = styled.li`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+const ImgBox = styled.div`
+  position: relative;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 4px;
+`;
+const Free = styled.img`
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  z-index: 999;
+  top: -5px;
+  left: -5px;
+`;
+const Img = styled.img`
+  position: absolute;
+  top: 0;
+  left: 0;
+`;
+const Figcaption = styled.figcaption`
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+`;
+const Figure = styled.figure`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+
+  &:hover {
+    cursor: pointer;
+  }
+  &:hover > ${Figcaption} {
+    color: rgb(153, 153, 153);
+  }
+`;
+
+const pulseKeyFrame = keyframes`
+    0% {
+        opacity: .5;
+    }
+    50% {
+        opacity: .3;
+    }
+    100% {
+        opacity: .5;
+    }
+`;
+const SkelStyledLink = styled(StyledLink)`
+  animation: ${pulseKeyFrame} 1.5s ease-in-out infinite;
+`;
+const SkelFigcaption = styled(Figcaption)`
+  background-color: lightgrey;
+  height: 12px;
+  width: 100%;
+`;
+const SkelImgBox = styled(ImgBox)`
+  background-color: lightgrey;
+`;

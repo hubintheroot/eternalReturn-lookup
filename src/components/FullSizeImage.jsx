@@ -1,6 +1,28 @@
+import { useSelector } from "react-redux";
 import styled, { css } from "styled-components";
 import { Img } from "./MiniSizeImage";
-import { useSelector } from "react-redux";
+
+export default function FullSizeImage({ src, alt, handler, select, name }) {
+  const loading = useSelector((state) => state.imageLoaded.detailLoaded);
+  const isSelected = select === src.split("/")[8];
+
+  return (
+    <>
+      <Skel $visible={loading}>
+        <SkelTitle $visible={isSelected} />
+      </Skel>
+      <Container $visible={!loading}>
+        <Title $visible={isSelected}>{name.kr}</Title>
+        <FullImg
+          $visible={isSelected}
+          src={src}
+          alt={alt}
+          onLoad={handler.loadEvent}
+        />
+      </Container>
+    </>
+  );
+}
 
 const visibleStyle = css`
   ${(props) => (props.$visible ? `display: block` : `display: none;`)}
@@ -38,24 +60,3 @@ const SkelTitle = styled(Title)`
   min-height: 1.8rem;
   ${skelStyle}
 `;
-export default function FullSizeImage({ src, alt, handler, select, name }) {
-  const loading = useSelector((state) => state.imageLoaded.detailLoaded);
-  const isSelected = select === src.split("/")[8];
-
-  return (
-    <>
-      <Skel $visible={loading}>
-        <SkelTitle $visible={isSelected} />
-      </Skel>
-      <Container $visible={!loading}>
-        <Title $visible={isSelected}>{name.kr}</Title>
-        <FullImg
-          $visible={isSelected}
-          src={src}
-          alt={alt}
-          onLoad={handler.loadEvent}
-        />
-      </Container>
-    </>
-  );
-}
