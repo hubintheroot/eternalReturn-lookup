@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import FlipCountClock from "./FlipCountClock";
 
-export default function CountDown({ endDate }) {
+export default function CountDown({ endDate, lang = "en" }) {
   // 종료일을 Date 객체로 변환
   const end = new Date(endDate).getTime();
   const [timeLeft, setTimeLeft] = useState(end - new Date().getTime());
@@ -31,51 +31,28 @@ export default function CountDown({ endDate }) {
     const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
-    return { days, hours, minutes, seconds };
+    return [
+      { subTitle: date.days, content: days, id: 0 },
+      { subTitle: date.hours, content: hours, id: 1 },
+      { subTitle: date.minutes, content: minutes, id: 2 },
+      { subTitle: date.seconds, content: seconds, id: 3 },
+    ];
   };
 
-  const { days, hours, minutes, seconds } = calculateTimeLeft();
+  const data = calculateTimeLeft();
+  const clockBoxs = data.map((data) => (
+    <ClockBox key={data.id}>
+      <SubTitle>
+        <h3>{data.subTitle[lang]}</h3>
+      </SubTitle>
+      <Clock>
+        <FlipCountClock counter={Math.floor(data.content / 10)} />
+        <FlipCountClock counter={data.content % 10} />
+      </Clock>
+    </ClockBox>
+  ));
 
-  return (
-    <Container>
-      <ClockBox>
-        <SubTitle>
-          <h3>{date.days.en}</h3>
-        </SubTitle>
-        <Clock>
-          <FlipCountClock counter={Math.floor(days / 10)} />
-          <FlipCountClock counter={days % 10} />
-        </Clock>
-      </ClockBox>
-      <ClockBox>
-        <SubTitle>
-          <h3>{date.hours.en}</h3>
-        </SubTitle>
-        <Clock>
-          <FlipCountClock counter={Math.floor(hours / 10)} />
-          <FlipCountClock counter={hours % 10} />
-        </Clock>
-      </ClockBox>
-      <ClockBox>
-        <SubTitle>
-          <h3>{date.minutes.en}</h3>
-        </SubTitle>
-        <Clock>
-          <FlipCountClock counter={Math.floor(minutes / 10)} />
-          <FlipCountClock counter={minutes % 10} />
-        </Clock>
-      </ClockBox>
-      <ClockBox>
-        <SubTitle>
-          <h3>{date.seconds.en}</h3>
-        </SubTitle>
-        <Clock>
-          <FlipCountClock counter={Math.floor(seconds / 10)} />
-          <FlipCountClock counter={seconds % 10} />
-        </Clock>
-      </ClockBox>
-    </Container>
-  );
+  return <Container>{clockBoxs}</Container>;
 }
 
 const date = {
