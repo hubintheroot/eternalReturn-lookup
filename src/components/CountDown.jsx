@@ -43,7 +43,7 @@ export default function CountDown({ endDate, lang = "en" }) {
   const clockBoxs = data.map((data) => (
     <ClockBox key={data.id}>
       <SubTitle>
-        <h3>{data.subTitle[lang]}</h3>
+        <h3 className="tjqmxkdlxmf">{data.subTitle[lang]}</h3>
       </SubTitle>
       <Clock>
         <FlipCountClock counter={Math.floor(data.content / 10)} />
@@ -63,6 +63,9 @@ const date = {
 };
 
 const Container = styled.div`
+  width: max-content;
+  margin: 0 auto;
+
   @media screen and (min-width: 990px) {
     display: flex;
     flex-direction: row;
@@ -75,34 +78,43 @@ const Container = styled.div`
   }
 `;
 const SubTitle = styled.div`
-  & > h3 {
+  & > .tjqmxkdlxmf {
     font-weight: bold;
     font-size: 1.5rem;
     margin-top: 0;
     margin-bottom: 0.5rem;
+    width: 0;
+
+    @media screen and (min-width: 768px) {
+      width: auto;
+    }
   }
 `;
 const ClockBox = styled.div`
   position: relative;
   display: flex;
   flex-direction: row-reverse;
-  justify-content: space-between;
+  justify-content: start;
   align-items: end;
-  width: 60vw;
+  column-gap: 1rem;
   margin: 1rem auto;
+  width: max-content;
 
   @media screen and (min-width: 768px) {
-    display: block;
-    width: auto;
-    margin: 0;
+    flex-direction: column-reverse;
+    align-items: center;
+    margin-top: 1rem;
   }
   @media screen and (min-width: 990px) {
-    margin-right: 2rem;
+    display: block;
+    width: auto;
+    margin: 1rem 2rem 1rem 0;
   }
 `;
 const Clock = styled.div`
   display: flex;
   flex-direction: row;
+
   @media screen and (min-width: 768px) {
     justify-content: center;
     margin-right: 0;
