@@ -62,6 +62,7 @@ export default function SeasonBox() {
 const removeMinutes = (date) => date.replace(/\d{2}:\d{2}/g, "");
 
 const Container = styled.div`
+  text-align: center;
   position: relative;
   width: 100vw;
   color: #fff;

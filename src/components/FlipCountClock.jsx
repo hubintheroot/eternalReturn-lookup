@@ -2,8 +2,6 @@ import React from "react";
 import styled, { keyframes } from "styled-components";
 
 export default function FlipCountClock({ counter }) {
-  const nums = Array.from({ length: 10 }, (_, i) => i);
-
   return (
     <StyledUl>
       {nums &&
@@ -25,6 +23,8 @@ export default function FlipCountClock({ counter }) {
     </StyledUl>
   );
 }
+
+const nums = Array.from({ length: 10 }, (_, i) => i);
 
 const increaseZindex = keyframes`
   0% {

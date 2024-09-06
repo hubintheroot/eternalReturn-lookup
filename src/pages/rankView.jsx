@@ -41,7 +41,6 @@ const bar = tiers.map((item) => (
 const Section = styled.section`
   display: flex;
   flex-direction: column;
-  text-align: center;
 
   & > .rank-info-container {
     & .rank-point-bar {

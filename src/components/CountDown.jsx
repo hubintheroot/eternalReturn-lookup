@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import FlipCountClock from "./FlipCountClock";
 
-export default function CountDown({ endDate }) {
+export default function CountDown({ endDate, lang = "en" }) {
   // 종료일을 Date 객체로 변환
   const end = new Date(endDate).getTime();
   const [timeLeft, setTimeLeft] = useState(end - new Date().getTime());
@@ -31,51 +31,28 @@ export default function CountDown({ endDate }) {
     const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
-    return { days, hours, minutes, seconds };
+    return [
+      { subTitle: date.days, content: days, id: 0 },
+      { subTitle: date.hours, content: hours, id: 1 },
+      { subTitle: date.minutes, content: minutes, id: 2 },
+      { subTitle: date.seconds, content: seconds, id: 3 },
+    ];
   };
 
-  const { days, hours, minutes, seconds } = calculateTimeLeft();
+  const data = calculateTimeLeft();
+  const clockBoxs = data.map((data) => (
+    <ClockBox key={data.id}>
+      <SubTitle>
+        <h3 className="tjqmxkdlxmf">{data.subTitle[lang]}</h3>
+      </SubTitle>
+      <Clock>
+        <FlipCountClock counter={Math.floor(data.content / 10)} />
+        <FlipCountClock counter={data.content % 10} />
+      </Clock>
+    </ClockBox>
+  ));
 
-  return (
-    <Container>
-      <ClockBox>
-        <SubTitle>
-          <h3>{date.days.en}</h3>
-        </SubTitle>
-        <Clock>
-          <FlipCountClock counter={Math.floor(days / 10)} />
-          <FlipCountClock counter={days % 10} />
-        </Clock>
-      </ClockBox>
-      <ClockBox>
-        <SubTitle>
-          <h3>{date.hours.en}</h3>
-        </SubTitle>
-        <Clock>
-          <FlipCountClock counter={Math.floor(hours / 10)} />
-          <FlipCountClock counter={hours % 10} />
-        </Clock>
-      </ClockBox>
-      <ClockBox>
-        <SubTitle>
-          <h3>{date.minutes.en}</h3>
-        </SubTitle>
-        <Clock>
-          <FlipCountClock counter={Math.floor(minutes / 10)} />
-          <FlipCountClock counter={minutes % 10} />
-        </Clock>
-      </ClockBox>
-      <ClockBox>
-        <SubTitle>
-          <h3>{date.seconds.en}</h3>
-        </SubTitle>
-        <Clock>
-          <FlipCountClock counter={Math.floor(seconds / 10)} />
-          <FlipCountClock counter={seconds % 10} />
-        </Clock>
-      </ClockBox>
-    </Container>
-  );
+  return <Container>{clockBoxs}</Container>;
 }
 
 const date = {
@@ -86,6 +63,9 @@ const date = {
 };
 
 const Container = styled.div`
+  width: max-content;
+  margin: 0 auto;
+
   @media screen and (min-width: 990px) {
     display: flex;
     flex-direction: row;
@@ -98,34 +78,43 @@ const Container = styled.div`
   }
 `;
 const SubTitle = styled.div`
-  & > h3 {
+  & > .tjqmxkdlxmf {
     font-weight: bold;
     font-size: 1.5rem;
     margin-top: 0;
     margin-bottom: 0.5rem;
+    width: 0;
+
+    @media screen and (min-width: 768px) {
+      width: auto;
+    }
   }
 `;
 const ClockBox = styled.div`
   position: relative;
   display: flex;
   flex-direction: row-reverse;
-  justify-content: space-between;
+  justify-content: start;
   align-items: end;
-  width: 60vw;
+  column-gap: 1rem;
   margin: 1rem auto;
+  width: max-content;
 
   @media screen and (min-width: 768px) {
-    display: block;
-    width: auto;
-    margin: 0;
+    flex-direction: column-reverse;
+    align-items: center;
+    margin-top: 1rem;
   }
   @media screen and (min-width: 990px) {
-    margin-right: 2rem;
+    display: block;
+    width: auto;
+    margin: 1rem 2rem 1rem 0;
   }
 `;
 const Clock = styled.div`
   display: flex;
   flex-direction: row;
+
   @media screen and (min-width: 768px) {
     justify-content: center;
     margin-right: 0;
