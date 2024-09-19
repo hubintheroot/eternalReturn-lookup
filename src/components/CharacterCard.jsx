@@ -20,7 +20,9 @@ export default function CharacterCard({
   const handler = {
     imgError: (e) => {
       cnt.current += 1;
-      e.target.src = bgPath;
+      e.target.src = `${process.env.PUBLIC_URL}/icons8-64.png`;
+      e.target.classList.add("prepare-image");
+
       setDisabled(true);
       handler.disableSkelUI();
     },
@@ -98,6 +100,13 @@ const Card = styled.li`
   display: flex;
   align-items: center;
   justify-content: center;
+
+  & .prepare-image {
+    width: 48px;
+    height: 48px;
+    top: 8px;
+    left: 8px;
+  }
 `;
 const ImgBox = styled.div`
   position: relative;
