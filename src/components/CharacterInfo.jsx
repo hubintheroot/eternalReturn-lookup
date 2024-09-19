@@ -112,10 +112,7 @@ export default function CharacterInfo() {
       getImagePath: (skinName) => {
         const upperA = charName.toUpperCase();
         const upperB = skinName && skinName.replace(/[\s&]/g, "").toUpperCase();
-
-        return upperA === upperB
-          ? "default"
-          : skinName.replace(`. ${charName}`, "");
+        return upperA === upperB ? "default" : skinName;
       },
     };
 
