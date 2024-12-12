@@ -5,7 +5,7 @@ import FlipCountClock from "./FlipCountClock";
 export default function CountDown({ endDate, lang = "en" }) {
   // 종료일을 Date 객체로 변환
   const end = new Date(endDate).getTime();
-  const [timeLeft, setTimeLeft] = useState(end - new Date().getTime());
+  const [timeLeft, setTimeLeft] = useState();
 
   useEffect(() => {
     // 타이머가 0에 도달하면 효과를 중지
@@ -22,7 +22,13 @@ export default function CountDown({ endDate, lang = "en" }) {
 
   // 남은 일, 시간, 분, 초를 계산
   const calculateTimeLeft = () => {
-    if (timeLeft <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+    if (timeLeft <= 0)
+      return [
+        { subTitle: date.days, content: 0, id: 0 },
+        { subTitle: date.hours, content: 0, id: 1 },
+        { subTitle: date.minutes, content: 0, id: 2 },
+        { subTitle: date.seconds, content: 0, id: 3 },
+      ];
 
     const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
     const hours = Math.floor(
