@@ -5,9 +5,12 @@ import { Img } from "./MiniSizeImage";
 export default function FullSizeImage({ src, alt, handler, select, name }) {
   const loading = useSelector((state) => state.imageLoaded.detailLoaded);
   const isSelected =
-    select.replace(/[\s&]/, "").toLowerCase() ===
-    src.split("/")[8].replace(/[\s&]/, "").toLowerCase();
-
+    src
+      .toLowerCase()
+      .replace(/[\s&]/, "")
+      .indexOf(select.replace(/[\s&]/, "").toLowerCase()) !== -1;
+  // select.replace(/[\s&]/, "").toLowerCase() ===
+  // src.split("/")[9].replace(/[\s&]/, "").toLowerCase();
   return (
     <>
       <Skel $visible={loading}>
