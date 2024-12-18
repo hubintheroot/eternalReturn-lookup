@@ -27,6 +27,10 @@ export default function CharactersView() {
 
         const data = character.data.map((charData) => {
           charData.Story_Desc = charData.Story_Desc.replace(/\\n/g, "\n");
+          charData.ImagePath = charData.ImagePath.replace(
+            "jsdelivr.net",
+            "statically.io"
+          );
           const tempSkinData = skin.data.filter(
             (skinData) => charData.CharacterID === skinData.character_id
           );
@@ -36,12 +40,14 @@ export default function CharactersView() {
             const f_size = img_info.full_size;
             const m_size = img_info.mini_size;
             if (f_size !== null && m_size !== null) {
-              tempSkinData[i].full_size = f_size
-                .replace("jsdelivr.net", "statically.io")
-                .replace("@", "/");
-              tempSkinData[i].mini_size = m_size
-                .replace("jsdelivr.net", "statically.io")
-                .replace("@", "/");
+              tempSkinData[i].full_size = f_size.replace(
+                "jsdelivr.net",
+                "statically.io"
+              );
+              tempSkinData[i].mini_size = m_size.replace(
+                "jsdelivr.net",
+                "statically.io"
+              );
             }
           }
           charData.skins = tempSkinData;
