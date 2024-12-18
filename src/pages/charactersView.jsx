@@ -30,6 +30,20 @@ export default function CharactersView() {
           const tempSkinData = skin.data.filter(
             (skinData) => charData.CharacterID === skinData.character_id
           );
+
+          for (let i = 0; i < tempSkinData.length; i++) {
+            const img_info = tempSkinData[i];
+            const f_size = img_info.full_size;
+            const m_size = img_info.mini_size;
+            if (f_size !== null && m_size !== null) {
+              tempSkinData[i].full_size = f_size
+                .replace("jsdelivr.net", "statically.io")
+                .replace("@", "/");
+              tempSkinData[i].mini_size = m_size
+                .replace("jsdelivr.net", "statically.io")
+                .replace("@", "/");
+            }
+          }
           charData.skins = tempSkinData;
           return charData;
         });
