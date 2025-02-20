@@ -3,9 +3,7 @@ import styled from "styled-components";
 import FlipCountClock from "./FlipCountClock";
 
 export default function CountDown({ endDate, lang = "en" }) {
-  // 종료일을 Date 객체로 변환
-  const end = new Date(endDate).getTime();
-  const [timeLeft, setTimeLeft] = useState();
+  const [timeLeft, setTimeLeft] = useState(getLeftTime(endDate));
 
   useEffect(() => {
     // 타이머가 0에 도달하면 효과를 중지
@@ -13,36 +11,34 @@ export default function CountDown({ endDate, lang = "en" }) {
 
     // 1초마다 남은 시간을 1씩 줄임
     const intervalId = setInterval(() => {
-      setTimeLeft(end - new Date().getTime());
+      const left = getLeftTime(endDate);
+      setTimeLeft(left);
     }, 1000);
 
     // 컴포넌트가 언마운트되거나 업데이트될 때 인터벌을 정리
     return () => clearInterval(intervalId);
-  }, [timeLeft, end]);
+  }, []);
 
   // 남은 일, 시간, 분, 초를 계산
   const calculateTimeLeft = () => {
-    if (timeLeft <= 0)
-      return [
-        { subTitle: date.days, content: 0, id: 0 },
-        { subTitle: date.hours, content: 0, id: 1 },
-        { subTitle: date.minutes, content: 0, id: 2 },
-        { subTitle: date.seconds, content: 0, id: 3 },
-      ];
-
-    const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-    const hours = Math.floor(
-      (timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-    );
-    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-
-    return [
-      { subTitle: date.days, content: days, id: 0 },
-      { subTitle: date.hours, content: hours, id: 1 },
-      { subTitle: date.minutes, content: minutes, id: 2 },
-      { subTitle: date.seconds, content: seconds, id: 3 },
+    const data = [
+      { subTitle: { en: "Days", kr: "일" }, content: 0, id: 0 },
+      { subTitle: { en: "Hours", kr: "시간" }, content: 0, id: 1 },
+      { subTitle: { en: "Minutes", kr: "분" }, content: 0, id: 2 },
+      { subTitle: { en: "Seconds", kr: "초" }, content: 0, id: 3 },
     ];
+    if (timeLeft > 0) {
+      const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+      const hours = Math.floor(
+        (timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      );
+      const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+      const time = [days, hours, minutes, seconds];
+      data.forEach((_, i) => (data[i].content = time[i]));
+    }
+
+    return data;
   };
 
   const data = calculateTimeLeft();
@@ -61,12 +57,9 @@ export default function CountDown({ endDate, lang = "en" }) {
   return <Container>{clockBoxs}</Container>;
 }
 
-const date = {
-  days: { en: "Days", kr: "일" },
-  hours: { en: "Hours", kr: "시간" },
-  minutes: { en: "Minutes", kr: "분" },
-  seconds: { en: "Seconds", kr: "초" },
-};
+function getLeftTime(end) {
+  return new Date(end).getTime() - new Date().getTime();
+}
 
 const Container = styled.div`
   width: max-content;
