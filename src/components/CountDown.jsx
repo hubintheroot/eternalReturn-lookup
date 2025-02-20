@@ -17,6 +17,7 @@ export default function CountDown({ endDate, lang = "en" }) {
 
     // 컴포넌트가 언마운트되거나 업데이트될 때 인터벌을 정리
     return () => clearInterval(intervalId);
+    // eslint-disable-next-line
   }, []);
 
   // 남은 일, 시간, 분, 초를 계산
