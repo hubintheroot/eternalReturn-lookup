@@ -4,7 +4,7 @@ import { styled } from "styled-components";
 export default function Navigate({ info }) {
   const menus = info.map((info, index) => (
     <StyledLink to={info.link} key={index}>
-      <p>{info.text}</p>
+      <span>{info.text}</span>
     </StyledLink>
   ));
 
@@ -14,15 +14,29 @@ export default function Navigate({ info }) {
 const Nav = styled.nav`
   display: flex;
   flex-direction: row;
+  justify-content: space-around;
   align-items: center;
+  height: 100%;
+  gap: 1em;
+  margin-left: 1em;
 `;
 
 const StyledLink = styled(Link)`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   text-decoration: none;
   color: black;
-  font-size: 1.2rem;
-  margin: 0 1rem;
+  font-size: 1.2em;
+  margin: 0;
+  width: 100%;
+  height: 100%;
   &:hover {
     color: grey;
+  }
+
+  & > span {
+    word-break: keep-all;
   }
 `;
