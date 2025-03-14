@@ -157,14 +157,15 @@ const InputBox = styled.div`
 `;
 const InputCheckBox = styled(InputBox)`
   display: flex;
+  justify-content: flex-start;
+  align-items: center;
   border: 1px solid rgb(224, 224, 224);
   background-color: #fff;
   border-radius: 0.5rem;
   padding: 1rem;
   & > input {
     width: fit-content;
-    margin-right: 1rem;
-    line-height: 1rem;
+    margin-right: 0.5rem;
   }
   & > label {
     margin: 0;
