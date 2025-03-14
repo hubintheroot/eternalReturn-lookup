@@ -14,11 +14,15 @@ export default function Navigate({ info }) {
 const Nav = styled.nav`
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: flex-start;
   align-items: center;
   height: 100%;
-  gap: 1em;
-  margin-left: 1em;
+  gap: 0.5rem;
+  margin-left: 0.5rem;
+  @media screen and (min-width: 768px) {
+    gap: 1rem;
+    margin-left: 1rem;
+  }
 `;
 
 const StyledLink = styled(Link)`

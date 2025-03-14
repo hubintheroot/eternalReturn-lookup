@@ -4,7 +4,7 @@ import { Outlet } from "react-router-dom";
 import { setData } from "../features/characterInfo/characterInfoSlice";
 import { styled } from "styled-components";
 import { supabase } from "../supabase/supabase";
-import CharacterList from "../components/CharacterList";
+import CharacterList from "../components/Character/CharacterList";
 
 export default function CharactersView() {
   const dispatch = useDispatch();

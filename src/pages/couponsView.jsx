@@ -191,7 +191,7 @@ const Section = styled.section`
 const Container = styled.div`
   @media screen and (min-width: 768px) {
     margin: 0 auto;
-    max-width: 960px;
+    max-width: 80rem;
   }
 `;
 const EmptyContainer = styled(Container)`
@@ -212,6 +212,7 @@ const TitleContainer = styled(Container)`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 0.5rem;
 `;
 const TitleBox = styled.div`
   display: flex;

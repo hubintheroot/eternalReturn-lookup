@@ -2,7 +2,7 @@ import Root from "../pages/Root";
 import NotFoundView from "../pages/notfoundView";
 import CharactersView from "../pages/charactersView";
 import ComingSoonView from "../pages/comingsoon";
-import CharacterInfo from "../components/CharacterInfo";
+import CharacterInfo from "../components/Character/CharacterInfo";
 // eslint-disable-next-line
 import NewsView from "../pages/newsView";
 // eslint-disable-next-line

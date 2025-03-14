@@ -3,20 +3,20 @@ import styled from "styled-components";
 import { XIconSVG } from "../ui/SVG";
 
 export default function CouponForm({ text, onSubmit, onClose, data }) {
-  const [noExpiry, setNoExpiry] = useState(false);
-  const [expiry, setExpiry] = useState(formatDate(new Date()));
+  const [noExpiry, setNoExpiry] = useState(data?.expires_at ? false : true);
+  const [expiry, setExpiry] = useState(
+    data?.expires_at
+      ? formatDate(new Date(data.expires_at))
+      : formatDate(new Date())
+  );
 
   useEffect(() => {
-    if (data) {
-      const expires_at = formatDate(new Date(data.expires_at));
-
-      setNoExpiry(data.expires_at === null ? true : false);
-      setExpiry(expires_at);
-    } else {
-      const today = formatDate(new Date());
-      setExpiry(today);
-    }
-  }, [data]);
+    setExpiry(
+      data?.expires_at
+        ? formatDate(new Date(data.expires_at))
+        : formatDate(new Date())
+    );
+  }, [noExpiry, data]);
 
   const checkHandler = () => {
     setNoExpiry(!noExpiry);
@@ -105,12 +105,16 @@ const Container = styled.div`
   background-color: rgb(249, 249, 249);
   border: 1px solid rgb(224, 224, 224);
   border-radius: 0.5rem;
-  width: 100%;
+  width: calc(100% - 1rem);
   max-width: 28rem;
   max-height: calc(-2rem + 100vh);
   overflow-y: auto;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px,
     rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
+
+  @media screen and (min-width: 768px) {
+    width: 100%;
+  }
 `;
 const TitleContainer = styled.div`
   display: flex;

@@ -141,8 +141,8 @@ const TitleBox = styled(InnerIcon)`
   align-items: flex-start;
   margin-bottom: 0.5rem;
 `;
-const Title = styled.h3`
-  font-size: 1.25rem;
+const Title = styled.span`
+  font-size: 1.1rem;
   font-weight: 600;
   margin: 0.5rem 0;
   color: rgb(17, 24, 39);

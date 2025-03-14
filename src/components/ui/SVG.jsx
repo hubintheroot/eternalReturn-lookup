@@ -108,3 +108,58 @@ export const XIconSVG = () => (
     <path d="m6 6 12 12"></path>
   </svg>
 );
+
+export const UserSVG = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="lucide lucide-user h-5 w-5"
+  >
+    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+    <circle cx="12" cy="7" r="4"></circle>
+  </svg>
+);
+
+export const LoginSVG = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="lucide lucide-log-in mr-2 h-4 w-4"
+  >
+    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+    <polyline points="10 17 15 12 10 7"></polyline>
+    <line x1="15" x2="3" y1="12" y2="12"></line>
+  </svg>
+);
+export const LogoutSVG = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="lucide lucide-log-out mr-2 h-4 w-4"
+  >
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+    <polyline points="16 17 21 12 16 7"></polyline>
+    <line x1="21" x2="9" y1="12" y2="12"></line>
+  </svg>
+);

@@ -1,13 +1,16 @@
 import Navigate from "../components/Navigate";
-import { Outlet } from "react-router-dom";
+import Modal from "../components/Modal";
+import Button from "../components/ui/Button";
+import UserInfo from "./userInfo";
+import { supabase } from "../supabase/supabase";
+import { styled } from "styled-components";
 import { isLogin, loginHandler, logOut, logoutHandler } from "../util/login";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../features/loginInfo/userInfoSlice";
-import { supabase } from "../supabase/supabase";
+import { Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { styled } from "styled-components";
-import Modal from "../components/Modal";
-import Userinfo from "../pages/userInfo";
+import { KakaoLoginButton } from "../components/ui/kakao";
+import { LogoutSVG, UserSVG } from "../components/ui/SVG";
 
 export default function Root() {
   const user = useSelector((state) => state.userInfo.user);
@@ -27,7 +30,6 @@ export default function Root() {
       }
     };
 
-    // const isLogin = localStorage.getItem("sb-acvvjofyppuyavonqhvd-auth-token");
     if (isLogin()) fetchUser();
 
     const { data: listener } = supabase().auth.onAuthStateChange(
@@ -57,36 +59,26 @@ export default function Root() {
       <Header>
         <StyledNav info={links}></StyledNav>
         {/* TODO: myProfile, LogOut 모달로 옮겨서 공간확보하기 */}
-        <Ol>
-          {user ? (
-            <>
-              <li onClick={userInfoHandler.show}>
-                <strong>
-                  <span>{user.user_metadata.user_name}</span>
-                </strong>
-              </li>
-              <li onClick={logoutHandler}>
-                <strong>
-                  <span>LogOut</span>
-                </strong>
-              </li>
-            </>
-          ) : (
-            <li onClick={loginHandler}>
-              <strong>
-                <span>LogIn</span>
-              </strong>
-            </li>
-          )}
-        </Ol>
+        {user ? (
+          <UserBox>
+            <Button eventHandler={userInfoHandler.show} text="프로필">
+              <UserSVG />
+            </Button>
+            <Button eventHandler={logoutHandler} text="로그아웃">
+              <LogoutSVG />
+            </Button>
+          </UserBox>
+        ) : (
+          <KakaoLoginButton loginHandler={loginHandler} />
+        )}
       </Header>
       <Content />
       {showModal && (
         <Modal>
-          <Userinfo
+          <UserInfo
             onClose={userInfoHandler.hide}
             data={user?.user_metadata}
-          ></Userinfo>
+          ></UserInfo>
         </Modal>
       )}
     </Page>
@@ -123,18 +115,14 @@ const StyledNav = styled(Navigate)`
 const Content = styled(Outlet)`
   height: calc(100vh - Header);
 `;
-const Ol = styled.ol`
-  list-style: none;
+const UserBox = styled.div`
   display: flex;
-  flex-direction: row;
-  gap: 0.4em;
-  padding: 0;
-  margin: 0 2rem 0 0;
-
-  & > li {
-    word-break: keep-all;
-    &:hover {
-      cursor: pointer;
-    }
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.5rem;
+  margin-right: 0.5rem;
+  @media screen and (min-width: 768px) {
+    gap: 1rem;
+    margin-right: 1rem;
   }
 `;
