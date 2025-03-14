@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { setCharDetailLoaded } from "../features/imageLoaded/imageLoadedSlice";
+import { setCharDetailLoaded } from "../../features/imageLoaded/imageLoadedSlice";
 import styled, { keyframes, css } from "styled-components";
-import NotFoundView from "../pages/notfoundView";
-import DifficultyBox from "./DifficultyBox";
-import MiniSizeImage from "./MiniSizeImage";
-import FullSizeImage from "./FullSizeImage";
+import NotFoundView from "../../pages/notfoundView";
+import DifficultyBox from "../DifficultyBox";
+import MiniSizeImage from "../MiniSizeImage";
+import FullSizeImage from "../FullSizeImage";
 
 export default function CharacterInfo() {
   const { pathname } = useLocation();
