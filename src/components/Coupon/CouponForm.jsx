@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { XIconSVG } from "../ui/SVG";
+import { formatDate } from "../../util/utils";
 
 export default function CouponForm({ text, onSubmit, onClose, data }) {
   const [noExpiry, setNoExpiry] = useState(data?.expires_at ? false : true);
@@ -90,15 +91,6 @@ export default function CouponForm({ text, onSubmit, onClose, data }) {
       </Form>
     </Container>
   );
-}
-
-function formatDate(date) {
-  return `${date.getFullYear()}-${(date.getMonth() + 1)
-    .toString()
-    .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}T${date
-    .getHours()
-    .toString()
-    .padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
 }
 
 const Container = styled.div`

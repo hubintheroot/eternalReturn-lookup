@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { getCoupons, supabase } from "../../supabase/supabase";
 import { LocalData } from "../../util/localData";
-import { couponSort } from "../../util/utils";
+import { couponSort, formatDate } from "../../util/utils";
 import Button from "../ui/Button";
 import { XIconSVG } from "../ui/SVG";
 
@@ -68,7 +68,11 @@ export default function DeleteCoupon({ handler, onClose, data }) {
           </Info>
           <Info>
             <SubTitle>만료일</SubTitle>
-            <Text>{data.expires_at || "영구"}</Text>
+            <Text>
+              {data.expires_at
+                ? formatDate(new Date(data.expires_at), true)
+                : "영구"}
+            </Text>
           </Info>
         </InfoBox>
         <DeleteBox>
