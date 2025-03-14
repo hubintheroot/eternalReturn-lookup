@@ -105,11 +105,16 @@ const Page = styled.div`
   position: relative;
 `;
 const Header = styled.header`
+  position: sticky;
+  top: 0;
+  z-index: 50;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
   height: 64px;
+  background-color: #fff;
+  box-sizing: border-box;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 `;
 const StyledNav = styled(Navigate)`

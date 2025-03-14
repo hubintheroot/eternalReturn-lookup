@@ -1,114 +1,93 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
+import { XIconSVG } from "../ui/SVG";
 
-export const itemList = [
-  { title: "이벤트 NP", value: "EventNP", key: 1, checked: false },
-  { title: "NP", value: "NP", key: 2, checked: false },
-  {
-    title: "연구소 데이터 박스",
-    value: "LabDataBox",
-    key: 3,
-    checked: false,
-  },
-  {
-    title: "스킨 데이터 박스",
-    value: "SkinDataBox",
-    key: 4,
-    checked: false,
-  },
-  { title: "A-Coin", value: "A-Coin", key: 5, checked: false },
-  { title: "이모티콘", value: "Emoji", key: 6, checked: false },
-  { title: "시즌 토큰", value: "SeasonToken", key: 7, checked: false },
-  { title: "브금", value: "BGM", key: 8, checked: false },
-  { title: "ER Point 부스트", value: "ERBoost", key: 9, checked: false },
-  { title: "A-Coin 부스트", value: "A-CoinBoost", key: 10, checked: false },
-  { title: "XP 부스트", value: "XPBoost", key: 11, checked: false },
-];
-
-export default function CouponForm({ title, onSubmit, onClose, data }) {
-  const [hasExpires, setHasExpires] = useState(false);
-  const [expires, setExpires] = useState();
-  const [item, setItem] = useState();
+export default function CouponForm({ text, onSubmit, onClose, data }) {
+  const [noExpiry, setNoExpiry] = useState(false);
+  const [expiry, setExpiry] = useState(formatDate(new Date()));
 
   useEffect(() => {
-    itemList.forEach((item) => (item.checked = false));
     if (data) {
       const expires_at = formatDate(new Date(data.expires_at));
-      const selectedItemList = data.description.split(", ");
-      const newItemList = [...itemList];
 
-      selectedItemList.forEach((item) => {
-        itemList.some(({ title }, i) => {
-          if (item === title) {
-            newItemList[i].checked = true;
-            return true;
-          } else return false;
-        });
-      });
-
-      setHasExpires(data.expires_at === null ? true : false);
-      setExpires(expires_at);
-      setItem(newItemList);
+      setNoExpiry(data.expires_at === null ? true : false);
+      setExpiry(expires_at);
     } else {
       const today = formatDate(new Date());
-      setExpires(today);
-      setItem(itemList);
+      setExpiry(today);
     }
   }, [data]);
 
   const checkHandler = () => {
-    setHasExpires(!hasExpires);
+    setNoExpiry(!noExpiry);
   };
 
   return (
     <Container>
-      <CloseButton onClick={onClose}>close</CloseButton>
-      <h2>{title}</h2>
-      <StyledForm onSubmit={onSubmit}>
+      <TitleContainer>
         <div>
-          <CouponInput
-            name="coupon-code"
+          <Title>{text.title}</Title>
+          <SubTitle>{text.sub}</SubTitle>
+        </div>
+        <CloseButton onClick={onClose}>
+          <XIconSVG />
+        </CloseButton>
+      </TitleContainer>
+      <Form onSubmit={onSubmit}>
+        <InputBox>
+          <Label htmlFor="coupon-name">쿠폰 이름</Label>
+          <Input
+            name="coupon_name"
+            id="coupon-name"
+            placeholder="쿠폰 이름"
+            defaultValue={data?.name}
+          />
+        </InputBox>
+        <InputBox>
+          <Label htmlFor="coupon-code">쿠폰 코드</Label>
+          <Input
+            name="coupon_code"
+            id="coupon-code"
             placeholder="쿠폰 코드"
             defaultValue={data?.code}
           />
-        </div>
-        <ExpiresContainer>
-          <ExpiresInput
-            type="datetime-local"
-            name="expires-at"
-            min="2023-07-20T00:00"
-            max="2100-01-01T23:59"
-            defaultValue={hasExpires ? null : expires}
-            disabled={hasExpires}
+        </InputBox>
+        <InputBox>
+          <Label htmlFor="coupon-reward">보상</Label>
+          <Input
+            name="coupon_reward"
+            id="coupon-reward"
+            placeholder="보상"
+            defaultValue={data?.description}
           />
-          <StyledLabel>
-            <input
-              onChange={checkHandler}
-              type="checkbox"
-              name="has-expires"
-              id="has-expires"
-              checked={hasExpires}
+        </InputBox>
+        <InputCheckBox>
+          <Input
+            onChange={checkHandler}
+            type="checkbox"
+            name="coupon_noExpiry"
+            id="coupon-noExpiry"
+            checked={noExpiry}
+          ></Input>
+          <Label htmlFor="coupon-noExpiry">이 쿠폰은 만료기한이 없습니다</Label>
+        </InputCheckBox>
+        {!noExpiry && (
+          <InputBox>
+            <Label htmlFor="coupon-expiresAt">만료일</Label>
+            <Input
+              type="datetime-local"
+              name="coupon_expiresAt"
+              min="2023-07-20T00:00"
+              max="2100-01-01T23:59"
+              placeholder=""
+              defaultValue={noExpiry ? null : expiry}
             />
-            <span>기한 없음</span>
-          </StyledLabel>
-        </ExpiresContainer>
-        <CheckBoxContainer>
-          {item?.map((item) => (
-            <StyledLabel htmlFor={item.value} key={item.key}>
-              <input
-                type="checkbox"
-                name={item.value}
-                id={item.value}
-                defaultChecked={item.checked}
-              />
-              <span>{item.title}</span>
-            </StyledLabel>
-          ))}
-        </CheckBoxContainer>
-        <ButtonContainer>
-          <SubmitButton type="submit">저장</SubmitButton>
-        </ButtonContainer>
-      </StyledForm>
+          </InputBox>
+        )}
+        <AddButtonBox>
+          <AddButton type="submit">{text.button}</AddButton>
+        </AddButtonBox>
+      </Form>
     </Container>
   );
 }
@@ -123,79 +102,114 @@ function formatDate(date) {
 }
 
 const Container = styled.div`
-  width: 300px;
-  @media screen and (min-width: 768px) {
-    width: 500px;
-  }
+  background-color: rgb(249, 249, 249);
+  border: 1px solid rgb(224, 224, 224);
+  border-radius: 0.5rem;
+  width: 100%;
+  max-width: 28rem;
+  max-height: calc(-2rem + 100vh);
+  overflow-y: auto;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px,
+    rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
 `;
-const StyledDiv = styled.div`
+const TitleContainer = styled.div`
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid rgb(224, 224, 224);
 `;
-const ButtonContainer = styled(StyledDiv)`
-  flex-direction: row;
+const Title = styled.h2`
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #000;
+`;
+const SubTitle = styled.p`
+  color: rgb(102, 102, 102);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+`;
+const CloseButton = styled.button`
+  display: flex;
+  align-items: center;
   justify-content: center;
-`;
-const ExpiresContainer = styled(StyledDiv)`
-  flex-direction: row;
-  gap: 0.2em;
-`;
-const CloseButton = styled.div`
-  margin-left: auto;
-  width: 4rem;
-  text-align: center;
-  border: 1px solid #000;
+  height: 2rem;
+  border-radius: 0.375rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: rgb(102, 102, 102);
 
-  &:hover {
-    cursor: pointer;
+  & svg {
+    width: 1.25rem;
+    height: 1.25rem;
   }
 `;
-const StyledForm = styled.form`
+const Form = styled.form`
+  padding: 1rem;
+`;
+const InputBox = styled.div`
+  margin-bottom: 1rem;
+`;
+const InputCheckBox = styled(InputBox)`
   display: flex;
-  flex-direction: column;
-  gap: 1em;
-`;
-const StyledInput = styled.input`
-  margin: 0;
-  padding: 1em;
-  font-size: 1em;
-  font-weight: normal;
-  font-family: Arial, Helvetica, sans-serif;
-  box-sizing: border-box;
-  border: 1px solid #000;
-  border-radius: 8px;
-`;
-const CouponInput = styled(StyledInput)`
-  width: 80%;
-`;
-const ExpiresInput = styled(StyledInput)`
-  width: fit-content;
-`;
-const CheckBoxContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(10em, 1fr));
-  gap: 1rem;
-  margin: 0;
-  box-sizing: border-box;
-  word-break: keep-all;
-`;
-const StyledLabel = styled.label`
-  width: fit-content;
-  & > span {
-    margin-left: 0.5em;
+  border: 1px solid rgb(224, 224, 224);
+  background-color: #fff;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  & > input {
+    width: fit-content;
+    margin-right: 1rem;
+    line-height: 1rem;
+  }
+  & > label {
+    margin: 0;
+    color: rgb(102, 102, 102);
   }
 `;
-const SubmitButton = styled.button`
-  padding: 1em 1.2em;
-  appearance: none;
-  -webkit-appearance: none;
+const Label = styled.label`
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: #000;
+`;
+const Input = styled.input`
+  width: 100%;
+  padding: 0.5rem 0.75rem;
   background-color: #fff;
   color: #000;
-  border: 1px solid #000;
-  box-sizing: border-box;
-  &:hover {
-    cursor: pointer;
+  border: 1px solid rgb(224, 224, 224);
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+`;
+const AddButtonBox = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  padding: 1rem;
+  border-top: 1px solid rgb(224, 224, 224);
+`;
+const AddButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #000;
+  color: #fff;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  & svg {
+    width: 1rem;
+    height: 1rem;
   }
-  @media screen and (min-width: 768px) {
-    padding: 0.5em 1em;
+
+  &:hover {
+    background-color: rgb(51, 51, 51);
   }
 `;

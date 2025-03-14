@@ -7,11 +7,7 @@ export default function Modal({ children }) {
     document.body.style = "overflow: hidden";
     return () => (document.body.style = "overflow: auto");
   }, []);
-  const content = (
-    <BackGround>
-      <Container>{children}</Container>
-    </BackGround>
-  );
+  const content = <BackGround>{children}</BackGround>;
 
   const el = document.getElementById("modal");
 
@@ -21,16 +17,16 @@ export default function Modal({ children }) {
 const BackGround = styled.div`
   background-color: rgba(0, 0, 0, 0.2);
   position: fixed;
-  width: 100vw;
-  height: 100vh;
+  inset: 0;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 `;
-const Container = styled.div`
-  background-color: white;
-  padding: 1rem;
-  margin: auto;
-  border-radius: 8px;
-  box-sizing: border-box;
-  box-shadow: rgba(0, 0, 0, 0.24) 0 3px 8px;
-`;
+// const Container = styled.div`
+//   background-color: white;
+//   padding: 1rem;
+//   border-radius: 8px;
+//   box-sizing: border-box;
+//   box-shadow: rgba(0, 0, 0, 0.24) 0 3px 8px;
+// `;

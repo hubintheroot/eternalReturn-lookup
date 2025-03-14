@@ -2,12 +2,13 @@ import { useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import { getCoupons } from "../supabase/supabase";
 import styled from "styled-components";
-import CouponCard from "../components/CouponCard";
+import CouponCard from "../components/Coupon/CouponCard";
 import Modal from "../components/Modal";
 import Toast from "../components/Toast";
 import AddCoupon from "../components/Coupon/AddCoupon";
 import { couponSort } from "../util/utils";
 import { LocalData } from "../util/localData";
+import { GiftBoxSVG, PlusIconSVG } from "../components/ui/SVG";
 // TODO: MUI쓰자..
 export default function CouponsView() {
   const user = useSelector((state) => state.userInfo.user);
@@ -26,20 +27,11 @@ export default function CouponsView() {
     const getData = async () => {
       try {
         const coupons = await getCoupons();
-        const localData = LocalData.get("Personalization").filter(
-          (item) => item.is_used
-        );
-
-        localData.forEach((nextData) => {
-          for (let i in coupons.data) {
-            if (nextData.code === coupons.data[i].code) {
-              coupons.data[i] = nextData;
-            }
-          }
-        });
-
-        const nextData = couponSort(coupons.data);
-        setData(nextData);
+        // const coupons = [];
+        if (coupons) {
+          const nextData = couponSort(coupons.data);
+          setData(nextData);
+        }
         setLoading(false);
       } catch (err) {
         console.error(err);
@@ -82,6 +74,14 @@ export default function CouponsView() {
     hide: () => setShowModal(false),
   };
 
+  const addCouponHandler = () => {
+    if (user) {
+      modalHandler.show();
+    } else {
+      toastHandler.alert("로그인이 필요합니다.");
+    }
+  };
+
   // TODO: 구현 목록
   // 1. supabase에서 쿠폰 데이터 가져오기 (완)
   // 2. 쿠폰 등록 구현 (완)
@@ -100,18 +100,28 @@ export default function CouponsView() {
   }
 
   return (
-    <div>
-      <div>
-        <Title>쿠폰 리스트</Title>
-      </div>
+    <Section>
+      <TitleContainer>
+        <TitleBox>
+          <GiftIconBox>
+            <GiftBoxSVG />
+          </GiftIconBox>
+          <Title>쿠폰</Title>
+        </TitleBox>
+        <AddButton onClick={addCouponHandler}>
+          <PlusIconSVG />
+          쿠폰 추가
+        </AddButton>
+      </TitleContainer>
       {loading ? (
-        <Section>
-          <div>loading...</div>
-        </Section>
+        <Container>
+          {/* TODO: 로딩 인터랙션 UI 구현하기 */}
+          <div>쿠폰 찾는 중...</div>
+        </Container>
       ) : (
-        <Section>
+        <Container>
           {data.length !== 0 ? (
-            <Ol>
+            <CouponContainer>
               {data.map((coupon) => (
                 <CouponCard
                   key={coupon.id}
@@ -126,13 +136,14 @@ export default function CouponsView() {
                   }}
                 />
               ))}
-            </Ol>
+            </CouponContainer>
           ) : (
-            <div>등록된 쿠폰이 없어요!</div>
+            <EmptyContainer>
+              <p>아직 등록된 쿠폰이 없습니다</p>
+            </EmptyContainer>
           )}
-        </Section>
+        </Container>
       )}
-      {user && <CouponAdd onClick={modalHandler.show}>쿠폰 등록</CouponAdd>}
       {showModal && (
         <Modal>
           <AddCoupon
@@ -146,7 +157,7 @@ export default function CouponsView() {
         </Modal>
       )}
       {toast.isShow && <Toast data={toast} handler={toastHandler} />}
-    </div>
+    </Section>
   );
 }
 
@@ -161,42 +172,82 @@ function setCouponUsed(oldData, usedCoupon = null) {
   return nextData;
 }
 
+const GiftIconBox = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  background-color: rgb(79, 70, 229);
+  color: #fff;
+  border-radius: 0.5rem;
+`;
 const Section = styled.section`
-  margin: 0 auto;
+  position: relative;
+  padding: 1rem 1.5rem;
+  background-color: rgb(248, 249, 250);
+  min-height: calc(100vh - 64px);
+`;
+const Container = styled.div`
   @media screen and (min-width: 768px) {
+    margin: 0 auto;
     max-width: 960px;
   }
 `;
-const CouponAdd = styled.div`
-  width: 128px;
-  background-color: #fff;
-  border: 1px solid #000;
-  border-radius: 100px;
-  box-sizing: border-box;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin: 4px;
-  padding: 1rem;
-  text-align: center;
-  font-size: 1.1rem;
-  font-weight: bold;
-  position: fixed;
-  bottom: 1.5rem;
-  left: 50%;
-  transform: translate(-50%, 0);
-`;
-const Ol = styled.ol`
-  list-style: none;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+const EmptyContainer = styled(Container)`
+  & > p {
+    text-align: center;
+    padding: 1rem;
+    color: rgb(100, 116, 139);
+    border: 1px solid rgb(226, 232, 240);
+    border-radius: 0.375rem;
+  }
 
   @media screen and (min-width: 768px) {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    justify-items: center;
-    gap: 1rem;
+    margin: 0 auto;
+    max-width: 960px;
   }
+`;
+const TitleContainer = styled(Container)`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+const TitleBox = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+`;
+const AddButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #000;
+  color: #fff;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  & svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  &:hover {
+    background-color: rgb(51, 51, 51);
+  }
+`;
+const CouponContainer = styled.div`
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
 `;
 const Title = styled.h2`
   text-align: center;
