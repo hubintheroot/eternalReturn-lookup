@@ -30,6 +30,7 @@ export default function EditCoupon({ handler, onClose, data }) {
 
     if (!name.trim()) {
       handler.toast.failed("쿠폰 이름을 입력해주세요.");
+      return;
     } else if (!code.trim()) {
       handler.toast.failed("쿠폰 코드를 입력해주세요.");
       return;
