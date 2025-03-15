@@ -95,7 +95,7 @@ export default function CharacterInfo() {
       loadEvent: () => {
         imageLoadedCount.current += 1;
 
-        if (imageLoadedCount.current === character.skins.length) {
+        if (imageLoadedCount.current === character.skins.length * 2) {
           dispatch(setCharDetailLoaded(false));
           imageLoadedCount.current = 0;
         }
