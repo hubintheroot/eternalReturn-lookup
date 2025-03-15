@@ -21,8 +21,6 @@ export default function UserInfo({ onClose, data }) {
     }
   };
 
-  console.log(data);
-
   return (
     <Container>
       <Header>
@@ -38,7 +36,10 @@ export default function UserInfo({ onClose, data }) {
         <InfoBox>
           <ImgContainer>
             <ImgBox>
-              <img src={data.avatar_url} alt="kakao profile" />
+              <img
+                src={data.avatar_url.replace("http:", "https:")}
+                alt="kakao profile"
+              />
             </ImgBox>
           </ImgContainer>
           <Info>

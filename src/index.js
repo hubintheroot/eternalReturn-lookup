@@ -6,6 +6,15 @@ import reportWebVitals from "./reportWebVitals";
 import { Provider } from "react-redux";
 import store from "./util/store";
 
+// production에서 로그 방지
+if (process.env.REACT_APP_NODE_ENV === "production") {
+  window.console = {
+    log: () => {},
+    warn: () => {},
+    error: () => {},
+  };
+}
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>

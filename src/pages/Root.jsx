@@ -25,7 +25,7 @@ export default function Root() {
         if (error) throw error;
         if (data?.user) dispatch(setUser(data.user));
       } catch (err) {
-        console.error("Error ferching user", err);
+        console.error("ferchUser Error Message:", err.message);
         logOut();
       }
     };

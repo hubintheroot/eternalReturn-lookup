@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { getCoupons, supabase } from "../../supabase/supabase";
-import { LocalData } from "../../util/localData";
 import { couponSort, formatDate } from "../../util/utils";
 import Button from "../ui/Button";
 import { XIconSVG } from "../ui/SVG";
@@ -11,16 +10,6 @@ async function del(id) {
     if (error) throw error;
 
     const coupons = await getCoupons();
-    const usedCoupons = LocalData.get("Personalization").filter(
-      (item) => item.is_used
-    );
-
-    usedCoupons.forEach((coupon) => {
-      for (let i in coupons.data) {
-        if (coupon.code === coupons.data[i].code)
-          coupons.data[i].is_used = coupon.is_used;
-      }
-    });
 
     return { ok: true, data: couponSort(coupons.data) };
   } catch (err) {
