@@ -57,20 +57,22 @@ export default function Root() {
   return (
     <Page>
       <Header>
-        <StyledNav info={links}></StyledNav>
-        {/* TODO: myProfile, LogOut 모달로 옮겨서 공간확보하기 */}
-        {user ? (
-          <UserBox>
-            <Button eventHandler={userInfoHandler.show} text="프로필">
-              <UserSVG />
-            </Button>
-            <Button eventHandler={logoutHandler} text="로그아웃">
-              <LogoutSVG />
-            </Button>
-          </UserBox>
-        ) : (
-          <KakaoLoginButton loginHandler={loginHandler} />
-        )}
+        <HeaderInner>
+          <StyledNav info={links}></StyledNav>
+          {/* TODO: myProfile, LogOut 모달로 옮겨서 공간확보하기 */}
+          {user ? (
+            <UserBox>
+              <Button eventHandler={userInfoHandler.show} text="프로필">
+                <UserSVG />
+              </Button>
+              <Button eventHandler={logoutHandler} text="로그아웃">
+                <LogoutSVG />
+              </Button>
+            </UserBox>
+          ) : (
+            <KakaoLoginButton loginHandler={loginHandler} />
+          )}
+        </HeaderInner>
       </Header>
       <Content />
       {showModal && (
@@ -100,14 +102,22 @@ const Header = styled.header`
   position: sticky;
   top: 0;
   z-index: 50;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
   height: 64px;
   background-color: #fff;
   box-sizing: border-box;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+`;
+const HeaderInner = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  @media screen and (min-width: 768px) {
+    max-width: 80rem;
+    margin: 0 auto;
+  }
 `;
 const StyledNav = styled(Navigate)`
   margin-right: 45px;

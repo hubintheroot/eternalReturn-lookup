@@ -48,6 +48,7 @@ const P = styled.p`
   display: ${(props) => props.$isContraction || "none"};
   padding: 0;
   margin: 0;
+  word-break: keep-all;
   @media screen and (min-width: 768px) {
     display: block;
   }

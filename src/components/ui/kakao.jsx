@@ -21,7 +21,7 @@ export const KakaoLoginButton = ({ loginHandler }) => {
   return (
     <Container onClick={loginHandler}>
       <KakaoSymbol />
-      <Label>로그인</Label>
+      <P>로그인</P>
     </Container>
   );
 };
@@ -40,17 +40,17 @@ const Container = styled.button`
   cursor: pointer;
 
   @media screen and (min-width: 768px) {
-    margin-right: 1rem;
+    margin-right: 0;
   }
 `;
-const Label = styled.label`
+const P = styled.p`
   line-height: 1rem;
   font-size: 1rem;
   font-weight: 600;
   color: rgba(0, 0, 0, 0.85);
+  padding: 0;
   margin: 0;
   word-break: keep-all;
-
   @media screen and (min-width: 768px) {
     font-size: 1rem;
   }
