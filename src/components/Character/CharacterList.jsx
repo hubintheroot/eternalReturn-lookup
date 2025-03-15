@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   setIsRotation,
   setState,
-} from "../features/sortOption/sortOptionSlice";
+} from "../../features/sortOption/sortOptionSlice";
 import styled from "styled-components";
 import CharacterCard from "./CharacterCard";
 

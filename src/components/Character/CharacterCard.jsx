@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { setCharListLoaded } from "../features/imageLoaded/imageLoadedSlice";
+import { setCharListLoaded } from "../../features/imageLoaded/imageLoadedSlice";
 import styled, { keyframes } from "styled-components";
 
 export default function CharacterCard({
@@ -118,7 +118,7 @@ const Free = styled.img`
   position: absolute;
   width: 16px;
   height: 16px;
-  z-index: 999;
+  z-index: 40;
   top: -5px;
   left: -5px;
 `;
