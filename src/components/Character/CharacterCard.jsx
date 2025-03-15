@@ -118,7 +118,7 @@ const Free = styled.img`
   position: absolute;
   width: 16px;
   height: 16px;
-  z-index: 999;
+  z-index: 40;
   top: -5px;
   left: -5px;
 `;

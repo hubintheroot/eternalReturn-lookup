@@ -2,26 +2,23 @@ import { useSelector } from "react-redux";
 import styled, { css } from "styled-components";
 import { Img } from "./MiniSizeImage";
 
-export default function FullSizeImage({ src, alt, handler, select, name }) {
+export default function FullSizeImage({ data, handler }) {
   const loading = useSelector((state) => state.imageLoaded.detailLoaded);
-  const isSelected =
-    src
-      .toLowerCase()
-      .replace(/[\s&]/, "")
-      .indexOf(select.replace(/[\s&]/, "").toLowerCase()) !== -1;
-  // select.replace(/[\s&]/, "").toLowerCase() ===
-  // src.split("/")[9].replace(/[\s&]/, "").toLowerCase();
+  const isSelected = data.select === data.skinID;
+
   return (
     <>
-      <Skel $visible={loading}>
-        <SkelTitle $visible={isSelected} />
-      </Skel>
+      {loading && (
+        <Skel $visible={loading}>
+          <SkelTitle $visible={isSelected} />
+        </Skel>
+      )}
       <Container $visible={!loading}>
-        <Title $visible={isSelected}>{name.kr}</Title>
+        <Title $visible={isSelected}>{data.name.kr}</Title>
         <FullImg
           $visible={isSelected}
-          src={src}
-          alt={alt}
+          src={data.src}
+          alt={data.name.en}
           onLoad={handler.loadEvent}
         />
       </Container>

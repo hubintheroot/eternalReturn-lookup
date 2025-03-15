@@ -1,18 +1,18 @@
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 
-export default function MiniSizeImage({ src, alt, handler, size }) {
+export default function MiniSizeImage({ data, handler }) {
   const loading = useSelector((state) => state.imageLoaded.detailLoaded);
 
   return (
     <>
-      <Skel style={{ display: loading ? "block" : "none" }} $size={size} />
+      {loading && <Skel $size={data.size} />}
       <Li
-        onClick={handler.setSelect}
+        onClick={() => handler.setSelect(data.skinID)}
         style={{ display: loading ? "none" : "block" }}
-        $size={size}
+        $size={data.size}
       >
-        <Img src={src} alt={alt} onLoad={handler.loadEvent} />
+        <Img src={data.src} alt={data.name.en} onLoad={handler.loadEvent} />
       </Li>
     </>
   );

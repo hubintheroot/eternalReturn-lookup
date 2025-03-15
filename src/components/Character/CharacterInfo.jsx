@@ -14,70 +14,61 @@ export default function CharacterInfo() {
   const dispatch = useDispatch();
   const loading = useSelector((state) => state.imageLoaded.detailLoaded);
   const data = useSelector((state) => state.characterData.data);
-  const [selectedSkin, setSelectedSkin] = useState();
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const [charName, setCharName] = useState();
   const [character, setCharacter] = useState();
-  const [skins, setSkins] = useState();
-  const [textContents, setTextContents] = useState();
   const imageLoadedCount = useRef(0);
 
   useEffect(() => {
-    setSelectedSkin("default");
     imageLoadedCount.current = 0;
-    dispatch(setCharDetailLoaded(true));
-
-    setCharName(pathname.replace("/characters/", ""));
-  }, [data, pathname, dispatch]);
-
-  useEffect(() => {
-    setCharacter(data.find((character) => charName === character.Name_EN));
-  }, [data, charName]);
-
-  useEffect(() => {
-    if (character) {
-      setSkins(
-        character.skins.filter((skin) => skin.mini_size && skin.full_size)
-      );
-      setTextContents([
+    const curCharacter = data.find(
+      (c) => pathname.length !== pathname.replace(c.Name_EN, "").length
+    );
+    const nextData = {
+      ...curCharacter,
+      selectedSkin: curCharacter.skins[0].skin_id,
+      textContents: [
         {
           id: 1,
           title: "이름",
-          content: character.Full_Name,
+          content: curCharacter.Full_Name,
           isStory: false,
         },
         {
           id: 2,
           title: "성별",
-          content: character.Gender,
+          content: curCharacter.Gender,
           isStory: false,
         },
         {
           id: 3,
           title: "나이",
-          content: character.Age,
+          content: curCharacter.Age,
           isStory: false,
         },
         {
           id: 4,
           title: "키",
-          content: character.Height,
+          content: curCharacter.Height,
           isStory: false,
         },
         {
           id: 5,
           title: "",
-          content: character.Story_Desc,
+          content: curCharacter.Story_Desc,
           isStory: true,
         },
-      ]);
-    }
-  }, [character]);
+      ],
+    };
+    setCharacter(nextData);
+    dispatch(setCharDetailLoaded(true));
+  }, [pathname, data, dispatch]);
 
   useEffect(() => {
     const eventHandler = {
       resizing: () => setWindowWidth(window.innerWidth),
     };
+
+    imageLoadedCount.current = 0;
 
     window.addEventListener("resize", eventHandler.resizing);
 
@@ -89,34 +80,29 @@ export default function CharacterInfo() {
   if (!data) {
     navigate("/");
   } else {
-    const chars = data.map((char) => char.Name_EN);
-    if (!chars.includes(charName)) {
-      return <NotFoundView message={`캐릭터 ${charName}`} />;
+    const chars = data.map((c) => c.Name_EN);
+    if (!chars.includes(character?.Name_EN)) {
+      return <NotFoundView message={`캐릭터`} />;
     }
 
     const handler = {
-      setSelect: (e) => {
-        if (e.target.alt) {
-          let skin_name = e.target.alt.replace(/%20/, " ");
-          setSelectedSkin(handler.getImagePath(skin_name));
-        }
+      setSelect: (nextSkinID) => {
+        // setSelectSkin(nextSkinID);
+        const nextData = { ...character };
+        nextData.selectedSkin = nextSkinID;
+        setCharacter(nextData);
       },
       loadEvent: () => {
         imageLoadedCount.current += 1;
 
-        if (imageLoadedCount.current === skins.length * 2) {
+        if (imageLoadedCount.current === character.skins.length) {
           dispatch(setCharDetailLoaded(false));
           imageLoadedCount.current = 0;
         }
       },
-      getImagePath: (skinName) => {
-        const upperA = charName.toUpperCase();
-        const upperB = skinName && skinName.replace(/[\s&]/g, "").toUpperCase();
-        return upperA === upperB ? "default" : skinName;
-      },
     };
 
-    if (skins) {
+    if (character) {
       return (
         <Section $isLoading={loading}>
           <TitleBox $isLoading={loading}>
@@ -134,7 +120,7 @@ export default function CharacterInfo() {
           </TitleBox>
           <Container>
             <InfoDiv $isLoading={loading}>
-              {textContents.map((info) => (
+              {character.textContents.map((info) => (
                 <InfoContent className="content" key={info.id}>
                   {info.isStory ? (
                     <DescContent className="story-desc">
@@ -151,27 +137,41 @@ export default function CharacterInfo() {
             </InfoDiv>
             <ImgDiv>
               <Ul>
-                {skins.map((skin) => (
-                  <MiniSizeImage
-                    src={skin.mini_size}
-                    alt={`${skin.name_en}`}
-                    handler={handler}
-                    size={windowWidth <= 768 ? 64 : 84}
-                    key={skin.skin_id}
-                  />
-                ))}
+                {character.skins.map(
+                  (skin) =>
+                    skin.mini_size &&
+                    skin.full_size && (
+                      <MiniSizeImage
+                        data={{
+                          src: skin.mini_size,
+                          name: { kr: skin.name_kr, en: skin.name_en },
+                          skinID: skin.skin_id,
+                          select: character.selectedSkin,
+                          size: windowWidth <= 768 ? 64 : 84,
+                        }}
+                        handler={handler}
+                        key={skin.skin_id}
+                      />
+                    )
+                )}
               </Ul>
               <FullBox>
-                {skins.map((skin) => (
-                  <FullSizeImage
-                    src={skin.full_size}
-                    alt={`${skin.name_en}`}
-                    name={{ kr: skin.name_kr, en: skin.name_en }}
-                    select={selectedSkin}
-                    handler={handler}
-                    key={skin.skin_id}
-                  />
-                ))}
+                {character.skins.map(
+                  (skin) =>
+                    skin.mini_size &&
+                    skin.full_size && (
+                      <FullSizeImage
+                        data={{
+                          src: skin.full_size,
+                          name: { kr: skin.name_kr, en: skin.name_en },
+                          skinID: skin.skin_id,
+                          select: character.selectedSkin,
+                        }}
+                        handler={handler}
+                        key={skin.skin_id}
+                      />
+                    )
+                )}
               </FullBox>
             </ImgDiv>
           </Container>
