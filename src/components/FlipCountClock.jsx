@@ -1,25 +1,45 @@
 import React from "react";
 import styled, { keyframes } from "styled-components";
 
-export default function FlipCountClock({ counter }) {
+export default function FlipCountClock({
+  counter,
+  color = "white",
+  bgColor = "#333",
+  borderColor = "mediumpurple",
+}) {
   return (
-    <StyledUl>
-      {nums &&
-        nums.map((num) => (
+    <StyledUl $borderColor={borderColor}>
+      {nums.map((num) => {
+        const isFront = num === counter;
+        const isBack = num === (counter + 1) % 10;
+        return (
           <StyledLi
             key={num}
-            className={`${num === counter ? "front" : ""} ${
-              num === (counter + 1) % 10 ? "back" : ""
-            }`}
+            className={`${isFront ? "front" : ""} ${isBack ? "back" : ""}`}
           >
             <StyledDiv className="upper">
-              <StyledNum className="num">{num}</StyledNum>
+              <StyledNum
+                className="num"
+                $customColor={color}
+                $bgColor={bgColor}
+                $borderColor={borderColor}
+              >
+                {num}
+              </StyledNum>
             </StyledDiv>
             <StyledDiv className="lower">
-              <StyledNum className="num">{num}</StyledNum>
+              <StyledNum
+                className="num"
+                $customColor={color}
+                $bgColor={bgColor}
+                $borderColor={borderColor}
+              >
+                {num}
+              </StyledNum>
             </StyledDiv>
           </StyledLi>
-        ))}
+        );
+      })}
     </StyledUl>
   );
 }
@@ -74,15 +94,36 @@ const hide = keyframes`
 const StyledUl = styled.ul`
   position: relative;
   margin: 5px;
-  width: 6vw;
-  height: 9vh;
-  margin: 2px;
-  border-radius: 6px;
-  border: 1px solid mediumpurple;
+  width: 35px;
+  height: 50px;
+  /* width: 6vw; */
+  /* height: 9vh; */
+  margin: 1px;
+  border-radius: 4px;
+  border: 1px solid ${(props) => props.$borderColor};
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.7);
-  font-size: 80px;
+  /* font-size: 80px; */
   font-weight: bold;
   list-style: none;
+  padding: 0;
+  overflow: hidden;
+  @media screen and (min-width: 400px) {
+    width: 40px;
+    height: 55px;
+  }
+
+  @media screen and (min-width: 768px) {
+    width: 45px;
+    height: 65px;
+    border-radius: 5px;
+  }
+
+  @media screen and (min-width: 990px) {
+    width: 50px;
+    height: 70px;
+    border-radius: 6px;
+    margin: 2px;
+  }
 `;
 
 const StyledLi = styled.li`
@@ -99,7 +140,6 @@ const StyledLi = styled.li`
     .upper {
       z-index: 2;
       animation: ${topToMiddle} 0.5s linear both;
-
       &::before {
         top: 0;
         left: 0;
@@ -200,9 +240,24 @@ const StyledNum = styled.div`
   height: 200%;
   align-items: center;
   justify-content: center;
-  background-color: #333;
-  border: 1px solid mediumpurple;
+  background-color: ${(props) => `${props.$bgColor}`};
+  border: 1px solid ${(props) => props.$borderColor};
   box-sizing: border-box;
   border-radius: 6px;
-  color: white;
+  color: ${(props) => `${props.$customColor}`};
+  font-size: 24px;
+
+  @media screen and (min-width: 400px) {
+    font-size: 26px;
+  }
+
+  @media screen and (min-width: 768px) {
+    font-size: 32px;
+    border-radius: 5px;
+  }
+
+  @media screen and (min-width: 990px) {
+    font-size: 36px;
+    border-radius: 6px;
+  }
 `;
