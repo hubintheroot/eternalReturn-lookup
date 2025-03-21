@@ -26,6 +26,8 @@ export default function CharacterInfo() {
     const nextData = {
       ...curCharacter,
       selectedSkin: curCharacter.skins[0].skin_id,
+      loadAbleSkin: curCharacter.skins.filter((s) => s.full_size && s.mini_size)
+        .length,
       textContents: [
         {
           id: 1,
@@ -95,12 +97,13 @@ export default function CharacterInfo() {
       loadEvent: () => {
         imageLoadedCount.current += 1;
 
-        if (imageLoadedCount.current === character.skins.length * 2) {
+        if (imageLoadedCount.current === character.loadAbleSkin * 2) {
           dispatch(setCharDetailLoaded(false));
           imageLoadedCount.current = 0;
         }
       },
     };
+    // console.log(character, character.skins);
 
     if (character) {
       return (
