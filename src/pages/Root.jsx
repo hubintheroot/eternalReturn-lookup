@@ -10,7 +10,7 @@ import { setUser } from "../features/loginInfo/userInfoSlice";
 import { Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { KakaoLoginButton } from "../components/ui/kakao";
-import { LogoutSVG, UserSVG } from "../components/ui/SVG";
+import { FeedbackSVG, LogoutSVG, UserSVG } from "../components/ui/SVG";
 
 export default function Root() {
   const user = useSelector((state) => state.userInfo.user);
@@ -74,6 +74,16 @@ export default function Root() {
           )}
         </HeaderInner>
       </Header>
+      <SurveyContainer>
+        <FeedbackContainer
+          href="https://forms.gle/hXXEEMWiiXeicxq2A"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <FeedbackSVG />
+          <span>피드백 설문하러 가기</span>
+        </FeedbackContainer>
+      </SurveyContainer>
       <Content />
       {showModal && (
         <Modal>
@@ -121,6 +131,25 @@ const HeaderInner = styled.div`
 `;
 const StyledNav = styled(Navigate)`
   margin-right: 45px;
+`;
+const SurveyContainer = styled.div`
+  width: 100%;
+  background-color: #73d3b2;
+`;
+const FeedbackContainer = styled.a`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.8rem;
+  gap: 0.5rem;
+
+  @media screen and (min-width: 768px) {
+    padding: 0.5rem 1rem;
+    transition: color 0.3s ease-in-out;
+    &:hover {
+      color: rgba(158, 3, 179, 0.8);
+    }
+  }
 `;
 const Content = styled(Outlet)`
   height: calc(100vh - Header);
