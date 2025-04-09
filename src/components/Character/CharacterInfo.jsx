@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setCharDetailLoaded } from "../../features/imageLoaded/imageLoadedSlice";
@@ -8,6 +8,53 @@ import DifficultyBox from "../DifficultyBox";
 import MiniSizeImage from "../MiniSizeImage";
 import FullSizeImage from "../FullSizeImage";
 
+const CharTextInfo = memo(({ textContents, isLoading }) => {
+  return (
+    <InfoDiv $isLoading={isLoading}>
+      {textContents?.map((info) => (
+        <InfoContent className="content" key={info.id}>
+          {info.isStory ? (
+            <DescContent className="story-desc">
+              <p>{info.content}</p>
+            </DescContent>
+          ) : (
+            <>
+              <InfoContentTitle>{info.title}</InfoContentTitle>
+              <div>{info.content}</div>
+            </>
+          )}
+        </InfoContent>
+      ))}
+    </InfoDiv>
+  );
+});
+
+const SkinImageList = memo(
+  ({ skins, windowWidth, onSkinSelect, onImageLoad }) => {
+    const loadableSkins = skins.filter(
+      (skin) => skin.mini_size && skin.full_size
+    );
+    const size = windowWidth <= 768 ? 64 : 84;
+    return (
+      <Ul>
+        {loadableSkins.map((skin) => (
+          <MiniSizeImage
+            key={skin.skin_id}
+            data={{
+              src: skin.mini_size,
+              skinID: skin.skin_id,
+              name: { kr: skin.name_kr, en: skin.name_en },
+              skinID: skin.skin_id,
+              size: size,
+            }}
+            handler={{ setSelect: onSkinSelect, loadEvent: onImageLoad }}
+          />
+        ))}
+      </Ul>
+    );
+  }
+);
+
 export default function CharacterInfo() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -16,18 +63,27 @@ export default function CharacterInfo() {
   const data = useSelector((state) => state.characterData.data);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [character, setCharacter] = useState();
+  const [selectedSkinID, setSelectedSkinID] = useState();
   const imageLoadedCount = useRef(0);
 
   useEffect(() => {
+    if (!data || !data.length) return;
+
     imageLoadedCount.current = 0;
-    const curCharacter = data.find(
-      (c) => pathname.length !== pathname.replace(c.Name_EN, "").length
+
+    const curCharacter = data.find((c) => pathname.includes(c.Name_EN));
+
+    if (!curCharacter) return;
+
+    const loadableSkins = curCharacter.skins.filter(
+      (s) => s.full_size && s.mini_size
     );
+
+    setSelectedSkinID(curCharacter.skins[0]?.skin_id);
+
     const nextData = {
       ...curCharacter,
-      selectedSkin: curCharacter.skins[0].skin_id,
-      loadAbleSkin: curCharacter.skins.filter((s) => s.full_size && s.mini_size)
-        .length,
+      loadAbleSkins: loadableSkins,
       textContents: [
         {
           id: 1,
@@ -66,122 +122,92 @@ export default function CharacterInfo() {
   }, [pathname, data, dispatch]);
 
   useEffect(() => {
-    const eventHandler = {
-      resizing: () => setWindowWidth(window.innerWidth),
-    };
+    const handleResize = () => setWindowWidth(window.innerWidth);
 
-    imageLoadedCount.current = 0;
-
-    window.addEventListener("resize", eventHandler.resizing);
-
+    window.addEventListener("resize", handleResize);
     return () => {
-      window.removeEventListener("resize", eventHandler.resizing);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
+  const handleSetSelect = useCallback(
+    (nextSkinID) => {
+      if (!character) return;
+      setSelectedSkinID(nextSkinID);
+    },
+    [character]
+  );
+
+  const handleImageLoad = useCallback(() => {
+    if (!character) return;
+    imageLoadedCount.current += 1;
+    if (imageLoadedCount.current === character.loadAbleSkins.length * 2) {
+      dispatch(setCharDetailLoaded(false));
+
+      imageLoadedCount.current = 0;
+    }
+  }, [character, dispatch]);
+
   if (!data) {
     navigate("/");
-  } else {
-    const chars = data.map((c) => c.Name_EN);
-    if (!chars.includes(character?.Name_EN)) {
-      return <NotFoundView message={`캐릭터`} />;
-    }
-
-    const handler = {
-      setSelect: (nextSkinID) => {
-        // setSelectSkin(nextSkinID);
-        const nextData = { ...character };
-        nextData.selectedSkin = nextSkinID;
-        setCharacter(nextData);
-      },
-      loadEvent: () => {
-        imageLoadedCount.current += 1;
-
-        if (imageLoadedCount.current === character.loadAbleSkin * 2) {
-          dispatch(setCharDetailLoaded(false));
-          imageLoadedCount.current = 0;
-        }
-      },
-    };
-    // console.log(character, character.skins);
-
-    if (character) {
-      return (
-        <Section $isLoading={loading}>
-          <TitleBox $isLoading={loading}>
-            <CharNameBox className="content">
-              <CharName>{character.Name_KR}</CharName>
-              <Span>{character.Story_Title}</Span>
-            </CharNameBox>
-            <ControlDiffBox className="content">
-              <div>조작 난이도</div>
-              <DifficultyBox
-                difficulty={character.Difficulty}
-                maxDifficulty={5}
-              />
-            </ControlDiffBox>
-          </TitleBox>
-          <Container>
-            <InfoDiv $isLoading={loading}>
-              {character.textContents.map((info) => (
-                <InfoContent className="content" key={info.id}>
-                  {info.isStory ? (
-                    <DescContent className="story-desc">
-                      <p>{info.content}</p>
-                    </DescContent>
-                  ) : (
-                    <>
-                      <InfoContentTitle>{info.title}</InfoContentTitle>
-                      <div>{info.content}</div>
-                    </>
-                  )}
-                </InfoContent>
-              ))}
-            </InfoDiv>
-            <ImgDiv>
-              <Ul>
-                {character.skins.map(
-                  (skin) =>
-                    skin.mini_size &&
-                    skin.full_size && (
-                      <MiniSizeImage
-                        data={{
-                          src: skin.mini_size,
-                          name: { kr: skin.name_kr, en: skin.name_en },
-                          skinID: skin.skin_id,
-                          select: character.selectedSkin,
-                          size: windowWidth <= 768 ? 64 : 84,
-                        }}
-                        handler={handler}
-                        key={skin.skin_id}
-                      />
-                    )
-                )}
-              </Ul>
-              <FullBox>
-                {character.skins.map(
-                  (skin) =>
-                    skin.mini_size &&
-                    skin.full_size && (
-                      <FullSizeImage
-                        data={{
-                          src: skin.full_size,
-                          name: { kr: skin.name_kr, en: skin.name_en },
-                          skinID: skin.skin_id,
-                          select: character.selectedSkin,
-                        }}
-                        handler={handler}
-                        key={skin.skin_id}
-                      />
-                    )
-                )}
-              </FullBox>
-            </ImgDiv>
-          </Container>
-        </Section>
-      );
-    }
+    return null;
   }
+  if (data && character && !data.some((c) => c.Name_EN === character.Name_EN)) {
+    return <NotFoundView message="캐릭터" />;
+  }
+
+  if (!character) {
+    return null;
+  }
+
+  return (
+    <Section $isLoading={loading}>
+      <TitleBox $isLoading={loading}>
+        <CharNameBox className="content">
+          <CharName>{character.Name_KR}</CharName>
+          <Span>{character.Story_Title}</Span>
+        </CharNameBox>
+        <ControlDiffBox className="content">
+          <div>조작 난이도</div>
+          <DifficultyBox difficulty={character.Difficulty} maxDifficulty={5} />
+        </ControlDiffBox>
+      </TitleBox>
+      <Container>
+        <CharTextInfo
+          textContents={character.textContents}
+          isLoading={loading}
+        />
+        <ImgDiv>
+          <SkinImageList
+            skins={character.skins}
+            windowWidth={windowWidth}
+            onSkinSelect={handleSetSelect}
+            onImageLoad={handleImageLoad}
+          />
+          <FullBox>
+            {character.skins.map(
+              (skin) =>
+                skin.mini_size &&
+                skin.full_size && (
+                  <FullSizeImage
+                    data={{
+                      src: skin.full_size,
+                      name: { kr: skin.name_kr, en: skin.name_en },
+                      skinID: skin.skin_id,
+                      select: selectedSkinID,
+                    }}
+                    handler={{
+                      loadEvent: handleImageLoad,
+                    }}
+                    key={skin.skin_id}
+                  />
+                )
+            )}
+          </FullBox>
+        </ImgDiv>
+      </Container>
+    </Section>
+  );
 }
 
 const skelAnimation = keyframes`
