@@ -7,17 +7,17 @@ import {
 import styled from "styled-components";
 import CharacterCard from "./CharacterCard";
 
+const selectList = {
+  release: { value: "release", text: "출시 순" },
+  ord: { value: "order", text: "가나다 순" },
+};
+
 export default function CharacterList() {
   const dispatch = useDispatch();
   const charData = useSelector((state) => state.characterData.data);
   const isRotation = useSelector((state) => state.sortOption.isRotation);
   const sortState = useSelector((state) => state.sortOption.state);
   const cnt = useRef(0);
-
-  const selectList = {
-    release: { value: "release", text: "출시 순" },
-    ord: { value: "order", text: "가나다 순" },
-  };
 
   const handleSetOrd = useCallback(
     (e) => dispatch(setState(e.target.value)),
@@ -28,21 +28,24 @@ export default function CharacterList() {
     [dispatch, isRotation]
   );
 
-  const sortData = useCallback((data) => {
-    if (!data) return [];
-    const tempData = [...data];
-    switch (sortState) {
-      case selectList.ord.value:
-        return tempData.sort((a, b) =>
-          a.Name_KR.localeCompare(b.Name_KR, "ko")
-        );
-      case selectList.release.value:
-        return tempData.sort((a, b) => a.CharacterID - b.CharacterID);
-      default:
-        console.log("func:: sortBy is something wrong.");
-        return tempData;
-    }
-  });
+  const sortData = useCallback(
+    (data) => {
+      if (!data) return [];
+      const tempData = [...data];
+      switch (sortState) {
+        case selectList.ord.value:
+          return tempData.sort((a, b) =>
+            a.Name_KR.localeCompare(b.Name_KR, "ko")
+          );
+        case selectList.release.value:
+          return tempData.sort((a, b) => a.CharacterID - b.CharacterID);
+        default:
+          console.log("func:: sortBy is something wrong.");
+          return tempData;
+      }
+    },
+    [sortState]
+  );
 
   const filterRotation = useCallback((data) => {
     if (!data) return [];
@@ -84,63 +87,63 @@ export default function CharacterList() {
     ));
   }, [processedData, cnt]);
 
-  const handler = {
-    setOrd: (e) => dispatch(setState(e.target.value)),
-    setRotation: () => dispatch(setIsRotation(!isRotation)),
-    rotationFilter: (data) => {
-      const rotation = [];
-      const other = [];
+  // const handler = {
+  //   setOrd: (e) => dispatch(setState(e.target.value)),
+  //   setRotation: () => dispatch(setIsRotation(!isRotation)),
+  //   rotationFilter: (data) => {
+  //     const rotation = [];
+  //     const other = [];
 
-      data.forEach((character) => {
-        if (character.Weekly_Free) rotation.push(character);
-        else other.push(character);
-      });
+  //     data.forEach((character) => {
+  //       if (character.Weekly_Free) rotation.push(character);
+  //       else other.push(character);
+  //     });
 
-      return rotation.concat(other);
-    },
+  //     return rotation.concat(other);
+  //   },
 
-    sortBy: (data) => {
-      const tempData = [].concat(data);
-      switch (sortState) {
-        case selectList.ord.value:
-          tempData.sort((a, b) => a.Name_KR.localeCompare(b.Name_KR, "ko"));
-          break;
+  //   sortBy: (data) => {
+  //     const tempData = [].concat(data);
+  //     switch (sortState) {
+  //       case selectList.ord.value:
+  //         tempData.sort((a, b) => a.Name_KR.localeCompare(b.Name_KR, "ko"));
+  //         break;
 
-        case selectList.release.value:
-          tempData.sort((a, b) => a.CharacterID - b.CharacterID);
-          break;
+  //       case selectList.release.value:
+  //         tempData.sort((a, b) => a.CharacterID - b.CharacterID);
+  //         break;
 
-        default:
-          console.log("func:: sortBy is something wrong.");
-      }
-      return tempData;
-    },
+  //       default:
+  //         console.log("func:: sortBy is something wrong.");
+  //     }
+  //     return tempData;
+  //   },
 
-    setCharacterCard: function () {
-      let newData = this.sortBy(charData);
-      if (isRotation) newData = this.rotationFilter(newData);
+  //   setCharacterCard: function () {
+  //     let newData = this.sortBy(charData);
+  //     if (isRotation) newData = this.rotationFilter(newData);
 
-      const size = {
-        height: 64,
-        width: 64,
-      };
-      const maxLength = newData.length;
-      const result = newData.map((data) => (
-        <CharacterCard
-          data={data}
-          maxLength={maxLength}
-          size={size}
-          cnt={cnt}
-          link={`/characters/${data.Name_EN}`}
-          bgPath={process.env.REACT_APP_BACKGROUND_IMAGE_PATH}
-          freeIconPath={process.env.REACT_APP_UNLOCK_ICON_PATH}
-          key={data.CharacterID}
-        />
-      ));
-      return result;
-    },
-  };
-  const data = charData && handler.setCharacterCard();
+  //     const size = {
+  //       height: 64,
+  //       width: 64,
+  //     };
+  //     const maxLength = newData.length;
+  //     const result = newData.map((data) => (
+  //       <CharacterCard
+  //         data={data}
+  //         maxLength={maxLength}
+  //         size={size}
+  //         cnt={cnt}
+  //         link={`/characters/${data.Name_EN}`}
+  //         bgPath={process.env.REACT_APP_BACKGROUND_IMAGE_PATH}
+  //         freeIconPath={process.env.REACT_APP_UNLOCK_ICON_PATH}
+  //         key={data.CharacterID}
+  //       />
+  //     ));
+  //     return result;
+  //   },
+  // };
+  // const data = charData && handler.setCharacterCard();
   return (
     <Section>
       <SubTitleDiv>
