@@ -8,33 +8,45 @@ import { isLogin, loginHandler, logOut, logoutHandler } from "../util/login";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../features/loginInfo/userInfoSlice";
 import { Outlet } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { KakaoLoginButton } from "../components/ui/kakao";
-import { LogoutSVG, UserSVG } from "../components/ui/SVG";
+import { FeedbackSVG, LogoutSVG, UserSVG } from "../components/ui/SVG";
 
-export default function Root() {
-  const user = useSelector((state) => state.userInfo.user);
-  const [showModal, setModal] = useState(false);
+const links = [
+  { link: "/news", text: "새소식" },
+  { link: "/coupons", text: "쿠폰" },
+  { link: "/characters", text: "실험체" },
+  { link: "/rank", text: "랭크" },
+];
+
+function useAuth() {
   const dispatch = useDispatch();
-
   useEffect(() => {
-    const fetchUser = async () => {
+    const checkExistingUser = async () => {
+      if (!isLogin) return;
       try {
-        const { data, error } = await supabase().auth.getUser();
+        const { data: sessionData, error: sessionError } =
+          await supabase().auth.getSession();
 
-        if (error) throw error;
-        if (data?.user) dispatch(setUser(data.user));
+        if (sessionError) {
+          throw sessionError;
+        }
+        if (sessionData?.session) {
+          const { data, error } = await supabase().auth.getUser();
+          if (error) throw error;
+          if (data?.user) dispatch(setUser(data.user));
+        }
       } catch (err) {
-        console.error("ferchUser Error Message:", err.message);
+        console.error("Auth Error Message:", err.message);
         logOut();
       }
     };
 
-    if (isLogin()) fetchUser();
+    checkExistingUser();
 
     const { data: listener } = supabase().auth.onAuthStateChange(
       (event, session) => {
-        if (event === "SIGNED_IN") {
+        if (event === "SIGNED_IN" && session?.user) {
           dispatch(setUser(session.user));
         } else if (event === "SIGNED_OUT") {
           dispatch(setUser(null));
@@ -42,17 +54,26 @@ export default function Root() {
       }
     );
 
-    return () => listener.subscription.unsubscribe();
+    return () => {
+      if (listener?.subscription?.unsubscribe) {
+        listener.subscription.unsubscribe();
+      }
+    };
   }, [dispatch]);
+}
 
-  const userInfoHandler = {
-    show: () => {
-      setModal(true);
-    },
-    hide: () => {
-      setModal(false);
-    },
-  };
+export default function Root() {
+  const user = useSelector((state) => state.userInfo.user);
+  const [showModal, setModal] = useState(false);
+
+  useAuth();
+
+  const showUserInfo = useCallback(() => {
+    setModal(true);
+  }, []);
+  const hideUserInfo = useCallback(() => {
+    setModal(false);
+  }, []);
 
   return (
     <Page>
@@ -62,7 +83,7 @@ export default function Root() {
           {/* TODO: myProfile, LogOut 모달로 옮겨서 공간확보하기 */}
           {user ? (
             <UserBox>
-              <Button eventHandler={userInfoHandler.show} text="프로필">
+              <Button eventHandler={showUserInfo} text="프로필">
                 <UserSVG />
               </Button>
               <Button eventHandler={logoutHandler} text="로그아웃">
@@ -74,11 +95,21 @@ export default function Root() {
           )}
         </HeaderInner>
       </Header>
+      <SurveyContainer>
+        <FeedbackContainer
+          href="https://forms.gle/hXXEEMWiiXeicxq2A"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <FeedbackSVG />
+          <span>피드백 설문하러 가기</span>
+        </FeedbackContainer>
+      </SurveyContainer>
       <Content />
       {showModal && (
         <Modal>
           <UserInfo
-            onClose={userInfoHandler.hide}
+            onClose={hideUserInfo}
             data={user?.user_metadata}
           ></UserInfo>
         </Modal>
@@ -86,13 +117,6 @@ export default function Root() {
     </Page>
   );
 }
-
-const links = [
-  { link: "/news", text: "새소식" },
-  { link: "/coupons", text: "쿠폰" },
-  { link: "/characters", text: "실험체" },
-  { link: "/rank", text: "랭크" },
-];
 
 const Page = styled.div`
   min-height: 100vh;
@@ -122,8 +146,30 @@ const HeaderInner = styled.div`
 const StyledNav = styled(Navigate)`
   margin-right: 45px;
 `;
+const SurveyContainer = styled.div`
+  position: sticky;
+  top: 64px;
+  z-index: 41;
+  width: 100%;
+  background-color: #73d3b2;
+`;
+const FeedbackContainer = styled.a`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.8rem;
+  gap: 0.5rem;
+
+  @media screen and (min-width: 768px) {
+    padding: 0.5rem 1rem;
+    transition: color 0.3s ease-in-out;
+    &:hover {
+      color: rgba(158, 3, 179, 0.8);
+    }
+  }
+`;
 const Content = styled(Outlet)`
-  height: calc(100vh - Header);
+  height: calc(100vh - 64px);
 `;
 const UserBox = styled.div`
   display: flex;

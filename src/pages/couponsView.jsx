@@ -186,7 +186,7 @@ const Section = styled.section`
   position: relative;
   padding: 1rem 1.5rem;
   background-color: rgb(248, 249, 250);
-  min-height: calc(100vh - 64px);
+  min-height: calc(100vh - 64px - 64px);
 `;
 const Container = styled.div`
   @media screen and (min-width: 768px) {
