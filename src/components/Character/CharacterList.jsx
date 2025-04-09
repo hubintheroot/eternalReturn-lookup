@@ -87,6 +87,66 @@ export default function CharacterList() {
     ));
   }, [processedData, cnt]);
 
+<<<<<<< HEAD
+=======
+  // const handler = {
+  //   setOrd: (e) => dispatch(setState(e.target.value)),
+  //   setRotation: () => dispatch(setIsRotation(!isRotation)),
+  //   rotationFilter: (data) => {
+  //     const rotation = [];
+  //     const other = [];
+
+  //     data.forEach((character) => {
+  //       if (character.Weekly_Free) rotation.push(character);
+  //       else other.push(character);
+  //     });
+
+  //     return rotation.concat(other);
+  //   },
+
+  //   sortBy: (data) => {
+  //     const tempData = [].concat(data);
+  //     switch (sortState) {
+  //       case selectList.ord.value:
+  //         tempData.sort((a, b) => a.Name_KR.localeCompare(b.Name_KR, "ko"));
+  //         break;
+
+  //       case selectList.release.value:
+  //         tempData.sort((a, b) => a.CharacterID - b.CharacterID);
+  //         break;
+
+  //       default:
+  //         console.log("func:: sortBy is something wrong.");
+  //     }
+  //     return tempData;
+  //   },
+
+  //   setCharacterCard: function () {
+  //     let newData = this.sortBy(charData);
+  //     if (isRotation) newData = this.rotationFilter(newData);
+
+  //     const size = {
+  //       height: 64,
+  //       width: 64,
+  //     };
+  //     const maxLength = newData.length;
+  //     const result = newData.map((data) => (
+  //       <CharacterCard
+  //         data={data}
+  //         maxLength={maxLength}
+  //         size={size}
+  //         cnt={cnt}
+  //         link={`/characters/${data.Name_EN}`}
+  //         bgPath={process.env.REACT_APP_BACKGROUND_IMAGE_PATH}
+  //         freeIconPath={process.env.REACT_APP_UNLOCK_ICON_PATH}
+  //         key={data.CharacterID}
+  //       />
+  //     ));
+  //     return result;
+  //   },
+  // };
+  // const data = charData && handler.setCharacterCard();
+>>>>>>> c711947bbffc76ccfda1fb5bb5c5a420107d0cd5
   return (
     <Section>
       <SubTitleDiv>
