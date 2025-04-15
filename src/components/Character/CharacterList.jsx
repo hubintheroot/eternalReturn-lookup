@@ -28,37 +28,37 @@ export default function CharacterList() {
     [dispatch, isRotation]
   );
 
-  const sortData = useCallback((data) => {
-    if (!data) return [];
-    const tempData = [...data];
-    switch (sortState) {
-      case selectList.ord.value:
-        return tempData.sort((a, b) =>
-          a.Name_KR.localeCompare(b.Name_KR, "ko")
-        );
-      case selectList.release.value:
-        return tempData.sort((a, b) => a.CharacterID - b.CharacterID);
-      default:
-        console.log("func:: sortBy is something wrong.");
-        return tempData;
-    }
-  });
-
-  const filterRotation = useCallback(
+  const sortData = useCallback(
     (data) => {
       if (!data) return [];
-      const rotation = [];
-      const other = [];
-
-      data.forEach((character) => {
-        if (character.Weekly_Free) rotation.push(character);
-        else other.push(character);
-      });
-
-      return rotation.concat(other);
+      const tempData = [...data];
+      switch (sortState) {
+        case selectList.ord.value:
+          return tempData.sort((a, b) =>
+            a.Name_KR.localeCompare(b.Name_KR, "ko")
+          );
+        case selectList.release.value:
+          return tempData.sort((a, b) => a.CharacterID - b.CharacterID);
+        default:
+          console.log("func:: sortBy is something wrong.");
+          return tempData;
+      }
     },
     [sortState]
   );
+
+  const filterRotation = useCallback((data) => {
+    if (!data) return [];
+    const rotation = [];
+    const other = [];
+
+    data.forEach((character) => {
+      if (character.Weekly_Free) rotation.push(character);
+      else other.push(character);
+    });
+
+    return rotation.concat(other);
+  }, []);
 
   const processedData = useMemo(() => {
     if (!charData) return [];
