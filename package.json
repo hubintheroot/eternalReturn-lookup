@@ -19,6 +19,9 @@
     "build": "vite build",
     "test": "vitest"
   },
+  "engines": {
+    "node": "22"
+  },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@vitejs/plugin-react": "^4.7.0",
