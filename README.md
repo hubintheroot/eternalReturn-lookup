@@ -1,7 +1,7 @@
 # 배포 페이지
 
-https://eternalreturn-lookup.netlify.app/
-https://eternalreturn-lookup.pages.dev/
+- [배포 페이지 보러가기](https://eternalreturn-lookup.pages.dev/)
+- [배포 페이지 보러가기 (2)](https://eternalreturn-lookup.netlify.app/)
 
 # EternalReturn Lookup
 
