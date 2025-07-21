@@ -1,9 +1,9 @@
 import { useRef, useState } from "react";
 import styled from "styled-components";
-import Modal from "../Modal";
+import Modal from "../../../common/components/Modal";
 import EditCoupon from "./EditCoupon";
 import DeleteCoupon from "./DeleteCoupon";
-import { CopyButtonSVG, DeleteButtonSVG, EditButtonSVG } from "../ui/SVG";
+import { CopyButtonSVG, DeleteButtonSVG, EditButtonSVG } from "../../../common/ui/SVG";
 
 export default function CouponCard({ data, isLogin, permission, handler }) {
   const [showModal, setModal] = useState(false);

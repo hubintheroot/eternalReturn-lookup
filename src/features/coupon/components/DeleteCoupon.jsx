@@ -1,19 +1,19 @@
-import styled from "styled-components";
-import { getCoupons, supabase } from "../../supabase/supabase";
-import { couponSort, formatDate } from "../../util/utils";
-import Button from "../ui/Button";
-import { XIconSVG } from "../ui/SVG";
+import styled from 'styled-components';
+import { getCoupons, supabase } from '../../../supabase/supabase';
+import { couponSort, formatDate } from '../../../common/utils/utils';
+import Button from '../../../common/ui/Button';
+import { XIconSVG } from '../../../common/ui/SVG';
 
 async function del(id) {
   try {
-    const { error } = await supabase().from("Coupons").delete().eq("id", id);
+    const { error } = await supabase().from('Coupons').delete().eq('id', id);
     if (error) throw error;
 
     const coupons = await getCoupons();
 
     return { ok: true, data: couponSort(coupons.data) };
   } catch (err) {
-    console.error("delete coupon error:", err);
+    console.error('delete coupon error:', err);
     return { ok: false, data: null };
   }
 }
@@ -21,17 +21,17 @@ async function del(id) {
 export default function DeleteCoupon({ handler, onClose, data }) {
   //   console.log(data, handler);
   const deleteCoupon = async () => {
-    if (window.confirm("삭제하시겠습니까?")) {
+    if (window.confirm('삭제하시겠습니까?')) {
       const res = await del(data.id);
       if (res.ok) {
-        handler.toast.success("쿠폰이 삭제되었습니다.");
+        handler.toast.success('쿠폰이 삭제되었습니다.');
         handler.setData(res.data);
       } else {
-        handler.toast.failed("알 수 없는 에러가 발생했습니다.");
+        handler.toast.failed('알 수 없는 에러가 발생했습니다.');
       }
       onClose();
     } else {
-      console.log("cancel");
+      console.log('cancel');
     }
   };
   return (
@@ -60,19 +60,19 @@ export default function DeleteCoupon({ handler, onClose, data }) {
             <Text>
               {data.expires_at
                 ? formatDate(new Date(data.expires_at), true)
-                : "영구"}
+                : '영구'}
             </Text>
           </Info>
         </InfoBox>
         <DeleteBox>
           <Button
             eventHandler={deleteCoupon}
-            text={"제거하기"}
-            color={"#fff"}
-            hoverColor={"none"}
-            backgroundColor={"#000"}
-            hoverBackgroundColor={"rgb(51, 51, 51)"}
-            display={"block"}
+            text={'제거하기'}
+            color={'#fff'}
+            hoverColor={'none'}
+            backgroundColor={'#000'}
+            hoverBackgroundColor={'rgb(51, 51, 51)'}
+            display={'block'}
           />
         </DeleteBox>
       </div>

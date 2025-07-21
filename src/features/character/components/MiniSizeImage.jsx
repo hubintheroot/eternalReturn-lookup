@@ -43,7 +43,7 @@ export const Img = styled.img`
   object-fit: cover;
   object-position: -1px -1px;
   box-sizing: border-box;
-  background-image: url(${process.env.REACT_APP_BACKGROUND_IMAGE_PATH});
+  background-image: url(${import.meta.env.VITE_BACKGROUND_IMAGE_PATH});
   background-repeat: no-repeat;
   background-size: cover;
 `;

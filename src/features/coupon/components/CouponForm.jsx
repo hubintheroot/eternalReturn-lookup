@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { XIconSVG } from "../ui/SVG";
-import { formatDate } from "../../util/utils";
+import { XIconSVG } from "../../../common/ui/SVG";
+import { formatDate } from "../../../common/utils/utils";
 
 export default function CouponForm({ text, onSubmit, onClose, data }) {
   const [noExpiry, setNoExpiry] = useState(data?.expires_at ? false : true);

@@ -2,12 +2,12 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
-import reportWebVitals from "./reportWebVitals";
+
 import { Provider } from "react-redux";
-import store from "./util/store";
+import store from "./common/utils/store";
 
 // production에서 로그 방지
-if (process.env.REACT_APP_NODE_ENV === "production") {
+if (import.meta.env.VITE_NODE_ENV === "production") {
   window.console = {
     log: () => {},
     warn: () => {},
@@ -26,7 +26,4 @@ root.render(
   </React.StrictMode>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+

@@ -5,7 +5,7 @@ import {
   setState,
 } from "../../features/sortOption/sortOptionSlice";
 import styled from "styled-components";
-import CharacterCard from "./CharacterCard";
+import CharacterCard from "./components/CharacterCard";
 
 const selectList = {
   release: { value: "release", text: "출시 순" },
@@ -28,37 +28,37 @@ export default function CharacterList() {
     [dispatch, isRotation]
   );
 
-  const sortData = useCallback((data) => {
-    if (!data) return [];
-    const tempData = [...data];
-    switch (sortState) {
-      case selectList.ord.value:
-        return tempData.sort((a, b) =>
-          a.Name_KR.localeCompare(b.Name_KR, "ko")
-        );
-      case selectList.release.value:
-        return tempData.sort((a, b) => a.CharacterID - b.CharacterID);
-      default:
-        console.log("func:: sortBy is something wrong.");
-        return tempData;
-    }
-  });
-
-  const filterRotation = useCallback(
+  const sortData = useCallback(
     (data) => {
       if (!data) return [];
-      const rotation = [];
-      const other = [];
-
-      data.forEach((character) => {
-        if (character.Weekly_Free) rotation.push(character);
-        else other.push(character);
-      });
-
-      return rotation.concat(other);
+      const tempData = [...data];
+      switch (sortState) {
+        case selectList.ord.value:
+          return tempData.sort((a, b) =>
+            a.Name_KR.localeCompare(b.Name_KR, "ko")
+          );
+        case selectList.release.value:
+          return tempData.sort((a, b) => a.CharacterID - b.CharacterID);
+        default:
+          console.log("func:: sortBy is something wrong.");
+          return tempData;
+      }
     },
     [sortState]
   );
+
+  const filterRotation = useCallback((data) => {
+    if (!data) return [];
+    const rotation = [];
+    const other = [];
+
+    data.forEach((character) => {
+      if (character.Weekly_Free) rotation.push(character);
+      else other.push(character);
+    });
+
+    return rotation.concat(other);
+  }, []);
 
   const processedData = useMemo(() => {
     if (!charData) return [];
@@ -80,8 +80,8 @@ export default function CharacterList() {
         size={size}
         cnt={cnt}
         link={`/characters/${data.Name_EN}`}
-        bgPath={process.env.REACT_APP_BACKGROUND_IMAGE_PATH}
-        freeIconPath={process.env.REACT_APP_UNLOCK_ICON_PATH}
+        bgPath={import.meta.env.VITE_BACKGROUND_IMAGE_PATH}
+        freeIconPath={import.meta.env.VITE_UNLOCK_ICON_PATH}
         key={data.CharacterID}
       />
     ));

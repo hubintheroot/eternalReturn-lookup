@@ -1,16 +1,16 @@
-import Navigate from "../components/Navigate";
-import Modal from "../components/Modal";
-import Button from "../components/ui/Button";
+import Navigate from "../common/components/Navigate";
+import Modal from "../common/components/Modal";
+import Button from "../common/ui/Button";
 import UserInfo from "./userInfo";
 import { supabase } from "../supabase/supabase";
 import { styled } from "styled-components";
-import { isLogin, loginHandler, logOut, logoutHandler } from "../util/login";
+import { isLogin, loginHandler, logOut, logoutHandler } from "../common/utils/login";
 import { useDispatch, useSelector } from "react-redux";
-import { setUser } from "../features/loginInfo/userInfoSlice";
+import { setUser } from "../features/login/userInfoSlice";
 import { Outlet } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
-import { KakaoLoginButton } from "../components/ui/kakao";
-import { FeedbackSVG, LogoutSVG, UserSVG } from "../components/ui/SVG";
+import { KakaoLoginButton } from "../common/ui/kakao";
+import { FeedbackSVG, LogoutSVG, UserSVG } from "../common/ui/SVG";
 
 const links = [
   { link: "/news", text: "새소식" },
