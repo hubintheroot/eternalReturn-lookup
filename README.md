@@ -1,74 +1,97 @@
 # 배포 페이지
 
 https://eternalreturn-lookup.netlify.app/
+https://eternalreturn-lookup.pages.dev/
 
-# Getting Started with Create React App
+# EternalReturn Lookup
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 프로젝트 소개
 
-## Available Scripts
+EternalReturn Lookup은 이터널 리턴 게임의 다양한 정보를 제공하는 웹 애플리케이션입니다. 스킨 이미지, 시즌 정보, 사용 가능한 쿠폰 등 게임과 관련된 유용한 정보들을 손쉽게 확인할 수 있습니다.
 
-In the project directory, you can run:
+**주요 기능:**
 
-### `npm start`
+- **스킨 및 캐릭터 정보 조회:** 다양한 캐릭터와 스킨 이미지를 찾아볼 수 있습니다.
+- **시즌 정보:** 현재 진행중인 시즌과 관련된 정보를 제공합니다.
+- **쿠폰 정보:** 사용 가능한 쿠폰 목록을 확인하고, 코드를 복사하여 게임 내에서 사용할 수 있습니다.
+- **신뢰성 있는 쿠폰 관리:** 사용자가 직접 쿠폰을 등록하고 수정할 수 있습니다. 쿠폰 정보의 신뢰도를 높이기 위해, 쿠폰 등록 및 수정 기능은 회원가입을 한 사용자에게만 제공됩니다.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+로그인하지 않은 사용자도 모든 정보(스킨, 시즌, 쿠폰)를 자유롭게 조회할 수 있습니다.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 프로젝트 구조
 
-### `npm test`
+```
+.
+├── public/
+│   ├── images/
+│   │   ├── backgroundImgs/
+│   │   └── icons/
+│   └── (기타 public 자산)
+├── src/
+│   ├── assets/
+│   │   └── images/
+│   │       ├── backgroundImgs/
+│   │       └── icons/
+│   ├── common/
+│   │   ├── components/
+│   │   ├── ui/
+│   │   └── utils/
+│   ├── features/
+│   │   ├── character/
+│   │   │   ├── components/
+│   │   │   └── pages/
+│   │   ├── coupon/
+│   │   │   ├── components/
+│   │   │   └── pages/
+│   │   ├── imageLoaded/
+│   │   ├── login/
+│   │   ├── season/
+│   │   │   ├── components/
+│   │   │   └── pages/
+│   │   └── sortOption/
+│   ├── pages/
+│   ├── supabase/
+│   └── (기타 src 폴더)
+├── index.html
+├── package.json
+├── package-lock.json
+├── README.md
+└── vite.config.js
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 실행 방법
 
-### `npm run build`
+1. **의존성 설치**
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+   ```bash
+   npm install
+   ```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+2. **환경 변수 설정**
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+   `.env` 파일을 프로젝트 루트에 생성하고, 다음 환경 변수를 추가합니다.
 
-### `npm run eject`
+   ```
+   VITE_SUPABASE_URL=your_supabase_url
+   VITE_SUPABASE_PUBLIC_ANON_KEY=your_supabase_public_anon_key
+   VITE_KAKAO_REST_KEY=your_kakao_rest_key
+   VITE_BACKGROUND_IMAGE_PATH=your_background_image_path
+   VITE_UNLOCK_ICON_PATH=your_unlock_icon_path
+   ```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+3. **개발 서버 실행**
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+   ```bash
+   npm run dev
+   ```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+   이제 브라우저에서 [http://localhost:5173](http://localhost:5173)으로 접속할 수 있습니다.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 사용 기술
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- React
+- Vite
+- Redux Toolkit
+- React Router
+- styled-components
+- Supabase
