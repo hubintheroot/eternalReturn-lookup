@@ -1,12 +1,12 @@
-import { memo, useCallback, useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { setCharDetailLoaded } from "../../features/imageLoaded/imageLoadedSlice";
-import styled, { keyframes, css } from "styled-components";
-import NotFoundView from "../../pages/notfoundView";
-import DifficultyBox from "../DifficultyBox";
-import MiniSizeImage from "../MiniSizeImage";
-import FullSizeImage from "../FullSizeImage";
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { setCharDetailLoaded } from '../../imageLoaded/imageLoadedSlice';
+import styled, { keyframes, css } from 'styled-components';
+import NotFoundView from '../../../pages/notfoundView';
+import DifficultyBox from './DifficultyBox';
+import MiniSizeImage from './MiniSizeImage';
+import FullSizeImage from './FullSizeImage';
 
 const CharTextInfo = memo(({ textContents, isLoading }) => {
   return (
@@ -44,7 +44,6 @@ const SkinImageList = memo(
               src: skin.mini_size,
               skinID: skin.skin_id,
               name: { kr: skin.name_kr, en: skin.name_en },
-              skinID: skin.skin_id,
               size: size,
             }}
             handler={{ setSelect: onSkinSelect, loadEvent: onImageLoad }}
@@ -87,31 +86,31 @@ export default function CharacterInfo() {
       textContents: [
         {
           id: 1,
-          title: "이름",
+          title: '이름',
           content: curCharacter.Full_Name,
           isStory: false,
         },
         {
           id: 2,
-          title: "성별",
+          title: '성별',
           content: curCharacter.Gender,
           isStory: false,
         },
         {
           id: 3,
-          title: "나이",
+          title: '나이',
           content: curCharacter.Age,
           isStory: false,
         },
         {
           id: 4,
-          title: "키",
+          title: '키',
           content: curCharacter.Height,
           isStory: false,
         },
         {
           id: 5,
-          title: "",
+          title: '',
           content: curCharacter.Story_Desc,
           isStory: true,
         },
@@ -124,9 +123,9 @@ export default function CharacterInfo() {
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
 
-    window.addEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
     return () => {
-      window.removeEventListener("resize", handleResize);
+      window.removeEventListener('resize', handleResize);
     };
   }, []);
 
@@ -149,7 +148,7 @@ export default function CharacterInfo() {
   }, [character, dispatch]);
 
   if (!data) {
-    navigate("/");
+    navigate('/');
     return null;
   }
   if (data && character && !data.some((c) => c.Name_EN === character.Name_EN)) {
@@ -347,10 +346,10 @@ const Span = styled.span`
   display: flex;
   align-items: end;
   &::before {
-    content: "“";
+    content: '“';
   }
   &::after {
-    content: "”";
+    content: '”';
   }
 `;
 const ControlDiffBox = styled(FlexDiv)`

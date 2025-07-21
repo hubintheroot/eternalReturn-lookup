@@ -1,9 +1,9 @@
 import styled from "styled-components";
-import { resignHandler } from "../util/login";
+import { resignHandler } from "../common/utils/login";
 import { useDispatch } from "react-redux";
-import { setUser } from "../features/loginInfo/userInfoSlice";
-import Button from "../components/ui/Button";
-import { XIconSVG } from "../components/ui/SVG";
+import { setUser } from "../features/login/userInfoSlice";
+import Button from "../common/ui/Button";
+import { XIconSVG } from "../common/ui/SVG";
 
 export default function UserInfo({ onClose, data }) {
   const dispatch = useDispatch();

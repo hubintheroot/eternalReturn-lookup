@@ -1,11 +1,10 @@
-import React from "react";
-import styled, { keyframes } from "styled-components";
+import styled, { keyframes } from 'styled-components';
 
 export default function FlipCountClock({
   counter,
-  color = "white",
-  bgColor = "#333",
-  borderColor = "mediumpurple",
+  color = 'white',
+  bgColor = '#333',
+  borderColor = 'mediumpurple',
 }) {
   return (
     <StyledUl $borderColor={borderColor}>
@@ -15,7 +14,7 @@ export default function FlipCountClock({
         return (
           <StyledLi
             key={num}
-            className={`${isFront ? "front" : ""} ${isBack ? "back" : ""}`}
+            className={`${isFront ? 'front' : ''} ${isBack ? 'back' : ''}`}
           >
             <StyledDiv className="upper">
               <StyledNum
@@ -198,7 +197,7 @@ const StyledDiv = styled.div`
     z-index: 2;
     width: 100%;
     height: 100%;
-    content: "";
+    content: '';
   }
 
   &.upper {
@@ -217,7 +216,7 @@ const StyledDiv = styled.div`
       width: 100%;
       height: 1px;
       background-color: rgba(0, 0, 0, 0.4);
-      content: "";
+      content: '';
     }
   }
 

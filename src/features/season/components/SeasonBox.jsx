@@ -1,9 +1,9 @@
-import { useEffect, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { setSeasonInfo } from "../features/seasonInfo/seasonInfoSlice";
-import styled from "styled-components";
-import { supabase } from "../supabase/supabase";
-import CountDown from "./CountDown";
+import { useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setSeasonInfo } from '../seasonInfoSlice';
+import styled from 'styled-components';
+import { supabase } from '../../../supabase/supabase';
+import CountDown from './CountDown';
 
 export default function SeasonBox() {
   const dispatch = useDispatch();
@@ -14,9 +14,9 @@ export default function SeasonBox() {
     async function getData() {
       try {
         const res = await supabase()
-          .from("seasonInfo")
-          .select("*")
-          .eq("isCurrent", true);
+          .from('seasonInfo')
+          .select('*')
+          .eq('isCurrent', true);
         dispatch(setSeasonInfo(res.data[0]));
       } catch (err) {
         console.error(err);
@@ -43,10 +43,10 @@ export default function SeasonBox() {
         <ContentWrapper>
           <TitleDiv className="season-title-box">
             <SeasonTitle>
-              {seasonInfo.isPre ? "프리 시즌" : "시즌"} {seasonInfo.season}
+              {seasonInfo.isPre ? '프리 시즌' : '시즌'} {seasonInfo.season}
             </SeasonTitle>
             <SeasonPeriodInfo>
-              {removeMinutes(seasonInfo.start)} ~{" "}
+              {removeMinutes(seasonInfo.start)} ~{' '}
               {removeMinutes(seasonInfo.end)}
             </SeasonPeriodInfo>
           </TitleDiv>
@@ -64,7 +64,7 @@ export default function SeasonBox() {
   );
 }
 
-const removeMinutes = (date) => date.replace(/\d{2}:\d{2}/g, "");
+const removeMinutes = (date) => date.replace(/\d{2}:\d{2}/g, '');
 
 const Container = styled.div`
   text-align: center;

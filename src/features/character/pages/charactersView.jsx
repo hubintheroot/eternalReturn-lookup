@@ -1,10 +1,10 @@
-import { useEffect, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Outlet } from "react-router-dom";
-import { setData } from "../features/characterInfo/characterInfoSlice";
-import { styled } from "styled-components";
-import { supabase } from "../supabase/supabase";
-import CharacterList from "../components/Character/CharacterList";
+import { useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Outlet } from 'react-router-dom';
+import { setData } from '../characterInfoSlice';
+import { styled } from 'styled-components';
+import { supabase } from '../../../supabase/supabase';
+import CharacterList from '../CharacterList';
 
 export default function CharactersView() {
   const dispatch = useDispatch();
@@ -15,21 +15,21 @@ export default function CharactersView() {
     async function getData() {
       try {
         const character = await supabase()
-          .from("Characters")
-          .select("*")
-          .order("CharacterID", { ascending: true });
+          .from('Characters')
+          .select('*')
+          .order('CharacterID', { ascending: true });
 
         const skin = await supabase()
-          .from("Skins")
-          .select("*")
-          .order("character_id", { ascending: true })
-          .order("skin_id", { ascending: true });
+          .from('Skins')
+          .select('*')
+          .order('character_id', { ascending: true })
+          .order('skin_id', { ascending: true });
 
         const data = character.data.map((charData) => {
-          charData.Story_Desc = charData.Story_Desc.replace(/\\n/g, "\n");
+          charData.Story_Desc = charData.Story_Desc.replace(/\\n/g, '\n');
           charData.ImagePath = charData.ImagePath.replace(
-            "jsdelivr.net",
-            "statically.io"
+            'jsdelivr.net',
+            'statically.io'
           );
           const tempSkinData = skin.data.filter(
             (skinData) => charData.CharacterID === skinData.character_id
@@ -41,12 +41,12 @@ export default function CharactersView() {
             const m_size = img_info.mini_size;
             if (f_size !== null && m_size !== null) {
               tempSkinData[i].full_size = f_size.replace(
-                "jsdelivr.net",
-                "statically.io"
+                'jsdelivr.net',
+                'statically.io'
               );
               tempSkinData[i].mini_size = m_size.replace(
-                "jsdelivr.net",
-                "statically.io"
+                'jsdelivr.net',
+                'statically.io'
               );
             }
           }
@@ -54,7 +54,7 @@ export default function CharactersView() {
           return charData;
         });
         dispatch(setData(data));
-        console.log("getData is worked");
+        console.log('getData is worked');
       } catch (err) {
         console.error(err);
       }

@@ -5,7 +5,7 @@ import {
   setState,
 } from "../../features/sortOption/sortOptionSlice";
 import styled from "styled-components";
-import CharacterCard from "./CharacterCard";
+import CharacterCard from "./components/CharacterCard";
 
 const selectList = {
   release: { value: "release", text: "출시 순" },
@@ -80,8 +80,8 @@ export default function CharacterList() {
         size={size}
         cnt={cnt}
         link={`/characters/${data.Name_EN}`}
-        bgPath={process.env.REACT_APP_BACKGROUND_IMAGE_PATH}
-        freeIconPath={process.env.REACT_APP_UNLOCK_ICON_PATH}
+        bgPath={import.meta.env.VITE_BACKGROUND_IMAGE_PATH}
+        freeIconPath={import.meta.env.VITE_UNLOCK_ICON_PATH}
         key={data.CharacterID}
       />
     ));

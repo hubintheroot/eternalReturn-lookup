@@ -1,14 +1,14 @@
-import { useSelector } from "react-redux";
-import { useEffect, useRef, useState } from "react";
-import { getCoupons } from "../supabase/supabase";
-import styled from "styled-components";
-import CouponCard from "../components/Coupon/CouponCard";
-import Modal from "../components/Modal";
-import Toast from "../components/Toast";
-import AddCoupon from "../components/Coupon/AddCoupon";
-import { couponSort } from "../util/utils";
-import { LocalData } from "../util/localData";
-import { GiftBoxSVG, PlusIconSVG } from "../components/ui/SVG";
+import { useSelector } from 'react-redux';
+import { useEffect, useRef, useState } from 'react';
+import { getCoupons } from '../../../supabase/supabase';
+import styled from 'styled-components';
+import CouponCard from '../components/CouponCard';
+import Modal from '../../../common/components/Modal';
+import Toast from '../../../common/components/Toast';
+import AddCoupon from '../components/AddCoupon';
+import { couponSort } from '../../../common/utils/utils';
+import { LocalData } from '../../../common/utils/localData';
+import { GiftBoxSVG, PlusIconSVG } from '../../../common/ui/SVG';
 // TODO: MUI쓰자..
 export default function CouponsView() {
   const user = useSelector((state) => state.userInfo.user);
@@ -53,19 +53,19 @@ export default function CouponsView() {
     hide: () => {
       setToast({
         isShow: false,
-        message: "",
-        status: "failed",
+        message: '',
+        status: 'failed',
         timer: timerRef,
       });
     },
     alert: function (message) {
-      this.show({ message: message, status: "alert" });
+      this.show({ message: message, status: 'alert' });
     },
     success: function (message) {
-      this.show({ message: message, status: "successed" });
+      this.show({ message: message, status: 'successed' });
     },
     failed: function (message) {
-      this.show({ message: message, status: "failed" });
+      this.show({ message: message, status: 'failed' });
     },
   };
 
@@ -78,7 +78,7 @@ export default function CouponsView() {
     if (user) {
       modalHandler.show();
     } else {
-      toastHandler.alert("로그인이 필요합니다.");
+      toastHandler.alert('로그인이 필요합니다.');
     }
   };
 
@@ -168,7 +168,7 @@ function setCouponUsed(oldData, usedCoupon = null) {
   tempCoupon.is_used = true;
   tempData[index] = tempCoupon;
   const nextData = couponSort(tempData);
-  LocalData.set("Personalization", nextData);
+  LocalData.set('Personalization', nextData);
   return nextData;
 }
 
