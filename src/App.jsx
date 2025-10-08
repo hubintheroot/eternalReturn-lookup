@@ -1,14 +1,7 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { RouterInfo } from './common/router/router';
-
-const router = createBrowserRouter(RouterInfo);
+import { AppProvider } from '@/app/providers';
 
 function App() {
-  return (
-    <div>
-      <RouterProvider router={router} />
-    </div>
-  );
+  return <AppProvider />;
 }
 
 export default App;

@@ -30,11 +30,98 @@ EternalReturn Lookup 프로젝트는 평소 즐기던 게임 '이터널 리턴'�
 - **Backend (BaaS):** Supabase
 - **Language:** JavaScript (ES6+)
 
-## 3. 아키텍처: ‘어떻게’ 만들었는가?
+## 3. 아키텍처: '어떻게' 만들었는가?
 
-사용자 경험(UX)과 개발 경험(DX)을 모두 향상시키기 위해 다음과 같은 아키텍처를 설계하고 적용했습니다.
+사용자 경험(UX)과 개발 경험(DX)을 모두 향상시키기 위해 **Feature-Sliced Design (FSD)** 아키텍처를 도입했습니다.
 
-### 3.1. 상태 관리: “데이터 흐름을 예측 가능하게”
+### 3.1. FSD 아키텍처: "확장 가능하고 유지보수가 쉬운 구조"
+
+#### 문제 정의
+
+프로젝트가 성장함에 따라 파일과 컴포넌트가 늘어나면서 코드 구조를 파악하기 어려워지고, 새로운 기능을 추가하거나 기존 기능을 수정할 때 영향 범위를 예측하기 힘들어졌습니다. 전통적인 폴더 구조는 기술별로 분류되어 있어 비즈니스 로직의 응집도가 떨어지는 문제가 있었습니다.
+
+#### 해결 방안: Feature-Sliced Design 도입
+
+**FSD(Feature-Sliced Design)**는 프론트엔드 애플리케이션을 계층(layer)과 슬라이스(slice)로 구조화하는 아키텍처 방법론입니다. 비즈니스 로직을 기준으로 코드를 구조화하여 확장성, 유지보수성, 그리고 팀 협업 효율성을 높입니다.
+
+**프로젝트 구조:**
+
+```
+src/
+├── app/                    # 애플리케이션 레이어
+│   ├── providers/         # Provider 설정 (Redux, Router 등)
+│   ├── router/            # 라우팅 설정
+│   └── store/             # 전역 스토어 설정
+├── pages/                  # 페이지 레이어
+│   ├── couponsView.jsx    # 쿠폰 페이지
+│   ├── charactersView.jsx # 캐릭터 목록 페이지
+│   ├── rankView.jsx       # 랭크 정보 페이지
+│   └── ...
+├── features/              # 기능 레이어
+│   ├── character-list/    # 캐릭터 목록 기능
+│   ├── character-info/    # 캐릭터 상세 정보 기능
+│   ├── coupon-management/ # 쿠폰 관리 기능
+│   └── season-display/    # 시즌 정보 표시 기능
+├── entities/              # 엔티티 레이어
+│   ├── character/         # 캐릭터 엔티티
+│   ├── season/            # 시즌 엔티티
+│   ├── coupon/            # 쿠폰 엔티티
+│   ├── user/              # 사용자 엔티티
+│   ├── sort-option/       # 정렬 옵션 엔티티
+│   └── image-loaded/      # 이미지 로딩 상태 엔티티
+└── shared/                # 공유 레이어
+    ├── ui/                # 공통 UI 컴포넌트
+    ├── lib/               # 유틸리티 함수
+    └── api/               # API 설정 (Supabase 등)
+```
+
+**각 레이어의 역할:**
+
+1. **app** - 애플리케이션 전역 설정 (라우터, 스토어, 프로바이더)
+2. **pages** - 라우팅 단위의 페이지 컴포넌트
+3. **features** - 사용자 시나리오와 기능 단위 모듈
+4. **entities** - 비즈니스 엔티티와 상태 관리
+5. **shared** - 재사용 가능한 공통 모듈
+
+**의존성 규칙:**
+
+FSD는 **단방향 의존성 규칙**을 따릅니다. 상위 레이어는 하위 레이어를 import 할 수 있지만, 하위 레이어는 상위 레이어를 import 할 수 없습니다.
+
+```
+app → pages → features → entities → shared
+```
+
+이를 통해 순환 참조를 방지하고, 각 모듈의 독립성을 보장합니다.
+
+_기술 명세: Store 설정 (`src/app/store/index.js`)_
+
+```javascript
+import { configureStore } from '@reduxjs/toolkit';
+import characterDataReducer from '@/entities/character/model/characterInfoSlice';
+import sortOptionSliceReducer from '@/entities/sort-option/model/sortOptionSlice';
+import imageLoadedSlice from '@/entities/image-loaded/model/imageLoadedSlice';
+import seasonInfoSlice from '@/entities/season/model/seasonInfoSlice';
+import userInfoSlice from '@/entities/user/model/userInfoSlice';
+
+export default configureStore({
+  reducer: {
+    characterData: characterDataReducer,
+    sortOption: sortOptionSliceReducer,
+    imageLoaded: imageLoadedSlice,
+    seasonInfo: seasonInfoSlice,
+    userInfo: userInfoSlice,
+  },
+});
+```
+
+#### 기대 효과
+
+- **확장성:** 새로운 기능을 추가할 때 기존 코드에 영향을 최소화하며 독립적으로 개발 가능
+- **유지보수성:** 비즈니스 로직별로 코드가 응집되어 있어 수정 시 영향 범위를 명확히 파악 가능
+- **협업 효율성:** 팀원들이 각자 다른 기능(feature)을 동시에 개발해도 충돌이 적음
+- **코드 재사용성:** shared 레이어의 공통 모듈을 여러 곳에서 재사용 가능
+
+### 3.2. 상태 관리: "데이터 흐름을 예측 가능하게"
 
 #### 문제 정의
 
@@ -44,28 +131,7 @@ EternalReturn Lookup 프로젝트는 평소 즐기던 게임 '이터널 리턴'�
 
 전역 상태와 지역 상태의 역할을 명확히 분리하는 전략을 채택했습니다.
 
-1.  **전역 상태 (Global State):** `Redux Toolkit`을 사용하여 애플리케이션 전반에서 필요한 데이터(사용자 정보, API로 받은 캐릭터 데이터 등)를 관리합니다. `createSlice`를 통해 상태, 리듀서, 액션을 모듈화하여 기능별로 응집도를 높였습니다.
-
-    _기술 명세: Store 설정 (`src/common/utils/store.js`)_
-
-    ```javascript
-    import { configureStore } from '@reduxjs/toolkit';
-    import characterDataReducer from '../../features/character/characterInfoSlice';
-    import sortOptionSliceReducer from '../../features/sortOption/sortOptionSlice';
-    import imageLoadedSlice from '../../features/imageLoaded/imageLoadedSlice';
-    import seasonInfoSlice from '../../features/season/seasonInfoSlice';
-    import userInfoSlice from '../../features/login/userInfoSlice';
-
-    export default configureStore({
-      reducer: {
-        characterData: characterDataReducer,
-        sortOption: sortOptionSliceReducer,
-        imageLoaded: imageLoadedSlice,
-        seasonInfo: seasonInfoSlice,
-        userInfo: userInfoSlice,
-      },
-    });
-    ```
+1.  **전역 상태 (Global State):** `Redux Toolkit`을 사용하여 애플리케이션 전반에서 필요한 데이터(사용자 정보, API로 받은 캐릭터 데이터 등)를 관리합니다. `createSlice`를 통해 상태, 리듀서, 액션을 모듈화하여 기능별로 응집도를 높였습니다. FSD 아키텍처에서는 각 엔티티의 상태를 `entities` 레이어에서 관리하고, `app/store`에서 통합합니다.
 
 2.  **지역 상태 (Local State):** 단일 컴포넌트 내에서만 유효한 UI 상태(모달의 열림/닫힘, 폼 입력 값 등)는 `useState`를 사용합니다. 이는 전역 스토어를 불필요한 상태로부터 보호하고, 컴포넌트의 독립성과 재사용성을 확보하는 결정이었습니다.
 
@@ -74,7 +140,7 @@ EternalReturn Lookup 프로젝트는 평소 즐기던 게임 '이터널 리턴'�
 - **개발자 경험:** 데이터 흐름이 단방향으로 예측 가능해져 디버깅이 용이해지고, 기능 추가 및 수정 시 영향을 받는 범위를 명확히 파악할 수 있습니다.
 - **사용자 경험:** 앱의 어느 곳에서든 로그인 상태나 정렬 순서가 일관되게 유지되어 안정적인 사용 경험을 제공합니다.
 
-### 3.2. 렌더링 최적화: “체감 성능을 향상시켜라”
+### 3.3. 렌더링 최적화: "체감 성능을 향상시켜라"
 
 #### 문제 정의
 
@@ -128,7 +194,7 @@ EternalReturn Lookup 프로젝트는 평소 즐기던 게임 '이터널 리턴'�
 
 - **사용자 경험:** 전체 페이지가 아닌, 각 카드 단위로 로딩 상태가 표시되어 사용자에게 더 정교한 피드백을 제공합니다. 또한, 로딩 중에도 페이지 전체 레이아웃이 유지되어 콘텐츠가 갑자기 나타나면서 화면이 밀리는 현상(Layout Shift)을 방지하고 시각적 안정성을 높입니다.
 
-### 3.3. 라우팅: “끊김 없는 네비게이션”
+### 3.4. 라우팅: "끊김 없는 네비게이션"
 
 #### 문제 정의
 
@@ -138,17 +204,17 @@ EternalReturn Lookup 프로젝트는 평소 즐기던 게임 '이터널 리턴'�
 
 `React Router`를 도입하여 **SPA(Single Page Application)** 로 구현했습니다. `<Outlet>`을 활용한 중첩 라우팅 구조를 설계하여 공통 레이아웃(헤더, 네비게이션 등)의 재사용성을 극대화했습니다.
 
-_기술 명세: 중첩 라우트 구조 (`src/common/router/router.jsx`)_
+_기술 명세: 중첩 라우트 구조 (`src/app/router/index.jsx`)_
 
 ```javascript
-import Root from '../../pages/Root';
-import CouponsView from '../../features/coupon/pages/couponsView';
-import CharactersView from '../../features/character/pages/charactersView';
+import RootLayout from '@/pages/RootLayout';
+import CouponsView from '@/pages/couponsView';
+import CharactersView from '@/pages/charactersView';
 // ...
 
 export const RouterInfo = [
   {
-    element: <Root />, // 모든 페이지에 공통으로 적용될 레이아웃
+    element: <RootLayout />, // 모든 페이지에 공통으로 적용될 레이아웃
     children: [
       { path: '*', element: <NotFoundView /> },
       { path: '/', element: <CouponsView /> },
