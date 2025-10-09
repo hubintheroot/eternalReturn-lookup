@@ -1,15 +1,15 @@
-import { useCallback, useMemo, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useCallback, useMemo, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   setIsRotation,
   setState,
-} from "@/entities/sort-option/model/sortOptionSlice";
-import styled from "styled-components";
-import CharacterCard from "./CharacterCard";
+} from '@/entities/sort-option/model/sortOptionSlice';
+import styled from 'styled-components';
+import CharacterCard from './CharacterCard';
 
 const selectList = {
-  release: { value: "release", text: "출시 순" },
-  ord: { value: "order", text: "가나다 순" },
+  release: { value: 'release', text: '출시 순' },
+  ord: { value: 'order', text: '가나다 순' },
 };
 
 export default function CharacterList() {
@@ -35,12 +35,12 @@ export default function CharacterList() {
       switch (sortState) {
         case selectList.ord.value:
           return tempData.sort((a, b) =>
-            a.Name_KR.localeCompare(b.Name_KR, "ko")
+            a.Name_KR.localeCompare(b.Name_KR, 'ko')
           );
         case selectList.release.value:
           return tempData.sort((a, b) => a.CharacterID - b.CharacterID);
         default:
-          console.log("func:: sortBy is something wrong.");
+          console.log('func:: sortBy is something wrong.');
           return tempData;
       }
     },

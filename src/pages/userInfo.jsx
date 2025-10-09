@@ -1,23 +1,24 @@
-import styled from "styled-components";
-import { resignHandler } from "@/shared/lib/login";
-import { useDispatch } from "react-redux";
-import { setUser } from "@/entities/user/model/userInfoSlice";
-import Button from "@/shared/ui/Button";
-import { XIconSVG } from "@/shared/ui/SVG";
+import styled from 'styled-components';
+import { useAuth } from '@/shared/lib/AuthProvider';
+import Button from '@/shared/ui/Button';
+import { XIconSVG } from '@/shared/ui/SVG';
 
 export default function UserInfo({ onClose, data }) {
-  const dispatch = useDispatch();
-  const resign = () => {
+  const { deleteAccount } = useAuth();
+
+  const resign = async () => {
     if (
       window.confirm(
-        "\n탈퇴 시 등록한 쿠폰을 관리할 수 없게 됩니다.\n정말 탈퇴하시겠습니까?"
+        '\n탈퇴 시 등록한 쿠폰을 관리할 수 없게 됩니다.\n정말 탈퇴하시겠습니까?'
       )
     ) {
-      resignHandler();
-      dispatch(setUser(null));
-      onClose();
-    } else {
-      return;
+      try {
+        await deleteAccount();
+        onClose();
+      } catch (error) {
+        console.error('Account deletion failed:', error);
+        alert('탈퇴 처리 중 오류가 발생했습니다.');
+      }
     }
   };
 
@@ -37,7 +38,7 @@ export default function UserInfo({ onClose, data }) {
           <ImgContainer>
             <ImgBox>
               <img
-                src={data.avatar_url.replace("http:", "https:")}
+                src={data.avatar_url.replace('http:', 'https:')}
                 alt="kakao profile"
               />
             </ImgBox>
@@ -54,12 +55,12 @@ export default function UserInfo({ onClose, data }) {
         <ResignBox>
           <Button
             eventHandler={resign}
-            text={"탈출하기"}
-            color={"#fff"}
-            hoverColor={"none"}
-            backgroundColor={"#000"}
-            hoverBackgroundColor={"rgb(51, 51, 51)"}
-            display={"block"}
+            text={'탈퇴하기'}
+            color={'#fff'}
+            hoverColor={'none'}
+            backgroundColor={'#000'}
+            hoverBackgroundColor={'rgb(51, 51, 51)'}
+            display={'block'}
           />
         </ResignBox>
       </div>
