@@ -1,9 +1,9 @@
-import { useRef, useState } from "react";
-import styled from "styled-components";
-import Modal from "@/shared/ui/Modal";
-import EditCoupon from "./EditCoupon";
-import DeleteCoupon from "./DeleteCoupon";
-import { CopyButtonSVG, DeleteButtonSVG, EditButtonSVG } from "@/shared/ui/SVG";
+import { useRef, useState } from 'react';
+import styled from 'styled-components';
+import Modal from '@/shared/ui/Modal';
+import EditCoupon from './EditCoupon';
+import DeleteCoupon from './DeleteCoupon';
+import { CopyButtonSVG, DeleteButtonSVG, EditButtonSVG } from '@/shared/ui/SVG';
 
 export default function CouponCard({ data, isLogin, permission, handler }) {
   const [showModal, setModal] = useState(false);
@@ -15,10 +15,10 @@ export default function CouponCard({ data, isLogin, permission, handler }) {
     const date = new Date(data.expires_at);
     expiresAt = `${date.getFullYear().toString()}/${(date.getMonth() + 1)
       .toString()
-      .padStart(2, "0")}/${date.getDate().toString().padStart(2, "0")} ${date
+      .padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')} ${date
       .getHours()
       .toString()
-      .padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
+      .padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
   }
   const copyHandler = () => {
     const toastInfo = {
@@ -29,10 +29,10 @@ export default function CouponCard({ data, isLogin, permission, handler }) {
     try {
       navigator.clipboard.writeText(data.code);
       toastInfo.message = `쿠폰 코드가 복사되었습니다.`;
-      toastInfo.status = "successed";
+      toastInfo.status = 'successed';
     } catch (err) {
       toastInfo.message = `복사는 pc환경을 이용해주세요`;
-      toastInfo.status = "alert";
+      toastInfo.status = 'alert';
       console.log(err);
     } finally {
       handler.toast.show(toastInfo);
@@ -48,20 +48,20 @@ export default function CouponCard({ data, isLogin, permission, handler }) {
   };
   const buttonHandler = {
     edit: () => {
-      mod.current = "edit";
+      mod.current = 'edit';
       modalHandler.show();
     },
     del: () => {
-      mod.current = "del";
+      mod.current = 'del';
       modalHandler.show();
     },
   };
 
   return (
-    <Card>
+    <Card $isActive={data.is_active}>
       <div>
         <TitleBox>
-          <Title>{data.name}</Title>
+          <Title $isActive={data.is_active}>{data.name}</Title>
           {isLogin && permission && (
             <ModifyBox>
               <ModifyButton onClick={buttonHandler.edit}>
@@ -73,11 +73,11 @@ export default function CouponCard({ data, isLogin, permission, handler }) {
             </ModifyBox>
           )}
         </TitleBox>
-        <Reward>{data.description}</Reward>
+        <Reward $isActive={data.is_active}>{data.description}</Reward>
       </div>
       <div>
-        <CodeBox>
-          <Code>{data.code}</Code>
+        <CodeBox $isActive={data.is_active}>
+          <Code $isActive={data.is_active}>{data.code}</Code>
           <CopyButton onClick={copyHandler}>
             <CopyButtonSVG />
           </CopyButton>
@@ -88,7 +88,7 @@ export default function CouponCard({ data, isLogin, permission, handler }) {
       </div>
       {showModal && (
         <Modal>
-          {mod.current === "edit" ? (
+          {mod.current === 'edit' ? (
             <EditCoupon
               onClose={modalHandler.hide}
               data={data}
@@ -126,7 +126,7 @@ const Card = styled.div`
   flex-direction: column;
   justify-content: space-between;
   position: relative;
-  background-color: #fff;
+  background-color: ${(props) => (!props.$isActive ? '#44444E' : '#fff')};
   border-radius: 0.75rem;
   overflow: hidden;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px,
@@ -145,7 +145,7 @@ const Title = styled.span`
   font-size: 1.1rem;
   font-weight: 600;
   margin: 0.5rem 0;
-  color: rgb(17, 24, 39);
+  color: ${(props) => (!props.$isActive ? '#D3DAD9' : 'rgb(17, 24, 39)')};
 `;
 const ModifyBox = styled.div`
   display: flex;
@@ -171,15 +171,15 @@ const DeleteButton = styled(ModifyButton)`
 `;
 const Reward = styled.p`
   font-size: 0.875rem;
-  color: rgb(107, 114, 128);
+  color: ${(props) => (!props.$isActive ? '#D3DAD9' : 'rgb(107, 114, 128)')};
   margin-bottom: 1.5rem;
   line-height: 1.5;
 `;
 const CodeBox = styled(InnerIcon)`
   display: flex;
   align-items: center;
-  background-color: #fff;
-  border: 1px dashed rgb(229, 231, 235);
+  background-color: ${(props) => (!props.$isActive ? '#D3DAD9' : '#fff')};
+  border: ${(props) => (!props.$isActive ? 'none' : '1px dashed #e5e7eb')};
   border-radius: 0.5rem;
   padding: 0.75rem;
   margin-bottom: 0.75rem;
@@ -188,7 +188,8 @@ const Code = styled.p`
   margin: 0;
   font-size: 1rem;
   flex: 1 1 0%;
-  color: rgb(79, 70, 229);
+  color: ${(props) =>
+    !props.$isActive ? 'rgb(60, 60, 60)' : 'rgb(79, 70, 229)'};
   font-weight: 600;
 `;
 const CopyButton = styled(Button)`
@@ -202,5 +203,5 @@ const ExpiresAt = styled.div`
   font-size: 0.75rem;
   /* color: rgb(107, 114, 128); */
   color: ${(props) =>
-    !props.$isActive ? "rgb(211, 47, 47);" : "rgb(107, 114, 128)"};
+    !props.$isActive ? 'rgb(211, 47, 47);' : 'rgb(107, 114, 128)'};
 `;

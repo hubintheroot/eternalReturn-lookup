@@ -9,7 +9,7 @@ import AddCoupon from '@/features/coupon-management/ui/AddCoupon';
 import { couponSort } from '@/shared/lib/utils';
 import { LocalData } from '@/shared/lib/localData';
 import { GiftBoxSVG, PlusIconSVG } from '@/shared/ui/SVG';
-// TODO: MUI쓰자..
+
 export default function CouponsView() {
   const user = useSelector((state) => state.userInfo.user);
   const [data, setData] = useState([]);
@@ -23,7 +23,6 @@ export default function CouponsView() {
   const timerRef = useRef(null);
 
   useEffect(() => {
-    // TODO: isUsed와 isActive로 사용됨과 만료됨을 처리하자
     const getData = async () => {
       try {
         const coupons = await getCoupons();
@@ -82,19 +81,6 @@ export default function CouponsView() {
     }
   };
 
-  // TODO: 구현 목록
-  // 1. supabase에서 쿠폰 데이터 가져오기 (완)
-  // 2. 쿠폰 등록 구현 (완)
-  // 3. 종료된 쿠폰은 아래로 정렬하기 필요 (완)
-  // TODO: 복사 구현
-  // 1. 복사 하기 (완)
-  // 2. toast 알림 portal 사용하기 (완)
-  // 3. toast가 일정 시간 후 unmount되게 만들어야함 (완)
-  // TODO: 회원 기능
-  // 1. 회원 가입 기능 KAKAO OAuth 2.0을 통해 구현 (완)
-  // 2. 쿠폰 등록 기능 구현 (완)
-  // 3. 회원 페이지 (완)
-  // 3. 회원 탈퇴 기능 구현 (완)
   function isDuplicatedCoupon(newCoupon) {
     return data.some((old) => old.code === newCoupon.toUpperCase());
   }
@@ -121,22 +107,46 @@ export default function CouponsView() {
       ) : (
         <Container>
           {data.length !== 0 ? (
-            <CouponContainer>
-              {data.map((coupon) => (
-                <CouponCard
-                  key={coupon.id}
-                  data={coupon}
-                  isLogin={user ? true : false}
-                  permission={user?.id === coupon.created_by}
-                  handler={{
-                    setData: setData,
-                    isDuplicatedCoupon: isDuplicatedCoupon,
-                    isUsed: isUsedHandler,
-                    toast: toastHandler,
-                  }}
-                />
-              ))}
-            </CouponContainer>
+            <>
+              <h2>사용 가능한 쿠폰</h2>
+              <CouponContainer>
+                {data
+                  .filter((coupon) => coupon.is_active)
+                  .map((coupon) => (
+                    <CouponCard
+                      key={coupon.id}
+                      data={coupon}
+                      isLogin={user ? true : false}
+                      permission={user?.id === coupon.created_by}
+                      handler={{
+                        setData: setData,
+                        isDuplicatedCoupon: isDuplicatedCoupon,
+                        isUsed: isUsedHandler,
+                        toast: toastHandler,
+                      }}
+                    />
+                  ))}
+              </CouponContainer>
+              <h2>만료된 쿠폰</h2>
+              <CouponContainer>
+                {data
+                  .filter((coupon) => !coupon.is_active)
+                  .map((coupon) => (
+                    <CouponCard
+                      key={coupon.id}
+                      data={coupon}
+                      isLogin={user ? true : false}
+                      permission={user?.id === coupon.created_by}
+                      handler={{
+                        setData: setData,
+                        isDuplicatedCoupon: isDuplicatedCoupon,
+                        isUsed: isUsedHandler,
+                        toast: toastHandler,
+                      }}
+                    />
+                  ))}
+              </CouponContainer>
+            </>
           ) : (
             <EmptyContainer>
               <p>아직 등록된 쿠폰이 없습니다</p>

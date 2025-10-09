@@ -2,10 +2,9 @@ import Navigate from "../common/components/Navigate";
 import Modal from "../common/components/Modal";
 import Button from "../common/ui/Button";
 import UserInfo from "./userInfo";
-import { supabase } from "../supabase/supabase";
 import { styled } from "styled-components";
-import { isLogin, loginHandler, logOut, logoutHandler } from "../common/utils/login";
-import { useDispatch, useSelector } from "react-redux";
+import { useAuth } from "@/shared/lib/AuthProvider";
+import { useDispatch } from "react-redux";
 import { setUser } from "../features/login/userInfoSlice";
 import { Outlet } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
@@ -19,54 +18,25 @@ const links = [
   { link: "/rank", text: "랭크" },
 ];
 
-function useAuth() {
+/**
+ * AuthProvider의 상태를 Redux와 동기화하는 Hook
+ */
+function useSyncAuthToRedux() {
   const dispatch = useDispatch();
+  const { user } = useAuth();
+
   useEffect(() => {
-    const checkExistingUser = async () => {
-      if (!isLogin) return;
-      try {
-        const { data: sessionData, error: sessionError } =
-          await supabase().auth.getSession();
-
-        if (sessionError) {
-          throw sessionError;
-        }
-        if (sessionData?.session) {
-          const { data, error } = await supabase().auth.getUser();
-          if (error) throw error;
-          if (data?.user) dispatch(setUser(data.user));
-        }
-      } catch (err) {
-        console.error("Auth Error Message:", err.message);
-        logOut();
-      }
-    };
-
-    checkExistingUser();
-
-    const { data: listener } = supabase().auth.onAuthStateChange(
-      (event, session) => {
-        if (event === "SIGNED_IN" && session?.user) {
-          dispatch(setUser(session.user));
-        } else if (event === "SIGNED_OUT") {
-          dispatch(setUser(null));
-        }
-      }
-    );
-
-    return () => {
-      if (listener?.subscription?.unsubscribe) {
-        listener.subscription.unsubscribe();
-      }
-    };
-  }, [dispatch]);
+    // AuthProvider의 user 상태를 Redux와 동기화
+    dispatch(setUser(user));
+  }, [user, dispatch]);
 }
 
 export default function Root() {
-  const user = useSelector((state) => state.userInfo.user);
+  const { user, signIn, signOut, loading } = useAuth();
   const [showModal, setModal] = useState(false);
 
-  useAuth();
+  // AuthProvider와 Redux 동기화
+  useSyncAuthToRedux();
 
   const showUserInfo = useCallback(() => {
     setModal(true);
@@ -74,6 +44,26 @@ export default function Root() {
   const hideUserInfo = useCallback(() => {
     setModal(false);
   }, []);
+
+  const handleLogin = useCallback(async () => {
+    try {
+      await signIn('kakao');
+    } catch (error) {
+      console.error('Login failed:', error);
+    }
+  }, [signIn]);
+
+  const handleLogout = useCallback(async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  }, [signOut]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Page>
@@ -86,12 +76,12 @@ export default function Root() {
               <Button eventHandler={showUserInfo} text="프로필">
                 <UserSVG />
               </Button>
-              <Button eventHandler={logoutHandler} text="로그아웃">
+              <Button eventHandler={handleLogout} text="로그아웃">
                 <LogoutSVG />
               </Button>
             </UserBox>
           ) : (
-            <KakaoLoginButton loginHandler={loginHandler} />
+            <KakaoLoginButton loginHandler={handleLogin} />
           )}
         </HeaderInner>
       </Header>
