@@ -1,25 +1,46 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setSeasonInfo } from '@/entities/season/model/seasonInfoSlice';
 import styled from 'styled-components';
 import { supabase } from '@/shared/api/supabase';
 import CountDown from './CountDown';
+import EmptyState from '@/shared/ui/EmptyState';
 
 export default function SeasonBox() {
   const dispatch = useDispatch();
   const getDataCnt = useRef(0);
   const seasonInfo = useSelector((state) => state.seasonInfo.data);
+  const [previousSeason, setPreviousSeason] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     async function getData() {
+      setIsLoading(true);
       try {
-        const res = await supabase()
+        // 현재 시즌 조회
+        const currentRes = await supabase()
           .from('seasonInfo')
           .select('*')
           .eq('isCurrent', true);
-        dispatch(setSeasonInfo(res.data[0]));
+
+        if (currentRes.data && currentRes.data.length > 0) {
+          dispatch(setSeasonInfo(currentRes.data[0]));
+        } else {
+          // 현재 시즌이 없으면 가장 최근 종료된 시즌 조회
+          const previousRes = await supabase()
+            .from('seasonInfo')
+            .select('*')
+            .order('end', { ascending: false })
+            .limit(1);
+
+          if (previousRes.data && previousRes.data.length > 0) {
+            setPreviousSeason(previousRes.data[0]);
+          }
+        }
       } catch (err) {
         console.error(err);
+      } finally {
+        setIsLoading(false);
       }
     }
     if (!seasonInfo && getDataCnt.current === 0) {
@@ -28,18 +49,16 @@ export default function SeasonBox() {
     }
   }, [seasonInfo, dispatch]);
 
-  return (
-    <Container className="season-info-container">
-      <ImgBox>
-        <Image
-          src={`//cdn.dak.gg/er/images/bg/bg-landing-search-v${
-            seasonInfo?.isPre ? seasonInfo?.season - 1 : seasonInfo?.season
-          }.jpg`}
-          alt="season background wallpaper"
-        />
-        <Overlay />
-      </ImgBox>
-      {seasonInfo && (
+  // 렌더링 로직 결정
+  const renderContent = () => {
+    // 로딩 중
+    if (isLoading) {
+      return null;
+    }
+
+    // 현재 시즌이 있을 때
+    if (seasonInfo) {
+      return (
         <ContentWrapper>
           <TitleDiv className="season-title-box">
             <SeasonTitle>
@@ -59,7 +78,67 @@ export default function SeasonBox() {
             </div>
           </SeasonTimeLeft>
         </ContentWrapper>
-      )}
+      );
+    }
+
+    // 현재 시즌이 없고 이전 시즌이 있을 때
+    if (previousSeason) {
+      return (
+        <ContentWrapper>
+          {/* 이전 시즌 정보 (회색톤) */}
+          <PreviousSeasonWrapper>
+            <TitleDiv className="season-title-box">
+              <SeasonTitle style={{ opacity: 0.6 }}>
+                {previousSeason.isPre ? '프리 시즌' : '시즌'}{' '}
+                {previousSeason.season}
+              </SeasonTitle>
+              <SeasonPeriodInfo style={{ opacity: 0.5 }}>
+                {removeMinutes(previousSeason.start)} ~{' '}
+                {removeMinutes(previousSeason.end)}
+              </SeasonPeriodInfo>
+            </TitleDiv>
+          </PreviousSeasonWrapper>
+
+          {/* Empty State */}
+          <EmptyState
+            icon=""
+            title="현재 진행 중인 시즌 정보가 없습니다"
+            description="곧 새로운 시즌이 시작될 예정이니 조금만 기다려 주세요!"
+            variant="default"
+          />
+        </ContentWrapper>
+      );
+    }
+
+    // 아무 데이터도 없을 때
+    return (
+      <ContentWrapper>
+        <EmptyState
+          icon="🍅"
+          title="시즌 정보를 불러오는 중입니다"
+          description="잠시만 기다려 주세요."
+          variant="subtle"
+        />
+      </ContentWrapper>
+    );
+  };
+
+  return (
+    <Container className="season-info-container">
+      <ImgBox>
+        <Image
+          src={`//cdn.dak.gg/er/images/bg/bg-landing-search-v${
+            seasonInfo?.isPre
+              ? seasonInfo?.season - 1
+              : previousSeason?.isPre
+              ? previousSeason?.season - 1
+              : seasonInfo?.season || previousSeason?.season || 1
+          }.jpg`}
+          alt="season background wallpaper"
+        />
+        <Overlay />
+      </ImgBox>
+      {renderContent()}
     </Container>
   );
 }
@@ -170,5 +249,14 @@ const SeasonTimeLeft = styled.div`
       font-size: 1.6rem;
       margin-bottom: 1rem;
     }
+  }
+`;
+
+const PreviousSeasonWrapper = styled.div`
+  opacity: 0.7;
+  margin-bottom: 1rem;
+
+  @media screen and (min-width: 768px) {
+    margin-bottom: 1.5rem;
   }
 `;
