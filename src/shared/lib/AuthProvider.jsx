@@ -17,19 +17,19 @@ export const AuthProvider = ({ children }) => {
     initializeAuth();
 
     // Supabase Auth 상태 변화 감지 (자동 토큰 갱신 포함)
-    const { data: { subscription } } = authService.onAuthStateChange(
-      async (event, session) => {
-        console.log('Auth event:', event, session);
+    const {
+      data: { subscription },
+    } = authService.onAuthStateChange(async (event, session) => {
+      // console.log('Auth event:', event, session);
 
-        // Supabase가 자동으로 관리하므로 상태만 업데이트
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
+      // Supabase가 자동으로 관리하므로 상태만 업데이트
+      setSession(session);
+      setUser(session?.user ?? null);
+      setLoading(false);
 
-        // 이벤트별 추가 처리
-        handleAuthEvent(event, session);
-      }
-    );
+      // 이벤트별 추가 처리
+      handleAuthEvent(event, session);
+    });
 
     return () => {
       subscription.unsubscribe();
@@ -83,11 +83,7 @@ export const AuthProvider = ({ children }) => {
     getUser: authService.getUser.bind(authService),
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 /**
