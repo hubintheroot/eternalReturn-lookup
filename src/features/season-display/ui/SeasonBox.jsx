@@ -1,15 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { setSeasonInfo } from '@/entities/season/model/seasonInfoSlice';
+import { useSeasonInfoStore } from '@/entities/season/model/seasonInfoStore';
 import styled from 'styled-components';
 import { supabase } from '@/shared/api/supabase';
 import CountDown from './CountDown';
 import EmptyState from '@/shared/ui/EmptyState';
 
 export default function SeasonBox() {
-  const dispatch = useDispatch();
+  const seasonInfo = useSeasonInfoStore((state) => state.data);
+  const setSeasonInfo = useSeasonInfoStore((state) => state.setSeasonInfo);
   const getDataCnt = useRef(0);
-  const seasonInfo = useSelector((state) => state.seasonInfo.data);
   const [previousSeason, setPreviousSeason] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -24,7 +23,7 @@ export default function SeasonBox() {
           .eq('isCurrent', true);
 
         if (currentRes.data && currentRes.data.length > 0) {
-          dispatch(setSeasonInfo(currentRes.data[0]));
+          setSeasonInfo(currentRes.data[0]);
         } else {
           // 현재 시즌이 없으면 가장 최근 종료된 시즌 조회
           const previousRes = await supabase()
@@ -47,7 +46,7 @@ export default function SeasonBox() {
       getDataCnt.current = 1;
       getData();
     }
-  }, [seasonInfo, dispatch]);
+  }, [seasonInfo, setSeasonInfo]);
 
   // 렌더링 로직 결정
   const renderContent = () => {

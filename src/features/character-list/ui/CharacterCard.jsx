@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { setCharListLoaded } from "@/entities/image-loaded/model/imageLoadedSlice";
+import { useImageLoadedStore } from "@/entities/image-loaded/model/imageLoadedStore";
 import styled, { keyframes } from "styled-components";
 
 export default function CharacterCard({
@@ -14,8 +13,8 @@ export default function CharacterCard({
   freeIconPath,
 }) {
   const [disabled, setDisabled] = useState(false);
-  const loading = useSelector((state) => state.imageLoaded.charListLoaded);
-  const dispatch = useDispatch();
+  const loading = useImageLoadedStore((state) => state.charListLoaded);
+  const setCharListLoaded = useImageLoadedStore((state) => state.setCharListLoaded);
 
   const handler = {
     imgError: (e) => {
@@ -40,7 +39,7 @@ export default function CharacterCard({
       e.target.style.cursor = disabled ? "not-allowed" : "pointer";
     },
     disableSkelUI: () => {
-      if (maxLength === cnt.current) dispatch(setCharListLoaded(false));
+      if (maxLength === cnt.current) setCharListLoaded(false);
     },
   };
 

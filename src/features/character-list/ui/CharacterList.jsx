@@ -1,9 +1,6 @@
 import { useCallback, useMemo, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  setIsRotation,
-  setState,
-} from '@/entities/sort-option/model/sortOptionSlice';
+import { useCharacterStore } from '@/entities/character/model/characterStore';
+import { useSortOptionStore } from '@/entities/sort-option/model/sortOptionStore';
 import styled from 'styled-components';
 import CharacterCard from './CharacterCard';
 
@@ -13,19 +10,20 @@ const selectList = {
 };
 
 export default function CharacterList() {
-  const dispatch = useDispatch();
-  const charData = useSelector((state) => state.characterData.data);
-  const isRotation = useSelector((state) => state.sortOption.isRotation);
-  const sortState = useSelector((state) => state.sortOption.state);
+  const charData = useCharacterStore((state) => state.data);
+  const isRotation = useSortOptionStore((state) => state.isRotation);
+  const sortState = useSortOptionStore((state) => state.state);
+  const setState = useSortOptionStore((state) => state.setState);
+  const setIsRotation = useSortOptionStore((state) => state.setIsRotation);
   const cnt = useRef(0);
 
   const handleSetOrd = useCallback(
-    (e) => dispatch(setState(e.target.value)),
-    [dispatch]
+    (e) => setState(e.target.value),
+    [setState]
   );
   const handleSetRotation = useCallback(
-    () => dispatch(setIsRotation(!isRotation)),
-    [dispatch, isRotation]
+    () => setIsRotation(!isRotation),
+    [setIsRotation, isRotation]
   );
 
   const sortData = useCallback(
