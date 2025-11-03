@@ -1,7 +1,7 @@
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { setCharDetailLoaded } from '@/entities/image-loaded/model/imageLoadedSlice';
+import { useCharacterStore } from '@/entities/character/model/characterStore';
+import { useImageLoadedStore } from '@/entities/image-loaded/model/imageLoadedStore';
 import styled, { keyframes, css } from 'styled-components';
 import NotFoundView from '@/pages/notfoundView';
 import DifficultyBox from './DifficultyBox';
@@ -57,9 +57,9 @@ const SkinImageList = memo(
 export default function CharacterInfo() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const loading = useSelector((state) => state.imageLoaded.detailLoaded);
-  const data = useSelector((state) => state.characterData.data);
+  const loading = useImageLoadedStore((state) => state.detailLoaded);
+  const data = useCharacterStore((state) => state.data);
+  const setCharDetailLoaded = useImageLoadedStore((state) => state.setCharDetailLoaded);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [character, setCharacter] = useState();
   const [selectedSkinID, setSelectedSkinID] = useState();
@@ -117,8 +117,8 @@ export default function CharacterInfo() {
       ],
     };
     setCharacter(nextData);
-    dispatch(setCharDetailLoaded(true));
-  }, [pathname, data, dispatch]);
+    setCharDetailLoaded(true);
+  }, [pathname, data, setCharDetailLoaded]);
 
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
@@ -141,11 +141,11 @@ export default function CharacterInfo() {
     if (!character) return;
     imageLoadedCount.current += 1;
     if (imageLoadedCount.current === character.loadAbleSkins.length * 2) {
-      dispatch(setCharDetailLoaded(false));
+      setCharDetailLoaded(false);
 
       imageLoadedCount.current = 0;
     }
-  }, [character, dispatch]);
+  }, [character, setCharDetailLoaded]);
 
   if (!data) {
     navigate('/');

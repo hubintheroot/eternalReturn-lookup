@@ -1,8 +1,8 @@
-import { useSelector } from "react-redux";
+import { useImageLoadedStore } from "@/entities/image-loaded/model/imageLoadedStore";
 import styled from "styled-components";
 
 export default function MiniSizeImage({ data, handler }) {
-  const loading = useSelector((state) => state.imageLoaded.detailLoaded);
+  const loading = useImageLoadedStore((state) => state.detailLoaded);
 
   return (
     <>

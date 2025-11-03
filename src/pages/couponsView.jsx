@@ -1,5 +1,5 @@
-import { useSelector } from 'react-redux';
 import { useEffect, useRef, useState } from 'react';
+import { useUserInfoStore } from '@/entities/user/model/userInfoStore';
 import { getCoupons } from '@/shared/api/supabase';
 import styled from 'styled-components';
 import CouponCard from '@/features/coupon-management/ui/CouponCard';
@@ -11,7 +11,7 @@ import { LocalData } from '@/shared/lib/localData';
 import { GiftBoxSVG, PlusIconSVG } from '@/shared/ui/SVG';
 
 export default function CouponsView() {
-  const user = useSelector((state) => state.userInfo.user);
+  const user = useUserInfoStore((state) => state.user);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);

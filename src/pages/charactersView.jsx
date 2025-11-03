@@ -1,14 +1,13 @@
 import { useEffect, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { Outlet } from 'react-router-dom';
-import { setData } from '@/entities/character/model/characterInfoSlice';
+import { useCharacterStore } from '@/entities/character/model/characterStore';
 import { styled } from 'styled-components';
 import { supabase } from '@/shared/api/supabase';
 import CharacterList from '@/features/character-list/ui/CharacterList';
 
 export default function CharactersView() {
-  const dispatch = useDispatch();
-  const characterData = useSelector((state) => state.characterData.data);
+  const characterData = useCharacterStore((state) => state.data);
+  const setData = useCharacterStore((state) => state.setData);
   const getDataCnt = useRef(0);
 
   useEffect(() => {
@@ -53,7 +52,7 @@ export default function CharactersView() {
           charData.skins = tempSkinData;
           return charData;
         });
-        dispatch(setData(data));
+        setData(data);
         console.log('getData is worked');
       } catch (err) {
         console.error(err);
@@ -64,7 +63,7 @@ export default function CharactersView() {
       getDataCnt.current = 1;
       getData();
     }
-  }, [characterData, dispatch]);
+  }, [characterData, setData]);
 
   if (characterData) {
     return (

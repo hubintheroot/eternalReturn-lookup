@@ -1,6 +1,7 @@
+import { memo } from 'react';
 import styled, { keyframes } from 'styled-components';
 
-export default function FlipCountClock({
+function FlipCountClock({
   counter,
   color = 'white',
   bgColor = '#333',
@@ -42,6 +43,8 @@ export default function FlipCountClock({
     </StyledUl>
   );
 }
+
+export default memo(FlipCountClock);
 
 const nums = Array.from({ length: 10 }, (_, i) => i);
 

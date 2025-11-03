@@ -4,8 +4,7 @@ import Button from "@/shared/ui/Button";
 import UserInfo from "./userInfo";
 import { styled } from "styled-components";
 import { useAuth } from "@/shared/lib/AuthProvider";
-import { useDispatch } from "react-redux";
-import { setUser } from "@/entities/user/model/userInfoSlice";
+import { useUserInfoStore } from "@/entities/user/model/userInfoStore";
 import { Outlet } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import { KakaoLoginButton } from "@/shared/ui/kakao";
@@ -19,24 +18,24 @@ const links = [
 ];
 
 /**
- * AuthProvider의 상태를 Redux와 동기화하는 Hook
+ * AuthProvider의 상태를 Zustand와 동기화하는 Hook
  */
-function useSyncAuthToRedux() {
-  const dispatch = useDispatch();
+function useSyncAuthToStore() {
+  const setUser = useUserInfoStore((state) => state.setUser);
   const { user } = useAuth();
 
   useEffect(() => {
-    // AuthProvider의 user 상태를 Redux와 동기화
-    dispatch(setUser(user));
-  }, [user, dispatch]);
+    // AuthProvider의 user 상태를 Zustand와 동기화
+    setUser(user);
+  }, [user, setUser]);
 }
 
 export default function Root() {
   const { user, signIn, signOut, loading } = useAuth();
   const [showModal, setModal] = useState(false);
 
-  // AuthProvider와 Redux 동기화
-  useSyncAuthToRedux();
+  // AuthProvider와 Zustand 동기화
+  useSyncAuthToStore();
 
   const showUserInfo = useCallback(() => {
     setModal(true);

@@ -1,9 +1,9 @@
-import { useSelector } from "react-redux";
+import { useImageLoadedStore } from "@/entities/image-loaded/model/imageLoadedStore";
 import styled, { css } from "styled-components";
 import { Img } from "./MiniSizeImage";
 
 export default function FullSizeImage({ data, handler }) {
-  const loading = useSelector((state) => state.imageLoaded.detailLoaded);
+  const loading = useImageLoadedStore((state) => state.detailLoaded);
   const isSelected = data.select === data.skinID;
 
   return (
