@@ -1,8 +1,15 @@
-import React, { useState, useEffect } from "react";
-import styled from "styled-components";
-import FlipCountClock from "./FlipCountClock";
+import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
+import FlipCountClock from './FlipCountClock';
 
-export default function CountDown({ endDate, lang = "en" }) {
+const TIME_UNITS = [
+  { subTitle: { en: 'Days', kr: '일' }, content: 0, id: 0 },
+  { subTitle: { en: 'Hours', kr: '시간' }, content: 0, id: 1 },
+  { subTitle: { en: 'Minutes', kr: '분' }, content: 0, id: 2 },
+  { subTitle: { en: 'Seconds', kr: '초' }, content: 0, id: 3 },
+];
+
+export default function CountDown({ endDate, lang = 'en' }) {
   const [timeLeft, setTimeLeft] = useState(getLeftTime(endDate));
 
   useEffect(() => {
@@ -22,24 +29,17 @@ export default function CountDown({ endDate, lang = "en" }) {
 
   // 남은 일, 시간, 분, 초를 계산
   const calculateTimeLeft = () => {
-    const data = [
-      { subTitle: { en: "Days", kr: "일" }, content: 0, id: 0 },
-      { subTitle: { en: "Hours", kr: "시간" }, content: 0, id: 1 },
-      { subTitle: { en: "Minutes", kr: "분" }, content: 0, id: 2 },
-      { subTitle: { en: "Seconds", kr: "초" }, content: 0, id: 3 },
-    ];
-    if (timeLeft > 0) {
-      const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-      const hours = Math.floor(
-        (timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-      );
-      const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-      const time = [days, hours, minutes, seconds];
-      data.forEach((_, i) => (data[i].content = time[i]));
+    if (timeLeft <= 0) {
+      return TIME_UNITS.map((unit) => ({ ...unit, content: 0 }));
     }
-
-    return data;
+    const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+    const hours = Math.floor(
+      (timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    );
+    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+    const time = [days, hours, minutes, seconds];
+    return TIME_UNITS.map((unit, i) => ({ ...unit, content: time[i] }));
   };
 
   const data = calculateTimeLeft();

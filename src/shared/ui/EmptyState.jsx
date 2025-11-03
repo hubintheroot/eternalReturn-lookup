@@ -20,7 +20,7 @@ export default function EmptyState({
   className,
 }) {
   return (
-    <Container variant={variant} style={style} className={className}>
+    <Container $variant={variant} style={style} className={className}>
       {icon && <IconWrapper>{icon}</IconWrapper>}
       {title && <Title>{title}</Title>}
       {description && <Description>{description}</Description>}
@@ -37,7 +37,7 @@ const Container = styled.div`
   text-align: center;
   padding: 2rem 1rem;
   color: ${(props) => {
-    switch (props.variant) {
+    switch (props.$variant) {
       case 'subtle':
         return 'rgba(255, 255, 255, 0.6)';
       case 'warning':
