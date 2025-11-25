@@ -1,13 +1,13 @@
 import Navigate from "@/shared/ui/Navigate";
 import Modal from "@/shared/ui/Modal";
 import Button from "@/shared/ui/Button";
-import UserInfo from "./userInfo";
+import UserInfo from "../userInfo";
 import { styled } from "styled-components";
 import { useAuth } from "@/shared/lib/AuthProvider";
 import { useUserInfoStore } from "@/entities/user/model/userInfoStore";
 import { Outlet } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
-import { KakaoLoginButton } from "@/shared/ui/kakao";
+import { KakaoLoginButton } from "@/shared/ui/kakaoLoginButton";
 import { FeedbackSVG, LogoutSVG, UserSVG } from "@/shared/ui/SVG";
 
 const links = [

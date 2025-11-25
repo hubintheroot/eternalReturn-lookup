@@ -1,6 +1,6 @@
 import { useImageLoadedStore } from "@/entities/image-loaded/model/imageLoadedStore";
 import styled, { css } from "styled-components";
-import { Img } from "./MiniSizeImage";
+import { Img } from "../MiniSizeImage";
 
 export default function FullSizeImage({ data, handler }) {
   const loading = useImageLoadedStore((state) => state.detailLoaded);

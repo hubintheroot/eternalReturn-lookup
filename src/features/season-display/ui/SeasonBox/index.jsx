@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useSeasonInfoStore } from '@/entities/season/model/seasonInfoStore';
 import styled from 'styled-components';
 import { supabase } from '@/shared/api/supabase';
-import CountDown from './CountDown';
+import CountDown from '../CountDown';
 import EmptyState from '@/shared/ui/EmptyState';
 
 export default function SeasonBox() {

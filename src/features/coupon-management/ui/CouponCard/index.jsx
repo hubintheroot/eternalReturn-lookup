@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react';
 import styled from 'styled-components';
 import Modal from '@/shared/ui/Modal';
-import EditCoupon from './EditCoupon';
-import DeleteCoupon from './DeleteCoupon';
+import EditCoupon from '../EditCoupon';
+import DeleteCoupon from '../DeleteCoupon';
 import { CopyButtonSVG, DeleteButtonSVG, EditButtonSVG } from '@/shared/ui/SVG';
 
 export default function CouponCard({ data, isLogin, permission, handler }) {

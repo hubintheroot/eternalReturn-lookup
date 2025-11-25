@@ -2,7 +2,7 @@ import { useCallback, useMemo, useRef } from 'react';
 import { useCharacterStore } from '@/entities/character/model/characterStore';
 import { useSortOptionStore } from '@/entities/sort-option/model/sortOptionStore';
 import styled from 'styled-components';
-import CharacterCard from './CharacterCard';
+import CharacterCard from '../CharacterCard';
 
 const selectList = {
   release: { value: 'release', text: '출시 순' },

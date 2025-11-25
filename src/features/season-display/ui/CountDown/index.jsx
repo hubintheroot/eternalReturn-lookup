@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import FlipCountClock from './FlipCountClock';
+import FlipCountClock from '../FlipCountClock';
 
 const TIME_UNITS = [
   { subTitle: { en: 'Days', kr: '일' }, content: 0, id: 0 },

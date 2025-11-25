@@ -1,6 +1,6 @@
 import { getCoupons, supabase } from '@/shared/api/supabase';
 import { couponSort } from '@/shared/lib/utils';
-import CouponForm from './CouponForm';
+import CouponForm from '../CouponForm';
 
 async function update(nextData, id) {
   try {

@@ -4,9 +4,9 @@ import { useCharacterStore } from '@/entities/character/model/characterStore';
 import { useImageLoadedStore } from '@/entities/image-loaded/model/imageLoadedStore';
 import styled, { keyframes, css } from 'styled-components';
 import NotFoundView from '@/pages/notfoundView';
-import DifficultyBox from './DifficultyBox';
-import MiniSizeImage from './MiniSizeImage';
-import FullSizeImage from './FullSizeImage';
+import DifficultyBox from '../DifficultyBox';
+import MiniSizeImage from '../MiniSizeImage';
+import FullSizeImage from '../FullSizeImage';
 
 const CharTextInfo = memo(({ textContents, isLoading }) => {
   return (

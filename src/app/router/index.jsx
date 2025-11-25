@@ -29,6 +29,7 @@ export const RouterInfo = [
       },
       { path: '/rank', element: <RankView /> },
       { path: '/coupons', element: <CouponsView /> },
+      { path: '/test', element: <NewsView /> },
     ],
   },
 ];
