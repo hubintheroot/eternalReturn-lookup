@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useSeasonInfoStore } from '@/entities/season/model/seasonInfoStore';
+import { useSeasonInfoStore } from '@/entities/season/store';
 import styled from 'styled-components';
 import { supabase } from '@/shared/api/supabase';
 import CountDown from '../CountDown';
@@ -37,7 +37,9 @@ export default function SeasonBox() {
           }
         }
       } catch (err) {
-        console.error(err);
+        if (import.meta.env.DEV) {
+          console.error(err);
+        }
       } finally {
         setIsLoading(false);
       }

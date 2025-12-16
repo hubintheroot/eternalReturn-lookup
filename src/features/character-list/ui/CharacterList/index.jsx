@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useRef } from 'react';
-import { useCharacterStore } from '@/entities/character/model/characterStore';
-import { useSortOptionStore } from '@/entities/sort-option/model/sortOptionStore';
+import { useCharacterStore } from '@/entities/character/store';
+import { useSortOptionStore } from '@/entities/sort-option/store';
 import styled from 'styled-components';
 import CharacterCard from '../CharacterCard';
 
@@ -38,7 +38,6 @@ export default function CharacterList() {
         case selectList.release.value:
           return tempData.sort((a, b) => a.CharacterID - b.CharacterID);
         default:
-          console.log('func:: sortBy is something wrong.');
           return tempData;
       }
     },

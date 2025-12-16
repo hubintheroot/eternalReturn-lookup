@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useImageLoadedStore } from "@/entities/image-loaded/model/imageLoadedStore";
+import { useImageLoadedStore } from "@/entities/image-loaded/store";
 import styled, { keyframes } from "styled-components";
 
 export default function CharacterCard({

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Outlet } from 'react-router-dom';
-import { useCharacterStore } from '@/entities/character/model/characterStore';
+import { useCharacterStore } from '@/entities/character/store';
 import { styled } from 'styled-components';
 import { supabase } from '@/shared/api/supabase';
 import CharacterList from '@/features/character-list/ui/CharacterList';
@@ -53,9 +53,10 @@ export default function CharactersView() {
           return charData;
         });
         setData(data);
-        console.log('getData is worked');
       } catch (err) {
-        console.error(err);
+        if (import.meta.env.DEV) {
+          console.error(err);
+        }
       }
     }
 

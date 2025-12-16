@@ -14,7 +14,9 @@ async function update(nextData, id) {
 
     return { ok: true, data: couponSort(coupons.data), editData: data };
   } catch (err) {
-    console.error('edit coupon error:', err);
+    if (import.meta.env.DEV) {
+      console.error('edit coupon error:', err);
+    }
     return { ok: false, data: null, message: err.message };
   }
 }
@@ -65,7 +67,9 @@ export default function EditCoupon({ handler, onClose, data }) {
       onClose();
     } else {
       handler.toast.failed('알 수 없는 에러가 발생했습니다.');
-      console.error(res.message);
+      if (import.meta.env.DEV) {
+        console.error(res.message);
+      }
     }
   };
 

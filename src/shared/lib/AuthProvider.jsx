@@ -42,31 +42,32 @@ export const AuthProvider = ({ children }) => {
       setSession(session);
       setUser(session?.user ?? null);
     } catch (error) {
-      console.error('Auth initialization failed:', error);
+      if (import.meta.env.DEV) {
+        console.error('Auth initialization failed:', error);
+      }
     } finally {
       setLoading(false);
     }
   };
 
   const handleAuthEvent = (event, session) => {
-    switch (event) {
-      case 'SIGNED_IN':
-        console.log('User signed in:', session?.user?.email);
-        // 로그인 후 처리 (예: 분석 이벤트 전송)
-        break;
-      case 'SIGNED_OUT':
-        console.log('User signed out');
-        // 로그아웃 후 정리 작업
-        break;
-      case 'TOKEN_REFRESHED':
-        console.log('Token refreshed automatically');
-        // 토큰 갱신 시 처리 (선택적)
-        break;
-      case 'USER_UPDATED':
-        console.log('User data updated');
-        break;
-      default:
-        break;
+    if (import.meta.env.DEV) {
+      switch (event) {
+        case 'SIGNED_IN':
+          console.log('User signed in:', session?.user?.email);
+          break;
+        case 'SIGNED_OUT':
+          console.log('User signed out');
+          break;
+        case 'TOKEN_REFRESHED':
+          console.log('Token refreshed automatically');
+          break;
+        case 'USER_UPDATED':
+          console.log('User data updated');
+          break;
+        default:
+          break;
+      }
     }
   };
 

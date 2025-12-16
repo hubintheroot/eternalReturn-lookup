@@ -49,7 +49,9 @@ export default function Root() {
     try {
       await signIn('kakao');
     } catch (error) {
-      console.error('Login failed:', error);
+      if (import.meta.env.DEV) {
+        console.error('Login failed:', error);
+      }
     }
   }, [signIn]);
 
@@ -57,7 +59,9 @@ export default function Root() {
     try {
       await signOut();
     } catch (error) {
-      console.error('Logout failed:', error);
+      if (import.meta.env.DEV) {
+        console.error('Logout failed:', error);
+      }
     }
   }, [signOut]);
 

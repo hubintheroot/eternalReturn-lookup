@@ -1,4 +1,4 @@
-import { useImageLoadedStore } from "@/entities/image-loaded/model/imageLoadedStore";
+import { useImageLoadedStore } from "@/entities/image-loaded/store";
 import styled from "styled-components";
 
 export default function MiniSizeImage({ data, handler }) {

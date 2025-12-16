@@ -33,7 +33,6 @@ export default function CouponCard({ data, isLogin, permission, handler }) {
     } catch (err) {
       toastInfo.message = `복사는 pc환경을 이용해주세요`;
       toastInfo.status = 'alert';
-      console.log(err);
     } finally {
       handler.toast.show(toastInfo);
     }

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useUserInfoStore } from '@/entities/user/model/userInfoStore';
+import { useUserInfoStore } from '@/entities/user/store';
 import { getCoupons } from '@/shared/api/supabase';
 import styled from 'styled-components';
 import CouponCard from '@/features/coupon-management/ui/CouponCard';
@@ -33,7 +33,9 @@ export default function CouponsView() {
         }
         setLoading(false);
       } catch (err) {
-        console.error(err);
+        if (import.meta.env.DEV) {
+          console.error(err);
+        }
       }
     };
 

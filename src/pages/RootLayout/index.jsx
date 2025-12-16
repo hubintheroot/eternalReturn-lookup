@@ -1,20 +1,20 @@
-import Navigate from "@/shared/ui/Navigate";
-import Modal from "@/shared/ui/Modal";
-import Button from "@/shared/ui/Button";
-import UserInfo from "../userInfo";
-import { styled } from "styled-components";
-import { useAuth } from "@/shared/lib/AuthProvider";
-import { useUserInfoStore } from "@/entities/user/model/userInfoStore";
-import { Outlet } from "react-router-dom";
-import { useCallback, useEffect, useState } from "react";
-import { KakaoLoginButton } from "@/shared/ui/kakaoLoginButton";
-import { FeedbackSVG, LogoutSVG, UserSVG } from "@/shared/ui/SVG";
+import Navigate from '@/shared/ui/Navigate';
+import Modal from '@/shared/ui/Modal';
+import Button from '@/shared/ui/Button';
+import UserInfo from '../userInfo';
+import { styled } from 'styled-components';
+import { useAuth } from '@/shared/lib/AuthProvider';
+import { useUserInfoStore } from '@/entities/user/store';
+import { Outlet } from 'react-router-dom';
+import { useCallback, useEffect, useState } from 'react';
+import { KakaoLoginButton } from '@/shared/ui/kakaoLoginButton';
+import { FeedbackSVG, LogoutSVG, UserSVG } from '@/shared/ui/SVG';
 
 const links = [
-  { link: "/news", text: "새소식" },
-  { link: "/coupons", text: "쿠폰" },
-  { link: "/characters", text: "실험체" },
-  { link: "/rank", text: "랭크" },
+  { link: '/news', text: '새소식' },
+  { link: '/coupons', text: '쿠폰' },
+  { link: '/characters', text: '실험체' },
+  { link: '/rank', text: '랭크' },
 ];
 
 /**
@@ -48,7 +48,9 @@ export default function Root() {
     try {
       await signIn('kakao');
     } catch (error) {
-      console.error('Login failed:', error);
+      if (import.meta.env.DEV) {
+        console.error('Login failed:', error);
+      }
     }
   }, [signIn]);
 
@@ -56,7 +58,9 @@ export default function Root() {
     try {
       await signOut();
     } catch (error) {
-      console.error('Logout failed:', error);
+      if (import.meta.env.DEV) {
+        console.error('Logout failed:', error);
+      }
     }
   }, [signOut]);
 

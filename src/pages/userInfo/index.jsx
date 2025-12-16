@@ -16,7 +16,9 @@ export default function UserInfo({ onClose, data }) {
         await deleteAccount();
         onClose();
       } catch (error) {
-        console.error('Account deletion failed:', error);
+        if (import.meta.env.DEV) {
+          console.error('Account deletion failed:', error);
+        }
         alert('탈퇴 처리 중 오류가 발생했습니다.');
       }
     }

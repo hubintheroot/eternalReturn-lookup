@@ -13,13 +13,14 @@ async function del(id) {
 
     return { ok: true, data: couponSort(coupons.data) };
   } catch (err) {
-    console.error('delete coupon error:', err);
+    if (import.meta.env.DEV) {
+      console.error('delete coupon error:', err);
+    }
     return { ok: false, data: null };
   }
 }
 
 export default function DeleteCoupon({ handler, onClose, data }) {
-  //   console.log(data, handler);
   const deleteCoupon = async () => {
     if (window.confirm('삭제하시겠습니까?')) {
       const res = await del(data.id);
@@ -30,8 +31,6 @@ export default function DeleteCoupon({ handler, onClose, data }) {
         handler.toast.failed('알 수 없는 에러가 발생했습니다.');
       }
       onClose();
-    } else {
-      console.log('cancel');
     }
   };
   return (

@@ -1,4 +1,4 @@
-import { useImageLoadedStore } from "@/entities/image-loaded/model/imageLoadedStore";
+import { useImageLoadedStore } from "@/entities/image-loaded/store";
 import styled, { css } from "styled-components";
 import { Img } from "../MiniSizeImage";
 

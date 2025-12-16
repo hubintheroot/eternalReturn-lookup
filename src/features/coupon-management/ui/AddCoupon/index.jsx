@@ -11,8 +11,9 @@ async function insert(nextData) {
 
     return { ok: true, data: couponSort(coupons.data) };
   } catch (err) {
-    console.error('add coupon error:', err);
-
+    if (import.meta.env.DEV) {
+      console.error('add coupon error:', err);
+    }
     return { ok: false, data: null };
   }
 }
@@ -59,7 +60,9 @@ export default function AddCoupon({ handler, onClose }) {
       onClose();
     } else {
       handler.toast.failed('알 수 없는 에러가 발생했습니다.');
-      console.error(res.message);
+      if (import.meta.env.DEV) {
+        console.error(res.message);
+      }
     }
   };
   return (

@@ -9,34 +9,9 @@ export default function RankView() {
   return (
     <Section>
       <SeasonBox />
-      {/* <div className="rank-info-container">
-        <div className="rank-point-bar">{bar}</div>
-      </div> */}
     </Section>
   );
 }
-
-const tiers = [
-  { id: 10, tier: "Immortal" },
-  { id: 9, tier: "Titan" },
-  { id: 8, tier: "Mithril" },
-  { id: 7, tier: "Meteor" },
-  { id: 6, tier: "Diamond" },
-  { id: 5, tier: "Platinum" },
-  { id: 4, tier: "Gold" },
-  { id: 3, tier: "Silver" },
-  { id: 2, tier: "Bronze" },
-  { id: 1, tier: "Iron" },
-];
-// eslint-disable-next-line
-const bar = tiers.map((item) => (
-  <div className={item.tier.toLowerCase()} key={item.id}>
-    <img
-      src={`https://cdn.jsdelivr.net/gh/hubintheroot/eternalreturn_contents@main/tier/${item.tier}.webp`}
-      alt={`${item.tier} tier`}
-    />
-  </div>
-));
 
 const Section = styled.section`
   display: flex;

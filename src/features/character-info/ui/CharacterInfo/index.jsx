@@ -1,9 +1,9 @@
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useCharacterStore } from '@/entities/character/model/characterStore';
-import { useImageLoadedStore } from '@/entities/image-loaded/model/imageLoadedStore';
+import { useCharacterStore } from '@/entities/character/store';
+import { useImageLoadedStore } from '@/entities/image-loaded/store';
 import styled, { keyframes, css } from 'styled-components';
-import NotFoundView from '@/pages/notfoundView';
+import NotFoundView from '@/shared/ui/NotFoundView';
 import DifficultyBox from '../DifficultyBox';
 import MiniSizeImage from '../MiniSizeImage';
 import FullSizeImage from '../FullSizeImage';
@@ -387,42 +387,3 @@ const FullBox = styled.div`
     margin-bottom: 2rem;
   }
 `;
-
-//   const voiceRef = useRef(null);
-// TODO: VoicePlayer 준비중
-//   useEffect(() => {
-//     const getVoicePath = () => {
-//       const character = pathname.replace("/characters/", "");
-//       const voicePath = require(`../assets/charactersVoice/${character}/selected.wav`);
-//       return voicePath;
-//     };
-//     const play = () => {
-//       try {
-//         voiceRef.current.play();
-//       } catch (error) {
-//         console.log(error.message);
-//       }
-//     };
-//     const voicePlayer = () => {
-//       try {
-//         const voicePath = getVoicePath();
-//         if (voiceRef.current) {
-//           voiceRef.current.src = voicePath;
-//         } else {
-//           const voice = new Audio(voicePath);
-//           voiceRef.current = voice;
-//         }
-//         voiceRef.current.addEventListener("canplaythrough", play);
-//       } catch (error) {
-//         if (voiceRef.current) {
-//           voiceRef.current.pause();
-//         }
-//         // console.log(`no voice for character: ${error.message}`);
-//       }
-//       return () => {
-//         voiceRef.current.removeEventListener("canplaythrough", play);
-//       };
-//     };
-
-//     voicePlayer();
-//   }, [pathname]);

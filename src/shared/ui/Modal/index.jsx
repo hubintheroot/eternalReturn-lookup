@@ -23,10 +23,3 @@ const BackGround = styled.div`
   justify-content: center;
   align-items: center;
 `;
-// const Container = styled.div`
-//   background-color: white;
-//   padding: 1rem;
-//   border-radius: 8px;
-//   box-sizing: border-box;
-//   box-shadow: rgba(0, 0, 0, 0.24) 0 3px 8px;
-// `;
