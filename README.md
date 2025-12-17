@@ -160,7 +160,50 @@ npm run dev
 
 ## 개발 히스토리
 
-### 코드베이스 정리 (2024.12)
+### 스타일과 로직 분리 (2024.12.17)
+
+전체 프로젝트의 모든 컴포넌트에서 스타일과 로직을 체계적으로 분리하여 코드 품질을 향상시켰습니다.
+
+#### 작업 개요
+
+**목표**: 모든 컴포넌트에서 styled-components 정의를 별도 파일로 분리하고 일관된 패턴 적용
+
+**결과**:
+- ✅ 총 26개 컴포넌트 스타일 분리 완료
+- ✅ 52개 파일 작업 (26개 styled 파일 생성 + 26개 컴포넌트 수정)
+- ✅ 빌드 성공 (1.41s, 0 errors, 0 warnings)
+
+#### 적용한 명명 규칙
+
+```javascript
+// 파일명: ComponentName.styled.js (NOT .jsx)
+import * as Styled from './ComponentName.styled'
+
+// Export: clean names without "Styled" prefix
+export const Button = styled.button``
+
+// Usage: Styled prefix appears at usage site
+<Styled.Button>Click</Styled.Button>
+```
+
+#### 6단계 Stage별 작업
+
+1. **Stage 1: 공통 스타일** (5개 파일) - mixins, animations, constants, theme, index
+2. **Stage 2: shared/ui** (5개) - Button, EmptyState, Modal, NotFoundView, Toast
+3. **Stage 3: coupon-management** (5개) - AddCoupon, CouponCard, DeleteCoupon, EditCoupon, CouponList
+4. **Stage 4: season-display** (3개) - SeasonBox, TimerDisplay, SeasonInfo
+5. **Stage 5: character features** (8개) - CharacterList, FilterBox, CharacterInfo, DifficultyBox 등
+6. **Stage 6: pages** (8개) - comingsoon, userInfo, newsView, Root, charactersView, couponsView 등
+
+#### 개선 효과
+
+- **유지보수성**: 스타일 수정 시 별도 파일에서 작업 가능
+- **가독성**: 컴포넌트 로직에 집중 가능 (파일당 평균 30-50% 코드 감소)
+- **재사용성**: 공통 스타일 상수/믹스인 활용 가능
+- **협업**: 스타일과 로직 담당자의 작업 분리 가능
+- **일관성**: 프로젝트 전체에 동일한 패턴 적용
+
+### 코드베이스 정리 (2024.12.16)
 
 Claude CLI와 협업하여 체계적인 코드 품질 개선 작업 수행
 
