@@ -1,7 +1,7 @@
+import * as Styled from './couponsView.styled';
 import { useEffect, useRef, useState } from 'react';
 import { useUserInfoStore } from '@/entities/user/store';
 import { getCoupons } from '@/shared/api/supabase';
-import styled from 'styled-components';
 import CouponCard from '@/features/coupon-management/ui/CouponCard';
 import Modal from '@/shared/ui/Modal';
 import Toast from '@/shared/ui/Toast';
@@ -88,30 +88,30 @@ export default function CouponsView() {
   }
 
   return (
-    <Section>
-      <TitleContainer>
-        <TitleBox>
-          <GiftIconBox>
+    <Styled.Section>
+      <Styled.TitleContainer>
+        <Styled.TitleBox>
+          <Styled.GiftIconBox>
             <GiftBoxSVG />
-          </GiftIconBox>
-          <Title>쿠폰</Title>
-        </TitleBox>
-        <AddButton onClick={addCouponHandler}>
+          </Styled.GiftIconBox>
+          <Styled.Title>쿠폰</Styled.Title>
+        </Styled.TitleBox>
+        <Styled.AddButton onClick={addCouponHandler}>
           <PlusIconSVG />
           쿠폰 추가
-        </AddButton>
-      </TitleContainer>
+        </Styled.AddButton>
+      </Styled.TitleContainer>
       {loading ? (
-        <Container>
+        <Styled.Container>
           {/* TODO: 로딩 인터랙션 UI 구현하기 */}
           <div>쿠폰 찾는 중...</div>
-        </Container>
+        </Styled.Container>
       ) : (
-        <Container>
+        <Styled.Container>
           {data.length !== 0 ? (
             <>
               <h2>사용 가능한 쿠폰</h2>
-              <CouponContainer>
+              <Styled.CouponContainer>
                 {data
                   .filter((coupon) => coupon.is_active)
                   .map((coupon) => (
@@ -128,9 +128,9 @@ export default function CouponsView() {
                       }}
                     />
                   ))}
-              </CouponContainer>
+              </Styled.CouponContainer>
               <h2>만료된 쿠폰</h2>
-              <CouponContainer>
+              <Styled.CouponContainer>
                 {data
                   .filter((coupon) => !coupon.is_active)
                   .map((coupon) => (
@@ -147,14 +147,14 @@ export default function CouponsView() {
                       }}
                     />
                   ))}
-              </CouponContainer>
+              </Styled.CouponContainer>
             </>
           ) : (
-            <EmptyContainer>
+            <Styled.EmptyContainer>
               <p>아직 등록된 쿠폰이 없습니다</p>
-            </EmptyContainer>
+            </Styled.EmptyContainer>
           )}
-        </Container>
+        </Styled.Container>
       )}
       {showModal && (
         <Modal>
@@ -169,7 +169,7 @@ export default function CouponsView() {
         </Modal>
       )}
       {toast.isShow && <Toast data={toast} handler={toastHandler} />}
-    </Section>
+    </Styled.Section>
   );
 }
 
@@ -183,85 +183,3 @@ function setCouponUsed(oldData, usedCoupon = null) {
   LocalData.set('Personalization', nextData);
   return nextData;
 }
-
-const GiftIconBox = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 3rem;
-  height: 3rem;
-  background-color: rgb(79, 70, 229);
-  color: #fff;
-  border-radius: 0.5rem;
-`;
-const Section = styled.section`
-  position: relative;
-  padding: 1rem 1.5rem;
-  background-color: rgb(248, 249, 250);
-  min-height: calc(100vh - 64px - 64px);
-`;
-const Container = styled.div`
-  @media screen and (min-width: 768px) {
-    margin: 0 auto;
-    max-width: 80rem;
-  }
-`;
-const EmptyContainer = styled(Container)`
-  & > p {
-    text-align: center;
-    padding: 1rem;
-    color: rgb(100, 116, 139);
-    border: 1px solid rgb(226, 232, 240);
-    border-radius: 0.375rem;
-  }
-
-  @media screen and (min-width: 768px) {
-    margin: 0 auto;
-    max-width: 960px;
-  }
-`;
-const TitleContainer = styled(Container)`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 0.5rem;
-`;
-const TitleBox = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 0.5rem;
-`;
-const AddButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background-color: #000;
-  color: #fff;
-  border: none;
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s;
-
-  & svg {
-    width: 1rem;
-    height: 1rem;
-  }
-
-  &:hover {
-    background-color: rgb(51, 51, 51);
-  }
-`;
-const CouponContainer = styled.div`
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
-`;
-const Title = styled.h2`
-  text-align: center;
-`;

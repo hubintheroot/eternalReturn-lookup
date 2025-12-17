@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useRef } from 'react';
 import { useCharacterStore } from '@/entities/character/store';
 import { useSortOptionStore } from '@/entities/sort-option/store';
-import styled from 'styled-components';
+import * as Styled from './CharacterList.styled';
 import CharacterCard from '../CharacterCard';
 
 const selectList = {
@@ -85,13 +85,13 @@ export default function CharacterList() {
   }, [processedData, cnt]);
 
   return (
-    <Section>
-      <SubTitleDiv>
+    <Styled.Section>
+      <Styled.SubTitleDiv>
         <div>
-          <SubTitle>실험체 목록</SubTitle>
+          <Styled.SubTitle>실험체 목록</Styled.SubTitle>
         </div>
-        <ConfigBox>
-          <CheckBox>
+        <Styled.ConfigBox>
+          <Styled.CheckBox>
             <input
               type="checkbox"
               id="checkbox"
@@ -99,7 +99,7 @@ export default function CharacterList() {
               checked={isRotation}
             />
             <label htmlFor="checkbox">로테이션부터 보기</label>
-          </CheckBox>
+          </Styled.CheckBox>
           <div>
             <select onChange={handleSetOrd} value={sortState}>
               <option value={selectList.release.value}>
@@ -110,52 +110,11 @@ export default function CharacterList() {
               </option>
             </select>
           </div>
-        </ConfigBox>
-      </SubTitleDiv>
-      <Container>
-        <Ul>{characterCards}</Ul>
-      </Container>
-    </Section>
+        </Styled.ConfigBox>
+      </Styled.SubTitleDiv>
+      <Styled.Container>
+        <Styled.Ul>{characterCards}</Styled.Ul>
+      </Styled.Container>
+    </Styled.Section>
   );
 }
-
-const Section = styled.section`
-  display: flex;
-  flex-direction: column;
-`;
-const SubTitleDiv = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #363944;
-  color: white;
-  height: 50px;
-  padding: 0 16px;
-  font-size: 14px;
-`;
-const SubTitle = styled.h3`
-  margin: 0;
-`;
-const ConfigBox = styled.div`
-  display: flex;
-  flex-direction: row;
-`;
-const CheckBox = styled.div`
-  margin-right: 16px;
-`;
-const Container = styled.div`
-  padding: 16px;
-  overflow-y: auto;
-  box-sizing: border-box;
-  border: 1px solid #e6e6e6;
-  height: 320px;
-`;
-const Ul = styled.ul`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
-  column-gap: 14px;
-  row-gap: 8px;
-  margin: 0;
-  padding: 0;
-`;

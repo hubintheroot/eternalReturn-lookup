@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import * as Styled from './DeleteCoupon.styled';
 import { getCoupons, supabase } from '@/shared/api/supabase';
 import { couponSort, formatDate } from '@/shared/lib/utils';
 import Button from '@/shared/ui/Button';
@@ -34,36 +34,36 @@ export default function DeleteCoupon({ handler, onClose, data }) {
     }
   };
   return (
-    <Container>
-      <Header>
-        <CloseBox>
+    <Styled.Container>
+      <Styled.Header>
+        <Styled.CloseBox>
           <Button eventHandler={onClose}>
             <XIconSVG />
           </Button>
-        </CloseBox>
+        </Styled.CloseBox>
         <h2>쿠폰 정보</h2>
         <p>삭제할 쿠폰 정보를 조회합니다.</p>
-      </Header>
+      </Styled.Header>
       <div>
-        <InfoBox>
-          <Info>
-            <SubTitle>쿠폰코드</SubTitle>
-            <Text>{data.code}</Text>
-          </Info>
-          <Info>
-            <SubTitle>보상</SubTitle>
-            <Text>{data.description}</Text>
-          </Info>
-          <Info>
-            <SubTitle>만료일</SubTitle>
-            <Text>
+        <Styled.InfoBox>
+          <Styled.Info>
+            <Styled.SubTitle>쿠폰코드</Styled.SubTitle>
+            <Styled.Text>{data.code}</Styled.Text>
+          </Styled.Info>
+          <Styled.Info>
+            <Styled.SubTitle>보상</Styled.SubTitle>
+            <Styled.Text>{data.description}</Styled.Text>
+          </Styled.Info>
+          <Styled.Info>
+            <Styled.SubTitle>만료일</Styled.SubTitle>
+            <Styled.Text>
               {data.expires_at
                 ? formatDate(new Date(data.expires_at), true)
                 : '영구'}
-            </Text>
-          </Info>
-        </InfoBox>
-        <DeleteBox>
+            </Styled.Text>
+          </Styled.Info>
+        </Styled.InfoBox>
+        <Styled.DeleteBox>
           <Button
             eventHandler={deleteCoupon}
             text={'제거하기'}
@@ -73,80 +73,8 @@ export default function DeleteCoupon({ handler, onClose, data }) {
             hoverBackgroundColor={'rgb(51, 51, 51)'}
             display={'block'}
           />
-        </DeleteBox>
+        </Styled.DeleteBox>
       </div>
-    </Container>
+    </Styled.Container>
   );
 }
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  width: calc(100% - 2.5rem);
-  max-width: 28rem;
-  background-color: #fff;
-  border-radius: 0.5rem;
-  padding: 1rem;
-  word-break: keep-all;
-  @media screen and (min-width: 768px) {
-    width: 100%;
-  }
-`;
-const Header = styled.div`
-  text-align: center;
-  & > h2 {
-    font-weight: 600;
-    font-size: 1.25rem;
-    line-height: 1.25rem;
-    margin: 0 0 0.5rem;
-    padding: 0;
-  }
-  & > p {
-    font-size: 0.9rem;
-    margin: 0;
-    padding: 0;
-    color: rgb(113, 113, 122);
-  }
-`;
-const InfoBox = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  padding: 1rem 1.5rem;
-  margin-bottom: 2rem;
-`;
-const Info = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  /* justify-content: space-between; */
-  padding-bottom: 0.5rem;
-  border: 0;
-  border-bottom: 1px;
-  border-style: solid;
-  border-color: #e5e5e8;
-`;
-const SubTitle = styled.span`
-  color: rgb(113, 113, 122);
-  line-height: 1rem;
-  font-size: 1rem;
-`;
-const Text = styled.span`
-  line-height: 0.8rem;
-  font-size: 0.8rem;
-  @media screen and(min-width: 768px) {
-    line-height: 1rem;
-    font-size: 1rem;
-  }
-`;
-const ButtonBox = styled.div`
-  display: flex;
-`;
-const CloseBox = styled(ButtonBox)`
-  justify-content: flex-end;
-`;
-const DeleteBox = styled(ButtonBox)`
-  justify-content: center;
-  padding: 1rem 0;
-`;

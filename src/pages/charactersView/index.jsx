@@ -1,7 +1,7 @@
+import * as Styled from './charactersView.styled';
 import { useEffect, useRef } from 'react';
 import { Outlet } from 'react-router-dom';
 import { useCharacterStore } from '@/entities/character/store';
-import { styled } from 'styled-components';
 import { supabase } from '@/shared/api/supabase';
 import CharacterList from '@/features/character-list/ui/CharacterList';
 
@@ -68,31 +68,11 @@ export default function CharactersView() {
 
   if (characterData) {
     return (
-      <StyledMain>
-        <PageTitle>실험체</PageTitle>
+      <Styled.StyledMain>
+        <Styled.PageTitle>실험체</Styled.PageTitle>
         <CharacterList />
         <Outlet />
-      </StyledMain>
+      </Styled.StyledMain>
     );
   }
 }
-
-const StyledMain = styled.main`
-  @media (min-width: 576px) {
-    max-width: 540px;
-  }
-  @media (min-width: 768px) {
-    max-width: 720px;
-  }
-  @media (min-width: 992px) {
-    max-width: 960px;
-  }
-
-  max-height: calc(100vh - 64px);
-  width: 100%;
-  margin: 20px auto 0;
-`;
-const PageTitle = styled.h2`
-  margin-top: 0;
-  margin-bottom: 20px;
-`;
