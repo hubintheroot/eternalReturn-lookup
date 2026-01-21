@@ -1,25 +1,33 @@
 # EternalReturn Lookup
 
 배포: [eternalreturn-lookup.pages.dev](https://eternalreturn-lookup.pages.dev/)
+배포2: [eternalreturn-lookup.netlify.app](https://eternalreturn-lookup.netlify.app/)
 
 ## 프로젝트 소개
 
-이터널 리턴 게임 정보를 제공하는 웹 애플리케이션입니다. 캐릭터 정보, 스킨 일러스트, 시즌 정보, 쿠폰 등을 빠르고 쉽게 확인할 수 있습니다.
+이터널 리턴 게임 정보를 제공하는 웹 애플리케이션입니다.
 
-주요 기능:
-- 스킨 및 캐릭터 정보 조회
-- 시즌 정보 및 카운트다운
-- 쿠폰 정보 관리 (회원 전용)
-- 로그인 없이 모든 정보 조회 가능
+### 목적
+
+게임 플레이어들이 캐릭터 정보, 스킨 일러스트, 시즌 정보, 쿠폰 등을 빠르고 쉽게 확인할 수 있도록 정보를 제공합니다.
+
+### 주요 기능
+
+- **캐릭터 정보**: 전체 캐릭터 목록 조회, 난이도별 정렬, 로테이션 필터링
+- **캐릭터 상세**: 스킨 일러스트, 난이도, 기본 정보 확인
+- **시즌 정보**: 현재 시즌 정보 및 종료까지 남은 시간 카운트다운
+- **쿠폰 관리**: 로그인 시 쿠폰 등록/수정/삭제 기능 (CRUD)
+- **인증**: 카카오 소셜 로그인 지원
 
 ## 기술 스택
 
-- Core: React, Vite
-- State Management: Zustand
-- Routing: React Router DOM
-- Styling: Styled-components
-- Backend: Supabase (BaaS)
-- Language: JavaScript (ES6+)
+- **Core**: React 18.2.0, Vite 7.0.5
+- **State Management**: Zustand 5.0.2
+- **Routing**: React Router DOM 7.1.1
+- **Styling**: Styled-components 6.1.8
+- **Backend**: Supabase (BaaS) - Database, Authentication
+- **Language**: JavaScript (ES6+)
+- **Deployment**: Cloudflare Pages
 
 ## 아키텍처
 
@@ -28,6 +36,7 @@
 비즈니스 로직을 기준으로 코드를 구조화하여 확장성과 유지보수성을 높였습니다.
 
 프로젝트 구조:
+
 ```
 src/
 ├── app/
@@ -48,11 +57,11 @@ src/
 │   └── season-display/        - 시즌 정보 및 카운트다운
 │
 ├── entities/          - 비즈니스 엔티티 (Zustand stores)
-│   ├── character/model/characterStore.js
-│   ├── user/model/userInfoStore.js
-│   ├── season/model/seasonInfoStore.js
-│   ├── sort-option/model/sortOptionStore.js
-│   └── image-loaded/model/imageLoadedStore.js
+│   ├── character/store.js
+│   ├── user/store.js
+│   ├── season/store.js
+│   ├── sort-option/store.js
+│   └── image-loaded/store.js
 │
 └── shared/            - 공유 리소스
     ├── api/           - Supabase 클라이언트 및 API
@@ -61,6 +70,7 @@ src/
 ```
 
 계층 간 의존성 규칙:
+
 ```
 app → pages → features → entities → shared
 ```
@@ -72,6 +82,7 @@ app → pages → features → entities → shared
 프로젝트는 용도에 따라 3가지 상태 관리 방식을 사용합니다:
 
 1. Zustand (전역 상태)
+
    - characterStore: 캐릭터 데이터
    - userInfoStore: 사용자 정보
    - seasonInfoStore: 시즌 정보
@@ -79,6 +90,7 @@ app → pages → features → entities → shared
    - imageLoadedStore: 이미지 로딩 상태
 
 2. React Context (인증)
+
    - AuthProvider: Supabase 인증 상태 관리 및 실시간 동기화
 
 3. useState (지역 상태)
@@ -86,35 +98,54 @@ app → pages → features → entities → shared
 
 ### 성능 최적화
 
-1. 이미지 최적화
-   - webp 포맷 변환
-   - CDN 도입
+1. **이미지 최적화**
+
+   - webp 포맷 사용
+   - CDN 도입 (cdn.jsdelivr.net)
    - 평균 로딩 시간: 0.4초
 
-2. 스켈레톤 UI
-   - 컴포넌트 단위 로딩 표시
-   - Layout Shift 방지
-   - 로딩 상태의 시각적 피드백
+2. **스켈레톤 UI**
 
-3. 컴포넌트 메모이제이션
-   - React.memo 활용
-   - 불필요한 리렌더링 방지
+   - 이미지 로딩 중 스켈레톤 표시
+   - Layout Shift 방지
+   - imageLoadedStore를 통한 로딩 상태 관리
+
+3. **컴포넌트 최적화**
+   - React.memo로 불필요한 리렌더링 방지
+   - useCallback, useMemo로 함수/값 메모이제이션
+   - 조건부 렌더링으로 성능 개선
 
 ### 라우팅
 
-React Router를 활용한 SPA 구현:
-- 중첩 라우팅으로 레이아웃 재사용
+React Router v7를 활용한 SPA 구현:
+
+```
+/ (RootLayout)
+├── /                    - 쿠폰 페이지 (기본)
+├── /characters          - 캐릭터 목록
+│   └── /:name           - 캐릭터 상세 (중첩 라우팅)
+├── /coupons             - 쿠폰 관리
+├── /rank                - 랭크 정보
+├── /news                - 새소식 (준비 중)
+└── *                    - 404 페이지
+```
+
+주요 특징:
+
+- 중첩 라우팅으로 RootLayout 재사용
+- Outlet을 통한 자식 라우트 렌더링
 - 끊김 없는 페이지 전환
-- 빠른 사용자 경험
 
 ## 실행 방법
 
 1. 의존성 설치
+
 ```bash
 npm install
 ```
 
 2. 환경 변수 설정
+
 ```env
 VITE_SUPABASE_URL=your_supabase_url
 VITE_SUPABASE_PUBLIC_ANON_KEY=your_supabase_anon_key
@@ -122,6 +153,95 @@ VITE_KAKAO_REST_KEY=your_kakao_rest_key
 ```
 
 3. 개발 서버 실행
+
 ```bash
 npm run dev
 ```
+
+## 개발 히스토리
+
+### 스타일과 로직 분리 (2024.12.17)
+
+전체 프로젝트의 모든 컴포넌트에서 스타일과 로직을 체계적으로 분리하여 코드 품질을 향상시켰습니다.
+
+#### 작업 개요
+
+**목표**: 모든 컴포넌트에서 styled-components 정의를 별도 파일로 분리하고 일관된 패턴 적용
+
+**결과**:
+- ✅ 총 26개 컴포넌트 스타일 분리 완료
+- ✅ 52개 파일 작업 (26개 styled 파일 생성 + 26개 컴포넌트 수정)
+- ✅ 빌드 성공 (1.41s, 0 errors, 0 warnings)
+
+#### 적용한 명명 규칙
+
+```javascript
+// 파일명: ComponentName.styled.js (NOT .jsx)
+import * as Styled from './ComponentName.styled'
+
+// Export: clean names without "Styled" prefix
+export const Button = styled.button``
+
+// Usage: Styled prefix appears at usage site
+<Styled.Button>Click</Styled.Button>
+```
+
+#### 6단계 Stage별 작업
+
+1. **Stage 1: 공통 스타일** (5개 파일) - mixins, animations, constants, theme, index
+2. **Stage 2: shared/ui** (5개) - Button, EmptyState, Modal, NotFoundView, Toast
+3. **Stage 3: coupon-management** (5개) - AddCoupon, CouponCard, DeleteCoupon, EditCoupon, CouponList
+4. **Stage 4: season-display** (3개) - SeasonBox, TimerDisplay, SeasonInfo
+5. **Stage 5: character features** (8개) - CharacterList, FilterBox, CharacterInfo, DifficultyBox 등
+6. **Stage 6: pages** (8개) - comingsoon, userInfo, newsView, Root, charactersView, couponsView 등
+
+#### 개선 효과
+
+- **유지보수성**: 스타일 수정 시 별도 파일에서 작업 가능
+- **가독성**: 컴포넌트 로직에 집중 가능 (파일당 평균 30-50% 코드 감소)
+- **재사용성**: 공통 스타일 상수/믹스인 활용 가능
+- **협업**: 스타일과 로직 담당자의 작업 분리 가능
+- **일관성**: 프로젝트 전체에 동일한 패턴 적용
+
+### 코드베이스 정리 (2024.12.16)
+
+Claude CLI와 협업하여 체계적인 코드 품질 개선 작업 수행
+
+#### 7단계 Cleanup 프로세스
+
+**Stage 1: 빈 폴더 제거**
+- 5개 빈 폴더 삭제 (app/store, assets/_empty, components, entities/coupon, widgets)
+
+**Stage 2: Console 문구 정리**
+- 17개 파일에서 console 문구 환경별 분기 처리
+- 모든 console.log 제거
+- console.error를 `import.meta.env.DEV` 블록으로 래핑하여 개발 환경에서만 실행
+
+**Stage 3: 주석 처리 코드 제거**
+- 5개 파일에서 100+ 줄의 주석 코드 제거
+- VoicePlayer 준비중 코드, 미사용 스타일, 주석 처리된 JSX 등
+
+**Stage 4: entities 폴더 구조 개선**
+- `entities/{entity}/model/{entity}Store.js` → `entities/{entity}/store.js`로 단순화
+- 5개 빈 model/ 폴더 제거
+- 9개 파일의 import 경로 업데이트
+
+**Stage 5: FSD 위반 수정**
+- NotFoundView를 pages에서 shared/ui로 이동하여 FSD 아키텍처 준수
+- 2개 파일의 import 경로 업데이트
+
+**Stage 6: 미사용 변수 정리**
+- rankView.jsx의 tiers, bar 변수 제거
+- router/index.jsx의 rankInfo 변수 제거
+
+**Stage 7: 최종 검증**
+- ✅ 빌드 성공 (0 errors, 0 warnings)
+- ✅ 빈 폴더: 0개
+- ✅ Console 문구: 25개 (모두 DEV 환경 분기 처리됨)
+- ✅ Import 경로: 모두 정상 작동
+
+#### 개선 효과
+- **코드 품질**: 주석 코드 제거, 미사용 변수 정리로 가독성 향상
+- **폴더 구조**: entities 구조 단순화로 import 경로가 명확해짐
+- **FSD 준수**: 아키텍처 원칙을 정확히 따르도록 개선
+- **프로덕션 최적화**: 개발용 로그가 프로덕션 번들에 포함되지 않도록 환경 분기 처리

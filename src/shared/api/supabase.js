@@ -18,7 +18,7 @@ const createSupabaseClient = () => {
   return createClient(
     import.meta.env.VITE_SUPABASE_URL,
     import.meta.env.VITE_SUPABASE_PUBLIC_ANON_KEY,
-    options
+    options,
   );
 };
 
@@ -31,3 +31,19 @@ export const getCoupons = async () =>
     .select('id, code, expires_at, name, description, is_active, created_by')
     .order('is_active', { ascending: false })
     .order('expires_at', { ascending: true });
+
+export const getPatchNotes = async () =>
+  await supabase()
+    .from('patch_note_summaries')
+    .select('id, title, patch_date, view_count')
+    .order('patch_date', { ascending: false });
+
+export const getPatchNoteById = async (id) =>
+  await supabase()
+    .from('patch_note_summaries')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+export const incrementViewCount = async (articleId) =>
+  await supabase().rpc('increment_view_count', { article_id: articleId });
