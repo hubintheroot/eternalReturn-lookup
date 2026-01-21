@@ -9,7 +9,7 @@ import { KakaoLoginButton } from '@/shared/ui/kakaoLoginButton';
 import { FeedbackSVG, LogoutSVG, UserSVG } from '@/shared/ui/SVG';
 
 const links = [
-  { link: '/news', text: '새소식' },
+  { link: '/patchNotes', text: '패치노트' },
   { link: '/coupons', text: '쿠폰' },
   { link: '/characters', text: '실험체' },
   { link: '/rank', text: '랭크' },
