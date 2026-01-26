@@ -82,7 +82,6 @@ app → pages → features → entities → shared
 프로젝트는 용도에 따라 3가지 상태 관리 방식을 사용합니다:
 
 1. Zustand (전역 상태)
-
    - characterStore: 캐릭터 데이터
    - userInfoStore: 사용자 정보
    - seasonInfoStore: 시즌 정보
@@ -90,7 +89,6 @@ app → pages → features → entities → shared
    - imageLoadedStore: 이미지 로딩 상태
 
 2. React Context (인증)
-
    - AuthProvider: Supabase 인증 상태 관리 및 실시간 동기화
 
 3. useState (지역 상태)
@@ -99,13 +97,11 @@ app → pages → features → entities → shared
 ### 성능 최적화
 
 1. **이미지 최적화**
-
    - webp 포맷 사용
    - CDN 도입 (cdn.jsdelivr.net)
    - 평균 로딩 시간: 0.4초
 
 2. **스켈레톤 UI**
-
    - 이미지 로딩 중 스켈레톤 표시
    - Layout Shift 방지
    - imageLoadedStore를 통한 로딩 상태 관리
@@ -122,11 +118,13 @@ React Router v7를 활용한 SPA 구현:
 ```
 / (RootLayout)
 ├── /                    - 쿠폰 페이지 (기본)
-├── /characters          - 캐릭터 목록
-│   └── /:name           - 캐릭터 상세 (중첩 라우팅)
+├── /patchNotes          - 패치노트 목록
+├── /patchNotes/:id      - 패치노트 상세
 ├── /coupons             - 쿠폰 관리
+├── /characters          - 캐릭터 목록
+│   └── /*               - 캐릭터 상세 (중첩 라우팅)
 ├── /rank                - 랭크 정보
-├── /news                - 새소식 (준비 중)
+├── /userInfo            - 사용자 정보
 └── *                    - 404 페이지
 ```
 
@@ -160,7 +158,7 @@ npm run dev
 
 ## 개발 히스토리
 
-### 스타일과 로직 분리 (2024.12.17)
+### 스타일과 로직 분리 (2025.12.17)
 
 전체 프로젝트의 모든 컴포넌트에서 스타일과 로직을 체계적으로 분리하여 코드 품질을 향상시켰습니다.
 
@@ -169,6 +167,7 @@ npm run dev
 **목표**: 모든 컴포넌트에서 styled-components 정의를 별도 파일로 분리하고 일관된 패턴 적용
 
 **결과**:
+
 - ✅ 총 26개 컴포넌트 스타일 분리 완료
 - ✅ 52개 파일 작업 (26개 styled 파일 생성 + 26개 컴포넌트 수정)
 - ✅ 빌드 성공 (1.41s, 0 errors, 0 warnings)
@@ -203,45 +202,73 @@ export const Button = styled.button``
 - **협업**: 스타일과 로직 담당자의 작업 분리 가능
 - **일관성**: 프로젝트 전체에 동일한 패턴 적용
 
-### 코드베이스 정리 (2024.12.16)
+### 코드베이스 정리 (2025.12.16)
 
 Claude CLI와 협업하여 체계적인 코드 품질 개선 작업 수행
 
 #### 7단계 Cleanup 프로세스
 
 **Stage 1: 빈 폴더 제거**
-- 5개 빈 폴더 삭제 (app/store, assets/_empty, components, entities/coupon, widgets)
+
+- 5개 빈 폴더 삭제 (app/store, assets/\_empty, components, entities/coupon, widgets)
 
 **Stage 2: Console 문구 정리**
+
 - 17개 파일에서 console 문구 환경별 분기 처리
 - 모든 console.log 제거
 - console.error를 `import.meta.env.DEV` 블록으로 래핑하여 개발 환경에서만 실행
 
 **Stage 3: 주석 처리 코드 제거**
+
 - 5개 파일에서 100+ 줄의 주석 코드 제거
 - VoicePlayer 준비중 코드, 미사용 스타일, 주석 처리된 JSX 등
 
 **Stage 4: entities 폴더 구조 개선**
+
 - `entities/{entity}/model/{entity}Store.js` → `entities/{entity}/store.js`로 단순화
 - 5개 빈 model/ 폴더 제거
 - 9개 파일의 import 경로 업데이트
 
 **Stage 5: FSD 위반 수정**
+
 - NotFoundView를 pages에서 shared/ui로 이동하여 FSD 아키텍처 준수
 - 2개 파일의 import 경로 업데이트
 
 **Stage 6: 미사용 변수 정리**
+
 - rankView.jsx의 tiers, bar 변수 제거
 - router/index.jsx의 rankInfo 변수 제거
 
 **Stage 7: 최종 검증**
+
 - ✅ 빌드 성공 (0 errors, 0 warnings)
 - ✅ 빈 폴더: 0개
 - ✅ Console 문구: 25개 (모두 DEV 환경 분기 처리됨)
 - ✅ Import 경로: 모두 정상 작동
 
 #### 개선 효과
+
 - **코드 품질**: 주석 코드 제거, 미사용 변수 정리로 가독성 향상
 - **폴더 구조**: entities 구조 단순화로 import 경로가 명확해짐
 - **FSD 준수**: 아키텍처 원칙을 정확히 따르도록 개선
 - **프로덕션 최적화**: 개발용 로그가 프로덕션 번들에 포함되지 않도록 환경 분기 처리
+
+---
+
+## 로드맵
+
+### 진행 중
+
+- [ ] 랜딩 페이지 도입 (시즌 타이머 + 퀵 링크)
+- [ ] 랭크 페이지 제거 (시즌 타이머 랜딩 페이지로 이동)
+
+### 예정
+
+- [ ] UI/UX 점진적 개선
+
+### 완료
+
+- [x] 패치노트 페이지 구현
+- [x] 스타일/로직 분리 리팩토링
+- [x] FSD 아키텍처 적용
+- [x] 코드베이스 정리
