@@ -32,7 +32,7 @@ const CharTextInfo = memo(({ textContents, isLoading }) => {
 const SkinImageList = memo(
   ({ skins, windowWidth, onSkinSelect, onImageLoad }) => {
     const loadableSkins = skins.filter(
-      (skin) => skin.mini_size && skin.full_size
+      (skin) => skin.mini_size && skin.full_size,
     );
     const size = windowWidth <= 768 ? 64 : 84;
     return (
@@ -51,7 +51,7 @@ const SkinImageList = memo(
         ))}
       </Styled.Ul>
     );
-  }
+  },
 );
 
 export default function CharacterInfo() {
@@ -59,7 +59,9 @@ export default function CharacterInfo() {
   const navigate = useNavigate();
   const loading = useImageLoadedStore((state) => state.detailLoaded);
   const data = useCharacterStore((state) => state.data);
-  const setCharDetailLoaded = useImageLoadedStore((state) => state.setCharDetailLoaded);
+  const setCharDetailLoaded = useImageLoadedStore(
+    (state) => state.setCharDetailLoaded,
+  );
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [character, setCharacter] = useState();
   const [selectedSkinID, setSelectedSkinID] = useState();
@@ -70,12 +72,14 @@ export default function CharacterInfo() {
 
     imageLoadedCount.current = 0;
 
-    const curCharacter = data.find((c) => pathname.includes(c.Name_EN));
+    const curCharacter = data.find((c) =>
+      decodeURIComponent(pathname).includes(c.Name_EN),
+    );
 
     if (!curCharacter) return;
 
     const loadableSkins = curCharacter.skins.filter(
-      (s) => s.full_size && s.mini_size
+      (s) => s.full_size && s.mini_size,
     );
 
     setSelectedSkinID(curCharacter.skins[0]?.skin_id);
@@ -134,7 +138,7 @@ export default function CharacterInfo() {
       if (!character) return;
       setSelectedSkinID(nextSkinID);
     },
-    [character]
+    [character],
   );
 
   const handleImageLoad = useCallback(() => {
@@ -200,7 +204,7 @@ export default function CharacterInfo() {
                     }}
                     key={skin.skin_id}
                   />
-                )
+                ),
             )}
           </Styled.FullBox>
         </Styled.ImgDiv>
