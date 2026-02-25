@@ -1,45 +1,24 @@
-import styled, { css } from 'styled-components';
-import { Img } from '../MiniSizeImage/MiniSizeImage.styled';
+import styled from 'styled-components';
 
-const visibleStyle = css`
-  ${(props) => (props.$visible ? `display: block` : `display: none;`)}
-`;
-
-const skelStyle = css`
-  background-color: lightgrey;
-  border-radius: 5px;
-  background-image: none;
-`;
-
-export const Container = styled.div`
+export const Img = styled.img`
   width: 100%;
   height: 100%;
-  position: absolute;
-  ${visibleStyle}
-`;
-
-export const FullImg = styled(Img)`
-  object-position: top;
-  width: 100%;
-  height: 100%;
-  ${visibleStyle}
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  -webkit-user-drag: none;
+  user-select: none;
 `;
 
 export const Title = styled.span`
   position: absolute;
-  font-size: 1.5rem;
-  font-weight: 700;
-  top: -2rem;
-  ${visibleStyle}
-`;
-
-export const Skel = styled(Container)`
-  ${skelStyle}
-  ${visibleStyle}
-`;
-
-export const SkelTitle = styled(Title)`
-  min-width: 8rem;
-  min-height: 1.8rem;
-  ${skelStyle}
+  bottom: 0;
+  left: 0;
+  background-color: rgba(113, 201, 206, 0.75);
+  color: #fff;
+  padding: 4px 14px 6px 10px;
+  border-top-right-radius: 16px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  pointer-events: none;
 `;

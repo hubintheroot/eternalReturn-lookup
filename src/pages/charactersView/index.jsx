@@ -26,32 +26,13 @@ export default function CharactersView() {
 
         const data = character.data.map((charData) => {
           charData.Story_Desc = charData.Story_Desc.replace(/\\n/g, '\n');
-          charData.ImagePath = charData.ImagePath.replace(
-            'jsdelivr.net',
-            'statically.io'
-          );
-          const tempSkinData = skin.data.filter(
-            (skinData) => charData.CharacterID === skinData.character_id
+          charData.skins = skin.data.filter(
+            (skinData) => charData.CharacterID === skinData.character_id,
           );
 
-          for (let i = 0; i < tempSkinData.length; i++) {
-            const img_info = tempSkinData[i];
-            const f_size = img_info.full_size;
-            const m_size = img_info.mini_size;
-            if (f_size !== null && m_size !== null) {
-              tempSkinData[i].full_size = f_size.replace(
-                'jsdelivr.net',
-                'statically.io'
-              );
-              tempSkinData[i].mini_size = m_size.replace(
-                'jsdelivr.net',
-                'statically.io'
-              );
-            }
-          }
-          charData.skins = tempSkinData;
           return charData;
         });
+
         setData(data);
       } catch (err) {
         if (import.meta.env.DEV) {
@@ -69,8 +50,9 @@ export default function CharactersView() {
   if (characterData) {
     return (
       <Styled.StyledMain>
-        <Styled.PageTitle>실험체</Styled.PageTitle>
-        <CharacterList />
+        <Styled.StyledCharacterListBox>
+          <CharacterList />
+        </Styled.StyledCharacterListBox>
         <Outlet />
       </Styled.StyledMain>
     );

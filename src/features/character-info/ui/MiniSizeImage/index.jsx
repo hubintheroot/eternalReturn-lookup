@@ -1,18 +1,18 @@
 import { useImageLoadedStore } from '@/entities/image-loaded/store';
 import * as Styled from './MiniSizeImage.styled';
 
-export default function MiniSizeImage({ data, handler }) {
+export default function MiniSizeImage({ src, alt, isActive, onClick }) {
   const loading = useImageLoadedStore((state) => state.detailLoaded);
 
   return (
     <>
-      {loading && <Styled.Skel $size={data.size} />}
+      {loading && <Styled.Skel />}
       <Styled.Li
-        onClick={() => handler.setSelect(data.skinID)}
+        $active={isActive}
+        onClick={onClick}
         style={{ display: loading ? 'none' : 'block' }}
-        $size={data.size}
       >
-        <Styled.Img src={data.src} alt={data.name.en} onLoad={handler.loadEvent} />
+        <Styled.Img src={src} alt={alt} draggable="false" />
       </Styled.Li>
     </>
   );

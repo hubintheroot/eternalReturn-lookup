@@ -1,91 +1,76 @@
 import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useImageLoadedStore } from '@/entities/image-loaded/store';
 import * as Styled from './CharacterCard.styled';
 
-export default function CharacterCard({
-  data,
-  maxLength,
-  cnt,
-  size,
-  link,
-  bgPath,
-  freeIconPath,
-}) {
+export default function CharacterCard({ data, maxLength, cnt, link }) {
   const [disabled, setDisabled] = useState(false);
+  const { pathname } = useLocation();
   const loading = useImageLoadedStore((state) => state.charListLoaded);
   const setCharListLoaded = useImageLoadedStore(
-    (state) => state.setCharListLoaded
+    (state) => state.setCharListLoaded,
   );
 
-  const handler = {
-    imgError: (e) => {
-      cnt.current += 1;
-      e.target.src = `${process.env.PUBLIC_URL}/icons8-64.png`;
-      e.target.classList.add('prepare-image');
+  const isActive = decodeURIComponent(pathname).includes(data.Name_EN);
 
-      setDisabled(true);
-      handler.disableSkelUI();
-    },
-    imgOnload: () => {
-      cnt.current += 1;
-      handler.disableSkelUI();
-    },
-    disableLink: (e) => {
-      if (disabled) {
-        e.preventDefault();
-        alert('데이터를 준비중입니다.');
-      }
-    },
-    setStyle: (e) => {
-      e.target.style.cursor = disabled ? 'not-allowed' : 'pointer';
-    },
-    disableSkelUI: () => {
-      if (maxLength === cnt.current) setCharListLoaded(false);
-    },
+  const handleLoad = () => {
+    cnt.current += 1;
+    if (maxLength === cnt.current) setCharListLoaded(false);
+  };
+
+  const handleError = (e) => {
+    cnt.current += 1;
+    e.target.src = `${process.env.PUBLIC_URL}/icons8-64.png`;
+    e.target.classList.add('prepare-image');
+    setDisabled(true);
+    if (maxLength === cnt.current) setCharListLoaded(false);
+  };
+
+  const handleClick = (e) => {
+    if (disabled) {
+      e.preventDefault();
+      alert('데이터를 준비중입니다.');
+    }
   };
 
   return (
-    <Styled.Card>
-      {/* skeleton ui */}
-      <Styled.SkelStyledLink style={{ display: loading ? 'block' : 'none' }}>
-        <Styled.Figure>
-          <Styled.SkelImgBox>
-            <Styled.Img height={`${size.height}px`} width={`${size.width}px`} />
-          </Styled.SkelImgBox>
-          <Styled.SkelFigcaption></Styled.SkelFigcaption>
-        </Styled.Figure>
-      </Styled.SkelStyledLink>
+    <Styled.Li>
+      {/* 스켈레톤: 이미지 로딩 중 표시 */}
+      <Styled.SkelCard style={{ display: loading ? 'flex' : 'none' }}>
+        <Styled.SkelImg />
+        <Styled.SkelCaption />
+      </Styled.SkelCard>
 
-      {/* content */}
+      {/* 콘텐츠: 항상 DOM에 유지하여 onLoad/onError 발화 보장 */}
       <Styled.StyledLink
         to={link}
+        $active={isActive}
+        $disabled={disabled}
+        onClick={handleClick}
         style={{ display: loading ? 'none' : 'block' }}
-        onClick={handler.disableLink}
-        onMouseOver={handler.setStyle}
       >
         <Styled.Figure>
-          <Styled.ImgBox>
-            {data.Weekly_Free ? (
-              <Styled.Free src={freeIconPath} alt="free rotation character flag" />
-            ) : null}
-            <Styled.Img
-              src={bgPath}
-              alt="background image"
-              height={size.height}
-              width={size.width}
+          <Styled.ImgWrapper>
+            <Styled.Thumb
+              src={data.skins[0].mini_size}
+              alt={data.Name_KR}
+              draggable="false"
+              onLoad={handleLoad}
+              onError={handleError}
             />
-            <Styled.Img
-              src={data.ImagePath}
-              onError={handler.imgError}
-              onLoad={handler.imgOnload}
-              alt="character image"
-              height={size.height}
-              width={size.width}
-            />
-          </Styled.ImgBox>
-          <Styled.Figcaption>{data.Name_KR}</Styled.Figcaption>
+            {data.Weekly_Free && (
+              <Styled.UnlockIcon
+                src="/images/icons/unlock_icon.png"
+                alt="로테이션"
+                draggable="false"
+              />
+            )}
+          </Styled.ImgWrapper>
+          <Styled.Figcaption $active={isActive}>
+            {data.Name_KR}
+          </Styled.Figcaption>
         </Styled.Figure>
       </Styled.StyledLink>
-    </Styled.Card>
+    </Styled.Li>
   );
 }
