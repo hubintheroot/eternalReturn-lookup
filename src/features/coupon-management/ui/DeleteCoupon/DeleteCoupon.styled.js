@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -14,7 +13,6 @@ export const Container = styled.div`
     width: 100%;
   }
 `;
-
 export const Header = styled.div`
   text-align: center;
   & > h2 {
@@ -31,7 +29,6 @@ export const Header = styled.div`
     color: rgb(113, 113, 122);
   }
 `;
-
 export const InfoBox = styled.div`
   display: flex;
   flex-direction: column;
@@ -39,25 +36,21 @@ export const InfoBox = styled.div`
   padding: 1rem 1.5rem;
   margin-bottom: 2rem;
 `;
-
 export const Info = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  /* justify-content: space-between; */
   padding-bottom: 0.5rem;
   border: 0;
   border-bottom: 1px;
   border-style: solid;
   border-color: #A6E3E9;
 `;
-
 export const SubTitle = styled.span`
   color: rgb(113, 113, 122);
   line-height: 1rem;
   font-size: 1rem;
 `;
-
 export const Text = styled.span`
   line-height: 0.8rem;
   font-size: 0.8rem;
@@ -66,15 +59,12 @@ export const Text = styled.span`
     font-size: 1rem;
   }
 `;
-
 export const ButtonBox = styled.div`
   display: flex;
 `;
-
 export const CloseBox = styled(ButtonBox)`
   justify-content: flex-end;
 `;
-
 export const DeleteBox = styled(ButtonBox)`
   justify-content: center;
   padding: 1rem 0;

@@ -1,6 +1,4 @@
 import { keyframes } from 'styled-components';
-
-// Toast animations - Desktop
 export const slideUpPC = keyframes`
   from {
     transform: translateY(1em);
@@ -11,7 +9,6 @@ export const slideUpPC = keyframes`
     opacity: 1;
   }
 `;
-
 export const slideDownPC = keyframes`
   from {
     transform: translateY(0);
@@ -22,8 +19,6 @@ export const slideDownPC = keyframes`
     opacity: 0;
   }
 `;
-
-// Toast animations - Mobile
 export const slideUpMB = keyframes`
   from {
     transform: translate(-50%, 1em);
@@ -34,7 +29,6 @@ export const slideUpMB = keyframes`
     opacity: 0;
   }
 `;
-
 export const slideDownMB = keyframes`
   from {
     transform: translate(-50%, 0);
@@ -45,8 +39,6 @@ export const slideDownMB = keyframes`
     opacity: 1;
   }
 `;
-
-// General animations
 export const fadeIn = keyframes`
   from {
     opacity: 0;
@@ -55,7 +47,6 @@ export const fadeIn = keyframes`
     opacity: 1;
   }
 `;
-
 export const fadeOut = keyframes`
   from {
     opacity: 1;

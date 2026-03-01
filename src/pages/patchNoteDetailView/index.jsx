@@ -1,12 +1,15 @@
 import * as Styled from './patchNoteDetailView.styled';
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getPatchNoteById, incrementViewCount, getCharacterImageMap } from '@/shared/api/supabase';
+import {
+  getPatchNoteById,
+  incrementViewCount,
+  getCharacterImageMap,
+} from '@/shared/api/supabase';
 import { useCharacterStore } from '@/entities/character/store';
 import CharacterSection from './components/CharacterSection';
 import EquipmentSection from './components/EquipmentSection';
 import NewSystemSection from './components/NewSystemSection';
-
 export default function PatchNoteDetailView() {
   const { id } = useParams();
   const characterData = useCharacterStore((state) => state.data);
@@ -15,21 +18,21 @@ export default function PatchNoteDetailView() {
   const [loading, setLoading] = useState(true);
   const topRef = useRef(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
-
-  // topRef가 뷰포트 밖으로 나가면 스크롤 상단 버튼 표시
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => setShowScrollTop(!entry.isIntersecting),
-      { threshold: 0 },
+      {
+        threshold: 0,
+      },
     );
     const el = topRef.current;
     if (el) observer.observe(el);
     return () => observer.disconnect();
   }, []);
-
-  const scrollToTop = () => topRef.current?.scrollIntoView({ behavior: 'smooth' });
-
-  // characterData(스토어)가 있으면 그것으로, 없으면 API에서 직접 이미지 맵 생성
+  const scrollToTop = () =>
+    topRef.current?.scrollIntoView({
+      behavior: 'smooth',
+    });
   useEffect(() => {
     if (characterData) {
       const map = {};
@@ -46,7 +49,6 @@ export default function PatchNoteDetailView() {
         if (import.meta.env.DEV) console.error(err);
       });
   }, [characterData]);
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -63,10 +65,8 @@ export default function PatchNoteDetailView() {
         setLoading(false);
       }
     };
-
     fetchData();
   }, [id]);
-
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('ko-KR', {
@@ -75,7 +75,6 @@ export default function PatchNoteDetailView() {
       day: '2-digit',
     });
   };
-
   if (loading) {
     return (
       <Styled.Section>
@@ -85,7 +84,6 @@ export default function PatchNoteDetailView() {
       </Styled.Section>
     );
   }
-
   if (!patchNote) {
     return (
       <Styled.Section>
@@ -99,13 +97,12 @@ export default function PatchNoteDetailView() {
       </Styled.Section>
     );
   }
-
   return (
     <Styled.Section>
       <div ref={topRef} />
       <Styled.Container>
         <Styled.TopNav>
-          <Styled.BackButton to="/patchNotes">← 목록으로</Styled.BackButton>
+          <Styled.BackButton to="/patchNotes">목록으로</Styled.BackButton>
         </Styled.TopNav>
         <Styled.Header>
           <Styled.Title>{patchNote.title}</Styled.Title>

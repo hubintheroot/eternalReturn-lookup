@@ -1,53 +1,34 @@
 import { memo } from 'react';
 import styled, { keyframes } from 'styled-components';
-
 function FlipCountClock({
   counter,
   color = 'white',
   bgColor = '#333',
-  borderColor = 'mediumpurple',
+  borderColor = 'mediumpurple'
 }) {
-  return (
-    <StyledUl $borderColor={borderColor}>
-      {nums.map((num) => {
-        const isFront = num === counter;
-        const isBack = num === (counter + 1) % 10;
-        return (
-          <StyledLi
-            key={num}
-            className={`${isFront ? 'front' : ''} ${isBack ? 'back' : ''}`}
-          >
+  return <StyledUl $borderColor={borderColor}>
+      {nums.map(num => {
+      const isFront = num === counter;
+      const isBack = num === (counter + 1) % 10;
+      return <StyledLi key={num} className={`${isFront ? 'front' : ''} ${isBack ? 'back' : ''}`}>
             <StyledDiv className="upper">
-              <StyledNum
-                className="num"
-                $customColor={color}
-                $bgColor={bgColor}
-                $borderColor={borderColor}
-              >
+              <StyledNum className="num" $customColor={color} $bgColor={bgColor} $borderColor={borderColor}>
                 {num}
               </StyledNum>
             </StyledDiv>
             <StyledDiv className="lower">
-              <StyledNum
-                className="num"
-                $customColor={color}
-                $bgColor={bgColor}
-                $borderColor={borderColor}
-              >
+              <StyledNum className="num" $customColor={color} $bgColor={bgColor} $borderColor={borderColor}>
                 {num}
               </StyledNum>
             </StyledDiv>
-          </StyledLi>
-        );
-      })}
-    </StyledUl>
-  );
+          </StyledLi>;
+    })}
+    </StyledUl>;
 }
-
 export default memo(FlipCountClock);
-
-const nums = Array.from({ length: 10 }, (_, i) => i);
-
+const nums = Array.from({
+  length: 10
+}, (_, i) => i);
 const increaseZindex = keyframes`
   0% {
     z-index: 4;
@@ -56,7 +37,6 @@ const increaseZindex = keyframes`
     z-index: 4;
   }
 `;
-
 const middleToBottom = keyframes`
   0% {
     transform: rotateX(90deg);
@@ -65,7 +45,6 @@ const middleToBottom = keyframes`
     transform: rotateX(0deg);
   }
 `;
-
 const topToMiddle = keyframes`
   0% {
     transform: rotateX(0deg);
@@ -74,7 +53,6 @@ const topToMiddle = keyframes`
     transform: rotateX(90deg);
   }
 `;
-
 const show = keyframes`
   0% {
     opacity: 0;
@@ -83,7 +61,6 @@ const show = keyframes`
     opacity: 1;
   }
 `;
-
 const hide = keyframes`
   0% {
     opacity: 1;
@@ -92,19 +69,14 @@ const hide = keyframes`
     opacity: 0;
   }
 `;
-
 const StyledUl = styled.ul`
   position: relative;
-  margin: 5px;
   width: 35px;
   height: 50px;
-  /* width: 6vw; */
-  /* height: 9vh; */
   margin: 1px;
   border-radius: 4px;
-  border: 1px solid ${(props) => props.$borderColor};
+  border: 1px solid ${props => props.$borderColor};
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.7);
-  /* font-size: 80px; */
   font-weight: bold;
   list-style: none;
   padding: 0;
@@ -127,7 +99,6 @@ const StyledUl = styled.ul`
     margin: 2px;
   }
 `;
-
 const StyledLi = styled.li`
   position: absolute;
   z-index: 1;
@@ -186,7 +157,6 @@ const StyledLi = styled.li`
     }
   }
 `;
-
 const StyledDiv = styled.div`
   position: absolute;
   z-index: 1;
@@ -232,7 +202,6 @@ const StyledDiv = styled.div`
     }
   }
 `;
-
 const StyledNum = styled.div`
   position: absolute;
   z-index: 1;
@@ -242,11 +211,11 @@ const StyledNum = styled.div`
   height: 200%;
   align-items: center;
   justify-content: center;
-  background-color: ${(props) => `${props.$bgColor}`};
-  border: 1px solid ${(props) => props.$borderColor};
+  background-color: ${props => `${props.$bgColor}`};
+  border: 1px solid ${props => props.$borderColor};
   box-sizing: border-box;
   border-radius: 6px;
-  color: ${(props) => `${props.$customColor}`};
+  color: ${props => `${props.$customColor}`};
   font-size: 24px;
 
   @media screen and (min-width: 400px) {

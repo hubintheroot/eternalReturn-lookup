@@ -12,44 +12,46 @@ import Navigate from '@/shared/ui/Navigate';
 import BlindTransition from '@/shared/ui/BlindTransition';
 import SeasonMiniTimer from '@/features/season-display/ui/SeasonMiniTimer';
 import { checkAndRedirectOnFirstVisit } from '@/shared/lib/appSession';
-
-const links = [
-  { link: '/', text: '홈' },
-  { link: '/patchNotes', text: '패치노트' },
-  { link: '/coupons', text: '쿠폰' },
-  { link: '/characters', text: '실험체' },
-];
-
-/**
- * AuthProvider의 상태를 Zustand와 동기화하는 Hook
- */
+const links = [{
+  link: '/',
+  text: '홈'
+}, {
+  link: '/patchNotes',
+  text: '패치노트'
+}, {
+  link: '/coupons',
+  text: '쿠폰'
+}, {
+  link: '/characters',
+  text: '실험체'
+}];
 function useSyncAuthToStore() {
-  const setUser = useUserInfoStore((state) => state.setUser);
-  const { user } = useAuth();
-
+  const setUser = useUserInfoStore(state => state.setUser);
+  const {
+    user
+  } = useAuth();
   useEffect(() => {
     setUser(user);
   }, [user, setUser]);
 }
-
 export default function Root() {
-  const { user, signIn, signOut, loading } = useAuth();
+  const {
+    user,
+    signIn,
+    signOut,
+    loading
+  } = useAuth();
   const [showModal, setModal] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-
   useSyncAuthToStore();
-
-  // 첫 접속 시 무조건 랜딩 페이지로 이동
   useEffect(() => {
     checkAndRedirectOnFirstVisit(navigate, location.pathname);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
+  }, []);
   const showUserInfo = useCallback(() => setModal(true), []);
   const hideUserInfo = useCallback(() => setModal(false), []);
   const closeDrawer = useCallback(() => setIsDrawerOpen(false), []);
-
   const handleLogin = useCallback(async () => {
     try {
       await signIn('kakao');
@@ -59,7 +61,6 @@ export default function Root() {
       }
     }
   }, [signIn]);
-
   const handleLogout = useCallback(async () => {
     try {
       await signOut();
@@ -69,34 +70,24 @@ export default function Root() {
       }
     }
   }, [signOut]);
-
   if (loading) {
     return <div>Loading...</div>;
   }
-
-  const userButtons = user ? (
-    <>
+  const userButtons = user ? <>
       <Button eventHandler={showUserInfo} text="프로필">
         <UserSVG />
       </Button>
       <Button eventHandler={handleLogout} text="로그아웃">
         <LogoutSVG />
       </Button>
-    </>
-  ) : (
-    <KakaoLoginButton loginHandler={handleLogin} />
-  );
-
-  return (
-    <Styled.Page>
-      {/* 세로모드: 상단 TopBar */}
+    </> : <KakaoLoginButton loginHandler={handleLogin} />;
+  return <Styled.Page>
       <Styled.TopBar>
         <Styled.TopBarTitle as={Link} to="/">ELK</Styled.TopBarTitle>
         <SeasonMiniTimer variant="topbar" />
         <Styled.HamburgerBtn onClick={() => setIsDrawerOpen(true)}>☰</Styled.HamburgerBtn>
       </Styled.TopBar>
 
-      {/* 세로모드: Drawer */}
       <Styled.DrawerOverlay $isOpen={isDrawerOpen} onClick={closeDrawer} />
       <Styled.Drawer $isOpen={isDrawerOpen}>
         <Styled.DrawerHeader>
@@ -107,7 +98,6 @@ export default function Root() {
         <Styled.DrawerUserBox>{userButtons}</Styled.DrawerUserBox>
       </Styled.Drawer>
 
-      {/* 가로모드: 왼쪽 Sidebar */}
       <Styled.Sidebar>
         <Styled.SidebarTitleRow>
           <Styled.SidebarTitle as={Link} to="/">ELK</Styled.SidebarTitle>
@@ -117,15 +107,10 @@ export default function Root() {
         <Styled.SidebarUserBox>{userButtons}</Styled.SidebarUserBox>
       </Styled.Sidebar>
 
-      {/* 콘텐츠 영역 */}
       <Styled.ContentWrapper>
         <BlindTransition />
         <Styled.SurveyContainer>
-          <Styled.FeedbackContainer
-            href="https://forms.gle/hXXEEMWiiXeicxq2A"
-            target="_blank"
-            rel="noreferrer"
-          >
+          <Styled.FeedbackContainer href="https://forms.gle/hXXEEMWiiXeicxq2A" target="_blank" rel="noreferrer">
             <FeedbackSVG />
             <span>피드백 설문하러 가기</span>
           </Styled.FeedbackContainer>
@@ -135,11 +120,8 @@ export default function Root() {
         </Styled.Content>
       </Styled.ContentWrapper>
 
-      {showModal && (
-        <Modal>
+      {showModal && <Modal>
           <UserInfo onClose={hideUserInfo} data={user?.user_metadata} />
-        </Modal>
-      )}
-    </Styled.Page>
-  );
+        </Modal>}
+    </Styled.Page>;
 }

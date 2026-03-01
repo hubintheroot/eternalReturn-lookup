@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-
 export const DiffBox = styled.div`
   position: relative;
   display: inline-flex;
@@ -10,7 +9,6 @@ export const DiffBox = styled.div`
   border-radius: 8px;
   background-color: #E3FDFD;
 
-  /* 배터리 양극 돌출부 */
   &::after {
     content: '';
     position: absolute;
@@ -23,12 +21,10 @@ export const DiffBox = styled.div`
     border-radius: 0 8px 8px 0;
   }
 `;
-
 export const Difficulty = styled.div`
   width: 8px;
   height: 16px;
   border-radius: 8px;
-  background-color: ${(props) =>
-    props.$empty ? 'rgba(113, 201, 206, 0.2)' : '#71C9CE'};
+  background-color: ${props => props.$empty ? 'rgba(113, 201, 206, 0.2)' : '#71C9CE'};
   box-sizing: border-box;
 `;
