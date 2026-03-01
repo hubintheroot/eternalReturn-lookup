@@ -30,7 +30,7 @@ export const StyledMain = styled.main`
   @media (orientation: landscape) {
     flex-direction: row;
     gap: clamp(12px, 2vw, 20px);
-    height: calc(100vh - 124px);
+    height: calc(100vh - 60px);
     overflow: hidden;
     max-width: min(1600px, 100%);
     margin-top: 0;

@@ -140,14 +140,16 @@ export default function ImageCarousel({ skins, isLoading, onImageLoad }) {
     if (!isLoadingRef.current) resetAutoPlay();
   }, [resetAutoPlay]);
 
-  const handleImageClick = useCallback(
-    (skin) => {
-      if (window.matchMedia('(orientation: landscape)').matches) {
-        setModalSkin(skin);
-      }
-    },
-    [],
-  );
+  const handleImageClick = useCallback((skin, e) => {
+    if (window.matchMedia('(orientation: landscape)').matches) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      setModalSkin({
+        skin,
+        originX: rect.left + rect.width / 2,
+        originY: rect.top + rect.height / 2,
+      });
+    }
+  }, []);
 
   return (
     <Styled.Wrapper>
@@ -172,7 +174,7 @@ export default function ImageCarousel({ skins, isLoading, onImageLoad }) {
                     name: { kr: skin.name_kr, en: skin.name_en },
                   }}
                   handler={{ loadEvent: isClone ? () => {} : onImageLoad }}
-                  onClick={isClone ? undefined : () => handleImageClick(skin)}
+                  onClick={isClone ? undefined : (e) => handleImageClick(skin, e)}
                 />
               </Styled.SlideWrapper>
             );
@@ -215,8 +217,10 @@ export default function ImageCarousel({ skins, isLoading, onImageLoad }) {
 
       {modalSkin && (
         <ImageModal
-          src={modalSkin.full_size}
-          label={modalSkin.name_kr}
+          src={modalSkin.skin.full_size}
+          label={modalSkin.skin.name_kr}
+          originX={modalSkin.originX}
+          originY={modalSkin.originY}
           onClose={() => setModalSkin(null)}
         />
       )}

@@ -1,19 +1,11 @@
 import * as Styled from '../patchNoteDetailView.styled';
 
-export default function ChangeTable({ data, type, variant }) {
+export default function ChangeTable({ data, type, variant, hideEntity = false }) {
   if (!data || data.length === 0) {
     return null;
   }
 
   const isCharacter = type === 'character';
-  const isBuffs = variant === 'buff';
-  const title = isCharacter
-    ? isBuffs
-      ? '캐릭터 상향'
-      : '캐릭터 하향'
-    : isBuffs
-      ? '아이템 상향'
-      : '아이템 하향';
 
   const flattenedData = data.flatMap((item) =>
     item.changes.map((change, index) => ({
@@ -29,16 +21,19 @@ export default function ChangeTable({ data, type, variant }) {
     })),
   );
 
+  const hasSkill = isCharacter && flattenedData.some((row) => row.skill);
+
   return (
     <Styled.TableWrapper>
-      <Styled.TableTitle $variant={variant}>{title}</Styled.TableTitle>
       <Styled.Table>
         <thead>
           <tr>
-            <Styled.Th>{isCharacter ? '캐릭터' : '아이템'}</Styled.Th>
-            {!isCharacter && <Styled.Th>타입</Styled.Th>}
-            <Styled.Th>{isCharacter ? '스킬' : '스탯'}</Styled.Th>
-            {isCharacter && <Styled.Th>스탯</Styled.Th>}
+            {!hideEntity && (
+              <Styled.Th>{isCharacter ? '캐릭터' : '아이템'}</Styled.Th>
+            )}
+            {!isCharacter && !hideEntity && <Styled.Th>타입</Styled.Th>}
+            {hasSkill && <Styled.Th>스킬</Styled.Th>}
+            <Styled.Th>스탯</Styled.Th>
             <Styled.Th>변경 전</Styled.Th>
             <Styled.Th>변경 후</Styled.Th>
           </tr>
@@ -46,16 +41,16 @@ export default function ChangeTable({ data, type, variant }) {
         <tbody>
           {flattenedData.map((row, index) => (
             <tr key={`${row.name}-${row.stat}-${index}`}>
-              {row.isFirstRow && (
+              {!hideEntity && row.isFirstRow && (
                 <Styled.Td rowSpan={row.rowSpan}>{row.name}</Styled.Td>
               )}
-              {!isCharacter && row.isFirstRow && (
+              {!isCharacter && !hideEntity && row.isFirstRow && (
                 <Styled.Td rowSpan={row.rowSpan}>
                   {row.subtype || row.type}
                 </Styled.Td>
               )}
-              <Styled.Td>{isCharacter ? row.skill : row.stat}</Styled.Td>
-              {isCharacter && <Styled.Td>{row.stat}</Styled.Td>}
+              {hasSkill && <Styled.Td>{row.skill}</Styled.Td>}
+              <Styled.Td>{row.stat}</Styled.Td>
               <Styled.Td $variant="before">{row.before}</Styled.Td>
               <Styled.Td $variant="after" $changeType={variant}>
                 {row.after}

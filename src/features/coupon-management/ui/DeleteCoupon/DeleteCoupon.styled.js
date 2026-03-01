@@ -49,7 +49,7 @@ export const Info = styled.div`
   border: 0;
   border-bottom: 1px;
   border-style: solid;
-  border-color: #e5e5e8;
+  border-color: #A6E3E9;
 `;
 
 export const SubTitle = styled.span`

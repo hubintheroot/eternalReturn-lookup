@@ -6,7 +6,7 @@ export const GiftIconBox = styled.div`
   justify-content: center;
   width: 3rem;
   height: 3rem;
-  background-color: rgb(79, 70, 229);
+  background-color: #71C9CE;
   color: #fff;
   border-radius: 0.5rem;
 `;
@@ -14,8 +14,8 @@ export const GiftIconBox = styled.div`
 export const Section = styled.section`
   position: relative;
   padding: 1rem 1.5rem;
-  background-color: rgb(248, 249, 250);
-  min-height: calc(100vh - 64px - 64px);
+  background-color: #E3FDFD;
+  min-height: 100vh;
 `;
 
 export const Container = styled.div`
@@ -30,7 +30,7 @@ export const EmptyContainer = styled(Container)`
     text-align: center;
     padding: 1rem;
     color: rgb(100, 116, 139);
-    border: 1px solid rgb(226, 232, 240);
+    border: 1px solid #A6E3E9;
     border-radius: 0.375rem;
   }
 
@@ -60,8 +60,8 @@ export const AddButton = styled.button`
   justify-content: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  background-color: #000;
-  color: #fff;
+  background-color: #71C9CE;
+  color: #1a1a1a;
   border: none;
   border-radius: 0.375rem;
   font-size: 0.875rem;
@@ -75,7 +75,7 @@ export const AddButton = styled.button`
   }
 
   &:hover {
-    background-color: rgb(51, 51, 51);
+    background-color: #A6E3E9;
   }
 `;
 
@@ -88,4 +88,11 @@ export const CouponContainer = styled.div`
 
 export const Title = styled.h2`
   text-align: center;
+`;
+
+export const SectionDivider = styled.div`
+  height: 4px;
+  background-color: #71C9CE;
+  border-radius: 2px;
+  margin: 1.5rem 0 0.75rem;
 `;

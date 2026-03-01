@@ -1,14 +1,16 @@
 import { Link } from "react-router-dom";
-import { styled } from "styled-components";
+import { css, styled } from "styled-components";
 
-export default function Navigate({ info }) {
-  const menus = info.map((info, index) => (
-    <StyledLink to={info.link} key={index}>
-      <span>{info.text}</span>
-    </StyledLink>
-  ));
-
-  return <Nav>{menus}</Nav>;
+export default function Navigate({ info, direction = 'row', onLinkClick }) {
+  return (
+    <Nav $direction={direction}>
+      {info.map((item, index) => (
+        <StyledLink to={item.link} key={index} $direction={direction} onClick={onLinkClick}>
+          <span>{item.text}</span>
+        </StyledLink>
+      ))}
+    </Nav>
+  );
 }
 
 const Nav = styled.nav`
@@ -23,6 +25,16 @@ const Nav = styled.nav`
     gap: 1rem;
     margin-left: 1rem;
   }
+
+  ${(props) =>
+    props.$direction === 'column' &&
+    css`
+      flex-direction: column;
+      align-items: stretch;
+      height: auto;
+      gap: 0;
+      margin-left: 0;
+    `}
 `;
 
 const StyledLink = styled(Link)`
@@ -43,4 +55,19 @@ const StyledLink = styled(Link)`
   & > span {
     word-break: keep-all;
   }
+
+  ${(props) =>
+    props.$direction === 'column' &&
+    css`
+      color: #fff;
+      font-size: clamp(0.9rem, 1.4vw, 1rem);
+      font-weight: 600;
+      height: auto;
+      padding: 14px 20px;
+      align-items: flex-start;
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.15);
+        color: #fff;
+      }
+    `}
 `;

@@ -26,7 +26,6 @@ export default function CouponsView() {
     const getData = async () => {
       try {
         const coupons = await getCoupons();
-        // const coupons = [];
         if (coupons) {
           const nextData = couponSort(coupons.data);
           setData(nextData);
@@ -103,7 +102,6 @@ export default function CouponsView() {
       </Styled.TitleContainer>
       {loading ? (
         <Styled.Container>
-          {/* TODO: 로딩 인터랙션 UI 구현하기 */}
           <div>쿠폰 찾는 중...</div>
         </Styled.Container>
       ) : (
@@ -118,7 +116,7 @@ export default function CouponsView() {
                     <CouponCard
                       key={coupon.id}
                       data={coupon}
-                      isLogin={user ? true : false}
+                      isLogin={!!user}
                       permission={user?.id === coupon.created_by}
                       handler={{
                         setData: setData,
@@ -129,15 +127,14 @@ export default function CouponsView() {
                     />
                   ))}
               </Styled.CouponContainer>
+              <Styled.SectionDivider />
               <h2>만료된 쿠폰</h2>
               <Styled.CouponContainer>
-                {data
-                  .filter((coupon) => !coupon.is_active)
-                  .map((coupon) => (
+                {getExpiredCoupons(data).map((coupon) => (
                     <CouponCard
                       key={coupon.id}
                       data={coupon}
-                      isLogin={user ? true : false}
+                      isLogin={!!user}
                       permission={user?.id === coupon.created_by}
                       handler={{
                         setData: setData,
@@ -171,6 +168,17 @@ export default function CouponsView() {
       {toast.isShow && <Toast data={toast} handler={toastHandler} />}
     </Styled.Section>
   );
+}
+
+function getExpiredCoupons(data) {
+  const expired = data.filter((coupon) => !coupon.is_active);
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  const recent = expired.filter((coupon) => new Date(coupon.expires_at) >= sevenDaysAgo);
+  if (recent.length > 0) return recent;
+  return [...expired]
+    .sort((a, b) => new Date(b.expires_at) - new Date(a.expires_at))
+    .slice(0, 4);
 }
 
 function setCouponUsed(oldData, usedCoupon = null) {

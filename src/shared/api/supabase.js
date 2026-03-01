@@ -47,3 +47,25 @@ export const getPatchNoteById = async (id) =>
 
 export const incrementViewCount = async (articleId) =>
   await supabase().rpc('increment_view_count', { article_id: articleId });
+
+// 패치노트 페이지에서 캐릭터 이미지를 독립적으로 조회하기 위한 함수
+// Name_KR → mini_size URL 맵 반환
+export const getCharacterImageMap = async () => {
+  const [chars, skins] = await Promise.all([
+    supabase().from('Characters').select('CharacterID, Name_KR'),
+    supabase()
+      .from('Skins')
+      .select('character_id, mini_size')
+      .not('mini_size', 'is', null)
+      .order('skin_id', { ascending: true }),
+  ]);
+
+  if (!chars.data || !skins.data) return {};
+
+  const map = {};
+  chars.data.forEach((c) => {
+    const skin = skins.data.find((s) => s.character_id === c.CharacterID);
+    if (skin) map[c.Name_KR] = skin.mini_size;
+  });
+  return map;
+};

@@ -1,4 +1,22 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+
+export const scrollbarStyle = css`
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background-color: #E3FDFD;
+    border-radius: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #A6E3E9;
+    border-radius: 8px;
+    &:hover {
+      background-color: #71C9CE;
+    }
+  }
+`;
 
 // Main container with responsive padding
 export const Container = styled.div`

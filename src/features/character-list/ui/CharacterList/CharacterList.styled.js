@@ -88,6 +88,39 @@ export const Select = styled.select`
   }
 `;
 
+export const SearchBar = styled.div`
+  display: flex;
+  align-items: center;
+  background-color: #A6E3E9;
+  padding: 6px 12px;
+  flex-shrink: 0;
+`;
+
+export const SearchInput = styled.input`
+  width: 100%;
+  padding: 4px 10px;
+  font-size: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.3);
+  color: #1a1a1a;
+  outline: none;
+  box-sizing: border-box;
+
+  &::placeholder {
+    color: rgba(26, 26, 26, 0.5);
+  }
+
+  &:focus {
+    background-color: rgba(255, 255, 255, 0.55);
+    border-color: #fff;
+  }
+
+  @media (orientation: landscape) {
+    font-size: clamp(12px, 1.4vw, 14px);
+  }
+`;
+
 export const Container = styled.div`
   overflow-y: auto;
   box-sizing: border-box;

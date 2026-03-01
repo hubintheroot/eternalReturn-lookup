@@ -1,4 +1,20 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
+
+const fadeInOverlay = keyframes`
+  from { background-color: rgba(0, 0, 0, 0); }
+  to   { background-color: rgba(0, 0, 0, 0.78); }
+`;
+
+const expandFromOrigin = keyframes`
+  from {
+    transform: translate(var(--tx), var(--ty)) scale(0.12);
+    opacity: 0;
+  }
+  to {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+`;
 
 export const Overlay = styled.div`
   position: fixed;
@@ -8,6 +24,7 @@ export const Overlay = styled.div`
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  animation: ${fadeInOverlay} 0.35s ease forwards;
 `;
 
 export const ModalBox = styled.div`
@@ -19,6 +36,7 @@ export const ModalBox = styled.div`
   background-color: #1a1a1a;
   border-radius: 8px;
   overflow: hidden;
+  animation: ${expandFromOrigin} 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 `;
 
 export const Img = styled.img`
@@ -37,7 +55,7 @@ export const CloseButton = styled.button`
   width: 32px;
   height: 32px;
   border-radius: 32px;
-  background-color: #71C9CE;
+  background-color: #71c9ce;
   color: #fff;
   font-size: 18px;
   border: none;
@@ -49,7 +67,7 @@ export const CloseButton = styled.button`
   line-height: 1;
 
   &:hover {
-    background-color: #A6E3E9;
+    background-color: #a6e3e9;
   }
 `;
 

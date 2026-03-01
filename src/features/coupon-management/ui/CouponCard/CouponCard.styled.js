@@ -28,7 +28,6 @@ export const Card = styled.div`
     rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
   box-sizing: border-box;
   padding: 1.5rem;
-  transition: transform 0.2s;
 `;
 
 export const TitleBox = styled(InnerIcon)`
@@ -81,7 +80,7 @@ export const CodeBox = styled(InnerIcon)`
   display: flex;
   align-items: center;
   background-color: ${(props) => (!props.$isActive ? '#D3DAD9' : '#fff')};
-  border: ${(props) => (!props.$isActive ? 'none' : '1px dashed #e5e7eb')};
+  border: ${(props) => (!props.$isActive ? 'none' : '1px dashed #A6E3E9')};
   border-radius: 0.5rem;
   padding: 0.75rem;
   margin-bottom: 0.75rem;
@@ -91,8 +90,7 @@ export const Code = styled.p`
   margin: 0;
   font-size: 1rem;
   flex: 1 1 0%;
-  color: ${(props) =>
-    !props.$isActive ? 'rgb(60, 60, 60)' : 'rgb(79, 70, 229)'};
+  color: ${(props) => (!props.$isActive ? 'rgb(60, 60, 60)' : '#2a9da4')};
   font-weight: 600;
 `;
 

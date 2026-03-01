@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { scrollbarStyle } from '@/shared/ui/styles';
 
 export const Container = styled.div`
   background-color: rgb(249, 249, 249);
@@ -10,6 +11,7 @@ export const Container = styled.div`
   overflow-y: auto;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px,
     rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
+  ${scrollbarStyle}
 
   @media screen and (min-width: 768px) {
     width: 100%;
@@ -21,6 +23,7 @@ export const TitleContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
+  border-left: 3px solid #71C9CE;
   border-bottom: 1px solid rgb(224, 224, 224);
 `;
 
@@ -95,6 +98,12 @@ export const Input = styled.input`
   border: 1px solid rgb(224, 224, 224);
   border-radius: 0.375rem;
   font-size: 0.875rem;
+
+  &:focus {
+    outline: none;
+    border-color: #71C9CE;
+    box-shadow: 0 0 0 3px rgba(113, 201, 206, 0.2);
+  }
 `;
 
 export const AddButtonBox = styled.div`
@@ -110,8 +119,8 @@ export const AddButton = styled.button`
   justify-content: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  background-color: #000;
-  color: #fff;
+  background-color: #71C9CE;
+  color: #1a1a1a;
   border: none;
   border-radius: 0.375rem;
   font-size: 0.875rem;
@@ -125,6 +134,6 @@ export const AddButton = styled.button`
   }
 
   &:hover {
-    background-color: rgb(51, 51, 51);
+    background-color: #A6E3E9;
   }
 `;

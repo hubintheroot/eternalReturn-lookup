@@ -5,7 +5,7 @@ import { supabase } from '@/shared/api/supabase';
 import CountDown from '../CountDown';
 import EmptyState from '@/shared/ui/EmptyState';
 
-export default function SeasonBox() {
+export default function SeasonBox({ onReady }) {
   const seasonInfo = useSeasonInfoStore((state) => state.data);
   const setSeasonInfo = useSeasonInfoStore((state) => state.setSeasonInfo);
   const getDataCnt = useRef(0);
@@ -42,6 +42,7 @@ export default function SeasonBox() {
         }
       } finally {
         setIsLoading(false);
+        onReady?.();
       }
     }
     if (!seasonInfo && getDataCnt.current === 0) {

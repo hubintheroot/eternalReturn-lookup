@@ -1,15 +1,51 @@
 import * as Styled from './patchNoteDetailView.styled';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getPatchNoteById, incrementViewCount } from '@/shared/api/supabase';
+import { getPatchNoteById, incrementViewCount, getCharacterImageMap } from '@/shared/api/supabase';
+import { useCharacterStore } from '@/entities/character/store';
 import CharacterSection from './components/CharacterSection';
 import EquipmentSection from './components/EquipmentSection';
 import NewSystemSection from './components/NewSystemSection';
 
 export default function PatchNoteDetailView() {
   const { id } = useParams();
+  const characterData = useCharacterStore((state) => state.data);
+  const [imageMap, setImageMap] = useState(null);
   const [patchNote, setPatchNote] = useState(null);
   const [loading, setLoading] = useState(true);
+  const topRef = useRef(null);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  // topRef가 뷰포트 밖으로 나가면 스크롤 상단 버튼 표시
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => setShowScrollTop(!entry.isIntersecting),
+      { threshold: 0 },
+    );
+    const el = topRef.current;
+    if (el) observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const scrollToTop = () => topRef.current?.scrollIntoView({ behavior: 'smooth' });
+
+  // characterData(스토어)가 있으면 그것으로, 없으면 API에서 직접 이미지 맵 생성
+  useEffect(() => {
+    if (characterData) {
+      const map = {};
+      characterData.forEach((c) => {
+        const skin = c.skins?.find((s) => s.mini_size);
+        if (skin) map[c.Name_KR] = skin.mini_size;
+      });
+      setImageMap(map);
+      return;
+    }
+    getCharacterImageMap()
+      .then(setImageMap)
+      .catch((err) => {
+        if (import.meta.env.DEV) console.error(err);
+      });
+  }, [characterData]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -66,7 +102,11 @@ export default function PatchNoteDetailView() {
 
   return (
     <Styled.Section>
+      <div ref={topRef} />
       <Styled.Container>
+        <Styled.TopNav>
+          <Styled.BackButton to="/patchNotes">← 목록으로</Styled.BackButton>
+        </Styled.TopNav>
         <Styled.Header>
           <Styled.Title>{patchNote.title}</Styled.Title>
           <Styled.Meta>
@@ -74,13 +114,12 @@ export default function PatchNoteDetailView() {
             <span>조회수 {patchNote.view_count}</span>
           </Styled.Meta>
         </Styled.Header>
-        {/* <Styled.Content>{patchNote.content}</Styled.Content> */}
-
         {patchNote.summary && (
           <Styled.SummaryContent>
             <CharacterSection
               newCharacters={patchNote.summary.new_characters}
               characterChanges={patchNote.summary.character_changes}
+              imageMap={imageMap}
             />
             <EquipmentSection
               equipmentChanges={patchNote.summary.equipment_changes}
@@ -92,6 +131,11 @@ export default function PatchNoteDetailView() {
           <Styled.BackButton to="/patchNotes">목록으로</Styled.BackButton>
         </Styled.Footer>
       </Styled.Container>
+      {showScrollTop && (
+        <Styled.ScrollTopButton onClick={scrollToTop} aria-label="맨 위로">
+          ↑
+        </Styled.ScrollTopButton>
+      )}
     </Styled.Section>
   );
 }
