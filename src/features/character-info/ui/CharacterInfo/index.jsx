@@ -1,12 +1,11 @@
-import { memo, useCallback, useEffect, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useCharacterStore } from '@/entities/character/store';
 import { useImageLoadedStore } from '@/entities/image-loaded/store';
 import * as Styled from './CharacterInfo.styled';
 import NotFoundView from '@/shared/ui/NotFoundView';
 import DifficultyBox from '../DifficultyBox';
-import MiniSizeImage from '../MiniSizeImage';
-import FullSizeImage from '../FullSizeImage';
+import ImageCarousel from '../ImageCarousel';
 
 const CharTextInfo = memo(({ textContents, isLoading }) => {
   return (
@@ -29,31 +28,6 @@ const CharTextInfo = memo(({ textContents, isLoading }) => {
   );
 });
 
-const SkinImageList = memo(
-  ({ skins, windowWidth, onSkinSelect, onImageLoad }) => {
-    const loadableSkins = skins.filter(
-      (skin) => skin.mini_size && skin.full_size,
-    );
-    const size = windowWidth <= 768 ? 64 : 84;
-    return (
-      <Styled.Ul>
-        {loadableSkins.map((skin) => (
-          <MiniSizeImage
-            key={skin.skin_id}
-            data={{
-              src: skin.mini_size,
-              skinID: skin.skin_id,
-              name: { kr: skin.name_kr, en: skin.name_en },
-              size: size,
-            }}
-            handler={{ setSelect: onSkinSelect, loadEvent: onImageLoad }}
-          />
-        ))}
-      </Styled.Ul>
-    );
-  },
-);
-
 export default function CharacterInfo() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -62,15 +36,18 @@ export default function CharacterInfo() {
   const setCharDetailLoaded = useImageLoadedStore(
     (state) => state.setCharDetailLoaded,
   );
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const setCarouselHeight = useImageLoadedStore(
+    (state) => state.setCarouselHeight,
+  );
   const [character, setCharacter] = useState();
-  const [selectedSkinID, setSelectedSkinID] = useState();
+  const [isEntering, setIsEntering] = useState(false);
   const imageLoadedCount = useRef(0);
+  const imgDivRef = useRef(null);
+  const hadCharacterRef = useRef(false);
+  const enterTimerRef = useRef(null);
 
   useEffect(() => {
     if (!data || !data.length) return;
-
-    imageLoadedCount.current = 0;
 
     const curCharacter = data.find((c) =>
       decodeURIComponent(pathname).includes(c.Name_EN),
@@ -81,8 +58,6 @@ export default function CharacterInfo() {
     const loadableSkins = curCharacter.skins.filter(
       (s) => s.full_size && s.mini_size,
     );
-
-    setSelectedSkinID(curCharacter.skins[0]?.skin_id);
 
     const nextData = {
       ...curCharacter,
@@ -120,31 +95,43 @@ export default function CharacterInfo() {
         },
       ],
     };
+
+    imageLoadedCount.current = 0;
     setCharacter(nextData);
     setCharDetailLoaded(true);
+
+    if (!hadCharacterRef.current) {
+      hadCharacterRef.current = true;
+      const isLandscape = window.matchMedia('(orientation: landscape)').matches;
+      if (isLandscape) {
+        clearTimeout(enterTimerRef.current);
+        setIsEntering(true);
+        enterTimerRef.current = setTimeout(() => setIsEntering(false), 350);
+      }
+    }
+
+    return () => clearTimeout(enterTimerRef.current);
   }, [pathname, data, setCharDetailLoaded]);
 
-  useEffect(() => {
-    const handleResize = () => setWindowWidth(window.innerWidth);
-
-    window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
-
-  const handleSetSelect = useCallback(
-    (nextSkinID) => {
-      if (!character) return;
-      setSelectedSkinID(nextSkinID);
-    },
-    [character],
-  );
+  useLayoutEffect(() => {
+    const el = imgDivRef.current;
+    if (!el) return;
+    const landscapeMq = window.matchMedia('(orientation: landscape)');
+    const observer = new ResizeObserver(() => {
+      if (landscapeMq.matches) {
+        setCarouselHeight(el.getBoundingClientRect().height);
+      } else {
+        setCarouselHeight(0);
+      }
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [character, setCarouselHeight]);
 
   const handleImageLoad = useCallback(() => {
     if (!character) return;
     imageLoadedCount.current += 1;
-    if (imageLoadedCount.current === character.loadAbleSkins.length * 2) {
+    if (imageLoadedCount.current >= character.loadAbleSkins.length) {
       setCharDetailLoaded(false);
 
       imageLoadedCount.current = 0;
@@ -164,50 +151,34 @@ export default function CharacterInfo() {
   }
 
   return (
-    <Styled.Section $isLoading={loading}>
-      <Styled.TitleBox $isLoading={loading}>
-        <Styled.CharNameBox className="content">
-          <Styled.CharName>{character.Name_KR}</Styled.CharName>
-          <Styled.Span>{character.Story_Title}</Styled.Span>
-        </Styled.CharNameBox>
-        <Styled.ControlDiffBox className="content">
-          <div>조작 난이도</div>
-          <DifficultyBox difficulty={character.Difficulty} maxDifficulty={5} />
-        </Styled.ControlDiffBox>
-      </Styled.TitleBox>
+    <Styled.Section $isEntering={isEntering}>
       <Styled.Container>
-        <CharTextInfo
-          textContents={character.textContents}
-          isLoading={loading}
-        />
-        <Styled.ImgDiv>
-          <SkinImageList
-            skins={character.skins}
-            windowWidth={windowWidth}
-            onSkinSelect={handleSetSelect}
-            onImageLoad={handleImageLoad}
+        <Styled.TitleBox $isLoading={loading}>
+          <Styled.CharNameBox className="content">
+            <Styled.CharName>{character.Name_KR}</Styled.CharName>
+            <Styled.Span>{character.Story_Title}</Styled.Span>
+          </Styled.CharNameBox>
+          <Styled.ControlDiffBox className="content">
+            <div>조작 난이도</div>
+            <DifficultyBox
+              difficulty={character.Difficulty}
+              maxDifficulty={5}
+            />
+          </Styled.ControlDiffBox>
+        </Styled.TitleBox>
+        <Styled.ContentBox>
+          <Styled.ImgDiv ref={imgDivRef}>
+            <ImageCarousel
+              skins={character.loadAbleSkins}
+              isLoading={loading}
+              onImageLoad={handleImageLoad}
+            />
+          </Styled.ImgDiv>
+          <CharTextInfo
+            textContents={character.textContents}
+            isLoading={loading}
           />
-          <Styled.FullBox>
-            {character.skins.map(
-              (skin) =>
-                skin.mini_size &&
-                skin.full_size && (
-                  <FullSizeImage
-                    data={{
-                      src: skin.full_size,
-                      name: { kr: skin.name_kr, en: skin.name_en },
-                      skinID: skin.skin_id,
-                      select: selectedSkinID,
-                    }}
-                    handler={{
-                      loadEvent: handleImageLoad,
-                    }}
-                    key={skin.skin_id}
-                  />
-                ),
-            )}
-          </Styled.FullBox>
-        </Styled.ImgDiv>
+        </Styled.ContentBox>
       </Styled.Container>
     </Styled.Section>
   );

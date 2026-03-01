@@ -1,6 +1,4 @@
 import styled from 'styled-components';
-
-// Base button with common properties
 export const BaseButton = styled.button`
   cursor: pointer;
   border: none;
@@ -13,8 +11,6 @@ export const BaseButton = styled.button`
     opacity: 0.5;
   }
 `;
-
-// Primary action button
 export const PrimaryButton = styled(BaseButton)`
   background-color: #4f46e5;
   color: white;
@@ -26,8 +22,6 @@ export const PrimaryButton = styled(BaseButton)`
     background-color: #4338ca;
   }
 `;
-
-// Secondary/outline button
 export const SecondaryButton = styled(BaseButton)`
   background-color: transparent;
   color: rgb(107, 114, 128);
@@ -39,8 +33,6 @@ export const SecondaryButton = styled(BaseButton)`
     background-color: rgb(240, 240, 240);
   }
 `;
-
-// Icon button (circular or minimal)
 export const IconButton = styled(BaseButton)`
   background-color: transparent;
   padding: 0.5rem;

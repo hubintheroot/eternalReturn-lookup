@@ -15,6 +15,7 @@
   },
   "scripts": {
     "dev": "vite",
+    "devM": "vite --host",
     "build": "vite build",
     "test": "vitest"
   },
@@ -24,6 +25,7 @@
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@vitejs/plugin-react": "^4.7.0",
+    "playwright": "^1.58.2",
     "vite": "^7.0.5",
     "vite-plugin-svgr": "^4.3.0"
   }
