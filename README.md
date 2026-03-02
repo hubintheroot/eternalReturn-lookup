@@ -26,8 +26,8 @@
 ## 기술 스택
 
 - **Core**: React 18.2.0, Vite 7.0.5
-- **State Management**: Zustand 5.0.2
-- **Routing**: React Router DOM 7.1.1
+- **State Management**: Zustand 5.0.8
+- **Routing**: React Router DOM 6.22.3
 - **Styling**: Styled-components 6.1.8
 - **Backend**: Supabase (BaaS) - Database, Authentication
 - **Language**: JavaScript (ES6+)
@@ -48,10 +48,13 @@ src/
 │   └── router/        - 라우트 구성 (React Router v6)
 │
 ├── pages/             - 페이지 컴포넌트
-│   ├── RootLayout.jsx
-│   ├── charactersView.jsx
-│   ├── couponsView.jsx
-│   ├── rankView.jsx
+│   ├── RootLayout/
+│   ├── landingView/
+│   ├── charactersView/
+│   ├── couponsView/
+│   ├── patchNotesView/
+│   ├── patchNoteDetailView/
+│   ├── userInfo/
 │   └── ...
 │
 ├── features/          - 기능 모듈
@@ -175,10 +178,10 @@ npm run dev
 
 #### 반응형 레이아웃 재설계 (RootLayout)
 
-| 방향 | 레이아웃 |
-|------|---------|
-| 세로(portrait) | TopBar + Drawer(햄버거 메뉴) |
-| 가로(landscape) | 왼쪽 Sidebar |
+| 방향            | 레이아웃                     |
+| --------------- | ---------------------------- |
+| 세로(portrait)  | TopBar + Drawer(햄버거 메뉴) |
+| 가로(landscape) | 왼쪽 Sidebar                 |
 
 - `SeasonMiniTimer` 컴포넌트 추가 (`variant="topbar"` / `variant="sidebar"`)
 - 랜딩 페이지(`/`)에서는 미니 타이머 숨김 (SeasonBox가 직접 표시)
@@ -315,10 +318,9 @@ Claude CLI와 협업하여 체계적인 코드 품질 개선 작업 수행
 
 ### 예정
 
-- [ ] UI/UX 점진적 개선
-
 ### 완료
 
+- [x] UI/UX 점진적 개선
 - [x] OpenGraph 메타 태그 적용
 - [x] 반응형 레이아웃 (Sidebar / TopBar+Drawer) 재설계
 - [x] BlindTransition 페이지 전환 애니메이션
