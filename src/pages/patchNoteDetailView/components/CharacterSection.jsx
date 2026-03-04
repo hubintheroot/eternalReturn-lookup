@@ -50,11 +50,13 @@ export default function CharacterSection({
   const hasNewCharacters = newCharacters && newCharacters.length > 0;
   const hasBuffs = characterChanges?.buffs?.length > 0;
   const hasNerfs = characterChanges?.nerfs?.length > 0;
+  const hasMixed = characterChanges?.mixed?.length > 0;
   const [activeDetail, setActiveDetail] = useState(null);
   const [tooltip, setTooltip] = useState(null);
   const tooltipRafRef = useRef(null);
   const buffContainerRef = useRef(null);
   const nerfContainerRef = useRef(null);
+  const mixedContainerRef = useRef(null);
   const detailPanelRef = useRef(null);
   useEffect(() => {
     if (!activeDetail) return;
@@ -122,7 +124,7 @@ export default function CharacterSection({
     }
     setTooltip(null);
   };
-  if (!hasNewCharacters && !hasBuffs && !hasNerfs) {
+  if (!hasNewCharacters && !hasBuffs && !hasNerfs && !hasMixed) {
     return null;
   }
   return <Styled.SectionBlock>
@@ -151,6 +153,17 @@ export default function CharacterSection({
               <IconGrid items={characterChanges.nerfs} imageMap={imageMap} activeDetail={activeDetail} variant="nerf" containerRef={nerfContainerRef} panelRef={detailPanelRef} onSelect={handleSelect} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} />
             </Styled.SubSection>}
         </Styled.TwoColumnGrid>}
+
+      {hasMixed && <Styled.SubSection>
+          <Styled.SectionHeader $variant="mixed">◆ 복합적</Styled.SectionHeader>
+          <IconGrid items={characterChanges.mixed.map(item => ({
+          name: item.name,
+          changes: [
+            ...(item.buffs ?? []).map(c => ({ ...c, change_type: 'buff' })),
+            ...(item.nerfs ?? []).map(c => ({ ...c, change_type: 'nerf' })),
+          ]
+        }))} imageMap={imageMap} activeDetail={activeDetail} variant="mixed" containerRef={mixedContainerRef} panelRef={detailPanelRef} onSelect={handleSelect} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} />
+        </Styled.SubSection>}
 
       {tooltip && <Styled.CharacterTooltip style={{
       left: tooltip.x + 14,

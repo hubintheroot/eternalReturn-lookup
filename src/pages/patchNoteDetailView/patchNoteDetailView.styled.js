@@ -160,7 +160,11 @@ export const Td = styled.td`
   text-align: center;
   word-break: keep-all;
   overflow-wrap: break-word;
-  background-color: ${props => props.$variant === 'after' ? props.$changeType === 'buff' ? '#CBF1F5' : '#FFF0EE' : 'transparent'};
+  background-color: ${props => {
+    if (props.$variant !== 'after') return 'transparent';
+    if (props.$changeType === 'buff') return '#CBF1F5';
+    return '#FFF0EE';
+  }};
   font-weight: ${props => props.$variant === 'after' ? '500' : 'normal'};
 
   @media screen and (max-width: 768px) {
@@ -213,9 +217,9 @@ export const TwoColumnGrid = styled.div`
 export const SectionHeader = styled.h3`
   font-size: 0.9375rem;
   font-weight: 600;
-  color: ${props => props.$variant === 'buff' ? '#3A9FA5' : '#E07060'};
+  color: ${props => props.$variant === 'buff' ? '#3A9FA5' : props.$variant === 'mixed' ? '#C8882A' : '#E07060'};
   border-left: 3px solid
-    ${props => props.$variant === 'buff' ? '#71C9CE' : '#E07060'};
+    ${props => props.$variant === 'buff' ? '#71C9CE' : props.$variant === 'mixed' ? '#E8B86D' : '#E07060'};
   padding-left: 0.625rem;
   margin-bottom: 0.75rem;
 `;
