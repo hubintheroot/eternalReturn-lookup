@@ -16,6 +16,7 @@ export default function ChangeTable({ data, type, variant, hideEntity = false })
       stat: change.stat,
       before: change.before,
       after: change.after,
+      changeType: change.change_type ?? variant,
       isFirstRow: index === 0,
       rowSpan: item.changes.length,
     })),
@@ -52,7 +53,7 @@ export default function ChangeTable({ data, type, variant, hideEntity = false })
               {hasSkill && <Styled.Td>{row.skill}</Styled.Td>}
               <Styled.Td>{row.stat}</Styled.Td>
               <Styled.Td $variant="before">{row.before}</Styled.Td>
-              <Styled.Td $variant="after" $changeType={variant}>
+              <Styled.Td $variant="after" $changeType={row.changeType}>
                 {row.after}
               </Styled.Td>
             </tr>
