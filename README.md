@@ -120,7 +120,7 @@ app → pages → features → entities → shared
 
 ### 라우팅
 
-React Router v7를 활용한 SPA 구현:
+React Router v6를 활용한 SPA 구현:
 
 ```
 / (RootLayout)
