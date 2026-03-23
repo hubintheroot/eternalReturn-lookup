@@ -10,6 +10,7 @@ export function shouldSkipBlock() {
 export function checkAndRedirectOnFirstVisit(navigate, currentPath) {
   if (!_isFirstVisit) return;
   _isFirstVisit = false;
+  if (new URLSearchParams(window.location.search).has('code')) return;
   if (currentPath !== '/') {
     navigate('/', {
       replace: true

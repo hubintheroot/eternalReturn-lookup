@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import * as Styled from './CouponCard.styled';
 import Modal from '@/shared/ui/Modal';
 import EditCoupon from '../EditCoupon';
@@ -6,6 +7,7 @@ import DeleteCoupon from '../DeleteCoupon';
 import { CopyButtonSVG, DeleteButtonSVG, EditButtonSVG } from '@/shared/ui/SVG';
 
 export default function CouponCard({ data, isLogin, permission, handler }) {
+  const { t } = useTranslation('coupon');
   const [showModal, setModal] = useState(false);
   const mod = useRef();
 
@@ -28,10 +30,10 @@ export default function CouponCard({ data, isLogin, permission, handler }) {
     };
     try {
       navigator.clipboard.writeText(data.code);
-      toastInfo.message = `쿠폰 코드가 복사되었습니다.`;
+      toastInfo.message = t('copied');
       toastInfo.status = 'successed';
     } catch (err) {
-      toastInfo.message = `복사는 pc환경을 이용해주세요`;
+      toastInfo.message = t('copyPcOnly');
       toastInfo.status = 'alert';
     } finally {
       handler.toast.show(toastInfo);
@@ -82,7 +84,7 @@ export default function CouponCard({ data, isLogin, permission, handler }) {
           </Styled.CopyButton>
         </Styled.CodeBox>
         <Styled.ExpiresAt $isActive={data.is_active}>
-          {!data.is_active ? `만료` : data.expires_at ? `${expiresAt}` : `영구`}
+          {!data.is_active ? t('expired') : data.expires_at ? `${expiresAt}` : t('permanent')}
         </Styled.ExpiresAt>
       </div>
       {showModal && (

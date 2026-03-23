@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { getCoupons, supabase } from '@/shared/api/supabase';
 import { couponSort } from '@/shared/lib/utils';
 import CouponForm from '../CouponForm';
@@ -19,6 +20,7 @@ async function insert(nextData) {
 }
 
 export default function AddCoupon({ handler, onClose }) {
+  const { t } = useTranslation('coupon');
   const addCoupon = async (e) => {
     e.preventDefault();
     const formData = Object.fromEntries(new FormData(e.target).entries());
@@ -28,19 +30,22 @@ export default function AddCoupon({ handler, onClose }) {
     const expiresAt = formData.coupon_expiresAt;
 
     if (!name.trim()) {
-      handler.toast.failed('쿠폰 이름을 입력해주세요.');
+      handler.toast.failed(t('validation.nameRequired'));
       return;
     } else if (!code.trim()) {
-      handler.toast.failed('쿠폰 코드를 입력해주세요.');
+      handler.toast.failed(t('validation.codeRequired'));
       return;
     } else if (code.replace(/[a-zA-Z0-9]/g, '').length !== 0) {
-      handler.toast.failed('정상적인 쿠폰 코드를 입력해주세요.');
+      handler.toast.failed(t('validation.codeInvalid'));
       return;
     } else if (handler.isDuplicatedCoupon(code)) {
-      handler.toast.failed('이미 등록된 쿠폰입니다.');
+      handler.toast.failed(t('validation.codeDuplicate'));
       return;
     } else if (!reward.trim()) {
-      handler.toast.failed('보상을 입력해주세요.');
+      handler.toast.failed(t('validation.rewardRequired'));
+      return;
+    } else if (formData.coupon_noExpiry !== 'on' && !expiresAt) {
+      handler.toast.failed(t('validation.expiresAtRequired'));
       return;
     }
 
@@ -55,11 +60,11 @@ export default function AddCoupon({ handler, onClose }) {
 
     const res = await insert(nextData);
     if (res.ok) {
-      handler.toast.success('쿠폰이 추가되었습니다.');
+      handler.toast.success(t('add_modal.success'));
       handler.setData(res.data);
       onClose();
     } else {
-      handler.toast.failed('알 수 없는 에러가 발생했습니다.');
+      handler.toast.failed(t('error.unknown'));
       if (import.meta.env.DEV) {
         console.error(res.message);
       }
@@ -68,9 +73,9 @@ export default function AddCoupon({ handler, onClose }) {
   return (
     <CouponForm
       text={{
-        title: '새 쿠폰 추가',
-        sub: '새로운 쿠폰 정보를 입력하세요.',
-        button: '추가하기',
+        title: t('add_modal.title'),
+        sub: t('add_modal.subtitle'),
+        button: t('add_modal.submit'),
       }}
       onSubmit={addCoupon}
       onClose={onClose}

@@ -1,16 +1,19 @@
 import * as Styled from './couponsView.styled';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useUserInfoStore } from '@/entities/user/store';
 import { getCoupons } from '@/shared/api/supabase';
 import CouponCard from '@/features/coupon-management/ui/CouponCard';
 import Modal from '@/shared/ui/Modal';
 import Toast from '@/shared/ui/Toast';
 import AddCoupon from '@/features/coupon-management/ui/AddCoupon';
+import LanguageSwitcher from '@/features/coupon-management/ui/LanguageSwitcher';
 import { couponSort } from '@/shared/lib/utils';
 import { LocalData } from '@/shared/lib/localData';
 import { GiftBoxSVG, PlusIconSVG } from '@/shared/ui/SVG';
 
 export default function CouponsView() {
+  const { t } = useTranslation('coupon');
   const user = useUserInfoStore((state) => state.user);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -78,7 +81,7 @@ export default function CouponsView() {
     if (user) {
       modalHandler.show();
     } else {
-      toastHandler.alert('로그인이 필요합니다.');
+      toastHandler.alert(t('loginRequired'));
     }
   };
 
@@ -93,22 +96,23 @@ export default function CouponsView() {
           <Styled.GiftIconBox>
             <GiftBoxSVG />
           </Styled.GiftIconBox>
-          <Styled.Title>쿠폰</Styled.Title>
+          <Styled.Title>{t('title')}</Styled.Title>
         </Styled.TitleBox>
         <Styled.AddButton onClick={addCouponHandler}>
           <PlusIconSVG />
-          쿠폰 추가
+          {t('add')}
         </Styled.AddButton>
+        <LanguageSwitcher />
       </Styled.TitleContainer>
       {loading ? (
         <Styled.Container>
-          <div>쿠폰 찾는 중...</div>
+          <div>{t('loading')}</div>
         </Styled.Container>
       ) : (
         <Styled.Container>
           {data.length !== 0 ? (
             <>
-              <h2>사용 가능한 쿠폰</h2>
+              <h2>{t('activeSection')}</h2>
               <Styled.CouponContainer>
                 {data
                   .filter((coupon) => coupon.is_active)
@@ -128,7 +132,7 @@ export default function CouponsView() {
                   ))}
               </Styled.CouponContainer>
               <Styled.SectionDivider />
-              <h2>만료된 쿠폰</h2>
+              <h2>{t('expiredSection')}</h2>
               <Styled.CouponContainer>
                 {getExpiredCoupons(data).map((coupon) => (
                     <CouponCard
@@ -148,7 +152,7 @@ export default function CouponsView() {
             </>
           ) : (
             <Styled.EmptyContainer>
-              <p>아직 등록된 쿠폰이 없습니다</p>
+              <p>{t('empty')}</p>
             </Styled.EmptyContainer>
           )}
         </Styled.Container>

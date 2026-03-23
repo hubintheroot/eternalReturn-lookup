@@ -136,8 +136,8 @@ export default function ImageCarousel({
   }, [resetAutoPlay]);
   const pauseAutoPlay = useCallback(() => clearInterval(autoPlayRef.current), []);
   const resumeAutoPlay = useCallback(() => {
-    if (!isLoadingRef.current) resetAutoPlay();
-  }, [resetAutoPlay]);
+    if (!isLoadingRef.current && skins.length > 1) resetAutoPlay();
+  }, [resetAutoPlay, skins.length]);
   const handleImageClick = useCallback((skin, e) => {
     if (window.matchMedia('(orientation: landscape)').matches) {
       const rect = e.currentTarget.getBoundingClientRect();

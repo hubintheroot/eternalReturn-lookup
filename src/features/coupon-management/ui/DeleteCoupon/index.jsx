@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import * as Styled from './DeleteCoupon.styled';
 import { getCoupons, supabase } from '@/shared/api/supabase';
 import { couponSort, formatDate } from '@/shared/lib/utils';
@@ -21,14 +22,15 @@ async function del(id) {
 }
 
 export default function DeleteCoupon({ handler, onClose, data }) {
+  const { t } = useTranslation('coupon');
   const deleteCoupon = async () => {
-    if (window.confirm('삭제하시겠습니까?')) {
+    if (window.confirm(t('delete.confirm'))) {
       const res = await del(data.id);
       if (res.ok) {
-        handler.toast.success('쿠폰이 삭제되었습니다.');
+        handler.toast.success(t('delete.success'));
         handler.setData(res.data);
       } else {
-        handler.toast.failed('알 수 없는 에러가 발생했습니다.');
+        handler.toast.failed(t('error.unknown'));
       }
       onClose();
     }
@@ -41,32 +43,32 @@ export default function DeleteCoupon({ handler, onClose, data }) {
             <XIconSVG />
           </Button>
         </Styled.CloseBox>
-        <h2>쿠폰 정보</h2>
-        <p>삭제할 쿠폰 정보를 조회합니다.</p>
+        <h2>{t('delete.title')}</h2>
+        <p>{t('delete.subtitle')}</p>
       </Styled.Header>
       <div>
         <Styled.InfoBox>
           <Styled.Info>
-            <Styled.SubTitle>쿠폰코드</Styled.SubTitle>
+            <Styled.SubTitle>{t('delete.codeLabel')}</Styled.SubTitle>
             <Styled.Text>{data.code}</Styled.Text>
           </Styled.Info>
           <Styled.Info>
-            <Styled.SubTitle>보상</Styled.SubTitle>
+            <Styled.SubTitle>{t('delete.rewardLabel')}</Styled.SubTitle>
             <Styled.Text>{data.description}</Styled.Text>
           </Styled.Info>
           <Styled.Info>
-            <Styled.SubTitle>만료일</Styled.SubTitle>
+            <Styled.SubTitle>{t('delete.expiresAtLabel')}</Styled.SubTitle>
             <Styled.Text>
               {data.expires_at
-                ? formatDate(new Date(data.expires_at), true)
-                : '영구'}
+                ? formatDate(new Date(data.expires_at), false).replace('T', ' ')
+                : t('permanent')}
             </Styled.Text>
           </Styled.Info>
         </Styled.InfoBox>
         <Styled.DeleteBox>
           <Button
             eventHandler={deleteCoupon}
-            text={'제거하기'}
+            text={t('delete.submit')}
             color={'#fff'}
             hoverColor={'none'}
             backgroundColor={'#000'}
