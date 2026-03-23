@@ -60,6 +60,8 @@ export const AddButton = styled.button`
   justify-content: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
+  height: 3rem;
+  white-space: nowrap;
   background-color: #71C9CE;
   color: #1a1a1a;
   border: none;
@@ -87,7 +89,8 @@ export const CouponContainer = styled.div`
 `;
 
 export const Title = styled.h2`
-  text-align: center;
+  margin: 0;
+  white-space: nowrap;
 `;
 
 export const SectionDivider = styled.div`

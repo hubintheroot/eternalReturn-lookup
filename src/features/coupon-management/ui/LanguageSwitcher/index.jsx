@@ -2,9 +2,9 @@ import { useTranslation } from 'react-i18next';
 import * as Styled from './LanguageSwitcher.styled';
 
 const LANGUAGES = [
-  { code: 'ko', label: '한' },
-  { code: 'en', label: 'EN' },
-  { code: 'ja', label: '日' },
+  { code: 'ko', label: 'Ko' },
+  { code: 'en', label: 'En' },
+  { code: 'ja', label: 'Ja' },
 ];
 
 export default function LanguageSwitcher() {
