@@ -178,6 +178,16 @@ npm run test
 
 ## 개발 히스토리
 
+### 쿠폰 달력 UI 버그 수정 (2026.04)
+
+쿠폰 만료일 DatePicker의 3가지 UI 문제를 수정했습니다.
+
+- **요일 헤더 텍스트 불표시 수정**: `.react-datepicker__day-names`에 배경색 명시적 적용으로 흰색 배경에 흰색 글씨가 겹치는 문제 해결
+- **달력 위치 변동 수정**: `fixedHeight` prop 추가로 4주/5주/6주 달력 간 높이 변화로 인한 위치 이동 방지
+- **다른 달 날짜 구분**: `.react-datepicker__day--outside-month`에 회색 스타일 적용
+
+---
+
 ### TypeScript 마이그레이션 + 테스트 코드 작성 (2026.04)
 
 전체 프로젝트를 JavaScript에서 TypeScript로 마이그레이션하고, 쿠폰 CRUD 기능의 테스트 코드를 작성했습니다.
@@ -356,6 +366,7 @@ Claude CLI와 협업하여 체계적인 코드 품질 개선 작업 수행
 
 ### 완료
 
+- [x] 쿠폰 달력 UI 버그 수정 (요일 텍스트, 위치 고정, 달 구분)
 - [x] TypeScript 마이그레이션 (strict mode, any 0건)
 - [x] 쿠폰 CRUD 테스트 코드 작성 (Vitest + Testing Library)
 - [x] UI/UX 점진적 개선
