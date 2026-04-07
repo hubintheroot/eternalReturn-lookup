@@ -1,0 +1,16 @@
+import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
+import type { ReactNode } from 'react';
+import * as Styled from './Modal.styled';
+
+export default function Modal({ children }: { children: ReactNode }) {
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = 'auto'; };
+  }, []);
+  const content = <Styled.Background>{children}</Styled.Background>;
+
+  const el = document.getElementById('modal');
+
+  return !el ? null : createPortal(content, el);
+}

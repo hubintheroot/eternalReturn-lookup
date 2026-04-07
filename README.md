@@ -30,7 +30,7 @@
 - **Routing**: React Router DOM 6.22.3
 - **Styling**: Styled-components 6.1.8
 - **Backend**: Supabase (BaaS) - Database, Authentication
-- **Language**: JavaScript (ES6+)
+- **Language**: TypeScript (Strict Mode)
 - **Deployment**: Cloudflare Pages
 
 ## 아키텍처
@@ -64,11 +64,11 @@ src/
 │   └── season-display/        - 시즌 정보 및 카운트다운
 │
 ├── entities/          - 비즈니스 엔티티 (Zustand stores)
-│   ├── character/store.js
-│   ├── user/store.js
-│   ├── season/store.js
-│   ├── sort-option/store.js
-│   └── image-loaded/store.js
+│   ├── character/store.ts
+│   ├── user/store.ts
+│   ├── season/store.ts
+│   ├── sort-option/store.ts
+│   └── image-loaded/store.ts
 │
 └── shared/            - 공유 리소스
     ├── api/           - Supabase 클라이언트 및 API
@@ -164,7 +164,43 @@ VITE_KAKAO_REST_KEY=your_kakao_rest_key
 npm run dev
 ```
 
+4. 타입 체크
+
+```bash
+npm run typecheck
+```
+
+5. 테스트 실행
+
+```bash
+npm run test
+```
+
 ## 개발 히스토리
+
+### TypeScript 마이그레이션 + 테스트 코드 작성 (2026.04)
+
+전체 프로젝트를 JavaScript에서 TypeScript로 마이그레이션하고, 쿠폰 CRUD 기능의 테스트 코드를 작성했습니다.
+
+#### TypeScript 마이그레이션
+
+- 98개 파일(48 `.js` + 50 `.jsx`)을 `.ts`/`.tsx`로 전환
+- `strict` 모드 + `noUncheckedIndexedAccess` 활성화, `any` 타입 사용 0건
+- 중앙 타입 정의 파일 `src/shared/types/index.ts` 생성 (도메인 모델 통합)
+- Zustand store에 제네릭 타입 적용 (`create<StoreInterface>()`)
+- styled-components transient props(`$propName`)에 인터페이스 정의
+- Supabase API 반환 타입 `.returns<T[]>()`로 명시
+- 기존 버그 수정: Modal의 `document.body.style` 전체 덮어쓰기 → `.overflow` 속성만 변경
+
+#### 테스트 코드 (Vitest + Testing Library)
+
+- 6개 테스트 파일, 36개 테스트 케이스 작성
+- `couponSort`, `formatDate` 유틸리티 테스트
+- `CouponCard`, `CouponForm`, `AddCoupon`, `EditCoupon`, `DeleteCoupon` 컴포넌트 테스트
+- Supabase API 모킹, i18n 모킹 적용
+- 유효성 검증(이름/코드/보상 필수, 코드 형식, 중복 코드), CRUD 동작 테스트
+
+---
 
 ### UI/UX 개선 및 신규 기능 (2026.02 ~ 2026.03)
 
@@ -191,7 +227,7 @@ npm run dev
 `useBlocker`를 활용해 사이드바 주요 경로(`/`, `/patchNotes`, `/coupons`, `/characters`) 이동 시 블라인드 슬라이드 전환 효과를 구현했습니다.
 
 - POP 히스토리, 같은 섹션 내 이동 시 미트리거
-- `appSession.js` 싱글톤으로 첫 접속 리다이렉트 및 블라인드 우회 플래그 관리
+- `appSession.ts` 싱글톤으로 첫 접속 리다이렉트 및 블라인드 우회 플래그 관리
 
 #### 실험체 이미지 캐러셀 (ImageCarousel + ImageModal)
 
@@ -233,8 +269,8 @@ npm run dev
 
 #### 적용한 명명 규칙
 
-```javascript
-// 파일명: ComponentName.styled.js (NOT .jsx)
+```typescript
+// 파일명: ComponentName.styled.ts (NOT .tsx)
 import * as Styled from './ComponentName.styled'
 
 // Export: clean names without "Styled" prefix
@@ -320,6 +356,8 @@ Claude CLI와 협업하여 체계적인 코드 품질 개선 작업 수행
 
 ### 완료
 
+- [x] TypeScript 마이그레이션 (strict mode, any 0건)
+- [x] 쿠폰 CRUD 테스트 코드 작성 (Vitest + Testing Library)
 - [x] UI/UX 점진적 개선
 - [x] OpenGraph 메타 태그 적용
 - [x] 반응형 레이아웃 (Sidebar / TopBar+Drawer) 재설계
