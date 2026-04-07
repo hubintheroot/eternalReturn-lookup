@@ -105,7 +105,7 @@ app → pages → features → entities → shared
 
 1. **이미지 최적화**
    - webp 포맷 사용
-   - CDN 도입 (cdn.jsdelivr.net)
+   - CDN 도입 ([statically.io](https://statically.io/))
    - 평균 로딩 시간: 0.4초
 
 2. **스켈레톤 UI**
