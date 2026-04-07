@@ -2,10 +2,11 @@ import type { ReactElement } from 'react';
 import * as Styled from './RootLayout.styled';
 import Modal from '@/shared/ui/Modal';
 import Button from '@/shared/ui/Button';
+import Toast from '@/shared/ui/Toast';
 import UserInfo from '../userInfo';
 import { useAuth } from '@/shared/lib/AuthProvider';
 import { useUserInfoStore } from '@/entities/user/store';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { KakaoLoginButton } from '@/shared/ui/kakaoLoginButton';
 import { FeedbackSVG, LogoutSVG, UserSVG } from '@/shared/ui/SVG';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
@@ -13,7 +14,7 @@ import Navigate from '@/shared/ui/Navigate';
 import BlindTransition from '@/shared/ui/BlindTransition';
 import SeasonMiniTimer from '@/features/season-display/ui/SeasonMiniTimer';
 import { checkAndRedirectOnFirstVisit } from '@/shared/lib/appSession';
-import type { User } from '@/shared/types';
+import type { User, ToastData, ToastHandler, ToastStatus } from '@/shared/types';
 
 interface NavLink {
   link: string;
@@ -49,16 +50,38 @@ export default function Root(): ReactElement {
     user,
     signIn,
     signOut,
-    loading
+    loading,
+    autoSignedOut,
+    clearAutoSignedOut
   } = useAuth();
   const [showModal, setModal] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [toast, setToast] = useState<{ isShow: boolean; message: string | null; status: ToastStatus | null }>({
+    isShow: false,
+    message: null,
+    status: null,
+  });
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
   useSyncAuthToStore();
   useEffect(() => {
     checkAndRedirectOnFirstVisit(navigate, location.pathname);
   }, []);
+  useEffect(() => {
+    if (autoSignedOut) {
+      setToast({ isShow: true, message: '로그아웃되었습니다', status: 'alert' });
+      clearAutoSignedOut();
+    }
+  }, [autoSignedOut, clearAutoSignedOut]);
+  const toastHandler: ToastHandler = {
+    show: (data: { message: string; status: ToastStatus }) => setToast({ isShow: true, ...data }),
+    hide: () => setToast({ isShow: false, message: '', status: 'failed' }),
+    alert: function (message: string) { this.show({ message, status: 'alert' }); },
+    success: function (message: string) { this.show({ message, status: 'successed' }); },
+    failed: function (message: string) { this.show({ message, status: 'failed' }); },
+  };
+  const toastData: ToastData = { ...toast, timer: timerRef };
   const showUserInfo = useCallback(() => setModal(true), []);
   const hideUserInfo = useCallback(() => setModal(false), []);
   const closeDrawer = useCallback(() => setIsDrawerOpen(false), []);
@@ -136,5 +159,6 @@ export default function Root(): ReactElement {
       {showModal && <Modal>
           <UserInfo onClose={hideUserInfo} data={typedUser?.user_metadata as { avatar_url: string; user_name: string; email: string }} />
         </Modal>}
+      {toast.isShow && <Toast data={toastData} handler={toastHandler} />}
     </Styled.Page>;
 }

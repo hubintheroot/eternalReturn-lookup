@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { authService } from './authService';
 import type { ReactNode } from 'react';
 import type { User, Session, AuthContextValue } from '@/shared/types';
@@ -11,6 +11,8 @@ export const AuthProvider = ({
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [autoSignedOut, setAutoSignedOut] = useState(false);
+  const isManualSignOut = useRef(false);
   useEffect(() => {
     initializeAuth();
     const {
@@ -21,6 +23,12 @@ export const AuthProvider = ({
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
+      if (event === 'SIGNED_OUT') {
+        if (!isManualSignOut.current) {
+          setAutoSignedOut(true);
+        }
+        isManualSignOut.current = false;
+      }
       handleAuthEvent(event, session);
     });
     return () => {
@@ -38,6 +46,21 @@ export const AuthProvider = ({
       }
     } finally {
       setLoading(false);
+    }
+  };
+  const handleSignOut = async (): Promise<void> => {
+    isManualSignOut.current = true;
+    try {
+      await authService.signOut();
+    } catch (e) {
+      if ((e as { status?: number })?.status === 403) {
+        setUser(null);
+        setSession(null);
+        isManualSignOut.current = false;
+        return;
+      }
+      isManualSignOut.current = false;
+      throw e;
     }
   };
   const handleAuthEvent = (event: AuthChangeEvent, session: Session | null) => {
@@ -65,11 +88,13 @@ export const AuthProvider = ({
     session,
     loading,
     isAuthenticated: !!user,
+    autoSignedOut,
     signIn: authService.signInWithProvider.bind(authService),
-    signOut: authService.signOut.bind(authService),
+    signOut: handleSignOut,
     deleteAccount: authService.deleteAccount.bind(authService),
     getSession: authService.getSession.bind(authService),
-    getUser: authService.getUser.bind(authService)
+    getUser: authService.getUser.bind(authService),
+    clearAutoSignedOut: () => setAutoSignedOut(false)
   };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

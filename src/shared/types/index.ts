@@ -76,11 +76,13 @@ export interface AuthContextValue {
   session: Session | null;
   loading: boolean;
   isAuthenticated: boolean;
+  autoSignedOut: boolean;
   signIn: (providerName?: string, options?: Record<string, unknown>) => Promise<unknown>;
   signOut: () => Promise<void>;
   deleteAccount: () => Promise<void>;
   getSession: () => Promise<Session | null>;
   getUser: () => Promise<User | null>;
+  clearAutoSignedOut: () => void;
 }
 
 // ── OAuth Provider Types ────────────────────────────────────
