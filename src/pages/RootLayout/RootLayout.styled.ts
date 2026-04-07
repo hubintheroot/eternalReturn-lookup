@@ -124,6 +124,10 @@ export const DrawerUserBox = styled.div`
   flex-direction: column;
   gap: 8px;
   border-top: 1px solid rgba(255, 255, 255, 0.3);
+
+  p {
+    display: block;
+  }
 `;
 
 export const Sidebar = styled.aside`

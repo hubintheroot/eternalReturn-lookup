@@ -119,6 +119,7 @@ export default function CouponForm({ text, onSubmit, onClose, data }: CouponForm
                 onChangeRaw={handleRawChange}
                 locale={locale}
                 showTimeSelect
+                popperPlacement="top-start"
                 dateFormat={t('form.dateFormat')}
                 timeFormat="HH:mm"
                 timeIntervals={30}

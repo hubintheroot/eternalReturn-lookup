@@ -7,8 +7,7 @@ export const Container = styled.div`
   border-radius: 0.5rem;
   width: calc(100% - 1rem);
   max-width: 28rem;
-  max-height: calc(-2rem + 100vh);
-  overflow-y: auto;
+  overflow-y: visible;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px,
     rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
   ${scrollbarStyle}
@@ -97,7 +96,11 @@ export const Input = styled.input`
   color: #000;
   border: 1px solid rgb(224, 224, 224);
   border-radius: 0.375rem;
-  font-size: 0.875rem;
+  font-size: 1rem;
+
+  @media screen and (min-width: 768px) {
+    font-size: 0.875rem;
+  }
 
   &:focus {
     outline: none;
@@ -121,9 +124,13 @@ export const DatePickerWrapper = styled.div`
     color: #000;
     border: 1px solid rgb(224, 224, 224);
     border-radius: 0.375rem;
-    font-size: 0.875rem;
+    font-size: 1rem;
     cursor: text;
     box-sizing: border-box;
+
+    @media screen and (min-width: 768px) {
+      font-size: 0.875rem;
+    }
 
     &:focus {
       outline: none;
@@ -167,6 +174,22 @@ export const DatePickerWrapper = styled.div`
 
   .react-datepicker__navigation-icon::before {
     border-color: #fff;
+  }
+
+  .react-datepicker__day-names {
+    background-color: #71C9CE;
+  }
+
+  .react-datepicker__day-name {
+    color: #fff;
+  }
+
+  .react-datepicker__day--outside-month {
+    color: #b0b0b0;
+  }
+
+  .react-datepicker__time-container {
+    border-left: 1px solid #71C9CE;
   }
 `;
 
