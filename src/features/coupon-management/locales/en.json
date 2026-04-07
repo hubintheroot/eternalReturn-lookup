@@ -1,0 +1,57 @@
+{
+  "title": "Coupons",
+  "add": "Add Coupon",
+  "loading": "Loading coupons...",
+  "activeSection": "Available Coupons",
+  "expiredSection": "Expired Coupons",
+  "empty": "No coupons registered yet",
+  "loginRequired": "Login required.",
+  "copied": "Coupon code copied.",
+  "copyPcOnly": "Please use PC to copy",
+  "expired": "Expired",
+  "permanent": "Permanent",
+  "form": {
+    "name": "Coupon Name",
+    "code": "Coupon Code",
+    "reward": "Reward",
+    "expiresAt": "Expires At",
+    "neverExpires": "This coupon never expires",
+    "dateFormat": "MM/dd/yyyy h:mm aa",
+    "parseFmt": "MM/dd/yyyy h:mm aa",
+    "datePlaceholder": "e.g. 03/20/2025 2:30 PM"
+  },
+  "add_modal": {
+    "title": "Add New Coupon",
+    "subtitle": "Enter new coupon details.",
+    "submit": "Add",
+    "success": "Coupon added."
+  },
+  "edit": {
+    "title": "Edit Coupon",
+    "subtitle": "Enter coupon details to edit.",
+    "submit": "Edit",
+    "success": "Updated.",
+    "noPermission": "No permission to edit."
+  },
+  "delete": {
+    "title": "Coupon Info",
+    "subtitle": "Viewing coupon info to delete.",
+    "codeLabel": "Coupon Code",
+    "rewardLabel": "Reward",
+    "expiresAtLabel": "Expires At",
+    "submit": "Remove",
+    "confirm": "Delete this coupon?",
+    "success": "Coupon deleted."
+  },
+  "validation": {
+    "nameRequired": "Please enter a coupon name.",
+    "codeRequired": "Please enter a coupon code.",
+    "codeInvalid": "Please enter a valid coupon code.",
+    "codeDuplicate": "Coupon already registered.",
+    "rewardRequired": "Please enter a reward.",
+    "expiresAtRequired": "Please enter an expiry date."
+  },
+  "error": {
+    "unknown": "An unknown error occurred."
+  }
+}

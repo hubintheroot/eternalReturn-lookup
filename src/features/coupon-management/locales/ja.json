@@ -1,0 +1,57 @@
+{
+  "title": "クーポン",
+  "add": "クーポン追加",
+  "loading": "クーポン検索中...",
+  "activeSection": "使用可能なクーポン",
+  "expiredSection": "期限切れクーポン",
+  "empty": "登録されたクーポンがありません",
+  "loginRequired": "ログインが必要です。",
+  "copied": "クーポンコードをコピーしました。",
+  "copyPcOnly": "PCでコピーしてください",
+  "expired": "期限切れ",
+  "permanent": "無期限",
+  "form": {
+    "name": "クーポン名",
+    "code": "クーポンコード",
+    "reward": "報酬",
+    "expiresAt": "有効期限",
+    "neverExpires": "このクーポンに有効期限はありません",
+    "dateFormat": "yyyy'年'MM'月'dd'日' HH:mm",
+    "parseFmt": "yyyy'年'MM'月'dd'日' HH:mm",
+    "datePlaceholder": "例) 2025年03月20日 14:30"
+  },
+  "add_modal": {
+    "title": "新規クーポン追加",
+    "subtitle": "新しいクーポン情報を入力してください。",
+    "submit": "追加する",
+    "success": "クーポンを追加しました。"
+  },
+  "edit": {
+    "title": "クーポン編集",
+    "subtitle": "修正するクーポン情報を入力してください。",
+    "submit": "修正する",
+    "success": "修正しました。",
+    "noPermission": "修正権限がありません。"
+  },
+  "delete": {
+    "title": "クーポン情報",
+    "subtitle": "削除するクーポン情報を確認します。",
+    "codeLabel": "クーポンコード",
+    "rewardLabel": "報酬",
+    "expiresAtLabel": "有効期限",
+    "submit": "削除する",
+    "confirm": "このクーポンを削除しますか？",
+    "success": "クーポンを削除しました。"
+  },
+  "validation": {
+    "nameRequired": "クーポン名を入力してください。",
+    "codeRequired": "クーポンコードを入力してください。",
+    "codeInvalid": "有効なクーポンコードを入力してください。",
+    "codeDuplicate": "すでに登録されているクーポンです。",
+    "rewardRequired": "報酬を入力してください。",
+    "expiresAtRequired": "有効期限を入力してください。"
+  },
+  "error": {
+    "unknown": "不明なエラーが発生しました。"
+  }
+}

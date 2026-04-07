@@ -1,0 +1,21 @@
+import type { NavigateFunction } from 'react-router-dom';
+
+let _isFirstVisit = true;
+let _skipNextBlock = false;
+export function shouldSkipBlock(): boolean {
+  if (_skipNextBlock) {
+    _skipNextBlock = false;
+    return true;
+  }
+  return false;
+}
+export function checkAndRedirectOnFirstVisit(navigate: NavigateFunction, currentPath: string): void {
+  if (!_isFirstVisit) return;
+  _isFirstVisit = false;
+  if (new URLSearchParams(window.location.search).has('code')) return;
+  if (currentPath !== '/') {
+    navigate('/', {
+      replace: true
+    });
+  }
+}
