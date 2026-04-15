@@ -14,49 +14,55 @@ import Navigate from '@/shared/ui/Navigate';
 import BlindTransition from '@/shared/ui/BlindTransition';
 import SeasonMiniTimer from '@/features/season-display/ui/SeasonMiniTimer';
 import { checkAndRedirectOnFirstVisit } from '@/shared/lib/appSession';
-import type { User, ToastData, ToastHandler, ToastStatus } from '@/shared/types';
+import type {
+  User,
+  ToastData,
+  ToastHandler,
+  ToastStatus,
+} from '@/shared/types';
 
 interface NavLink {
   link: string;
   text: string;
 }
 
-const links: NavLink[] = [{
-  link: '/',
-  text: '홈'
-}, {
-  link: '/patchNotes',
-  text: '패치노트'
-}, {
-  link: '/coupons',
-  text: '쿠폰'
-}, {
-  link: '/characters',
-  text: '실험체'
-}];
+const links: NavLink[] = [
+  {
+    link: '/',
+    text: '홈',
+  },
+  {
+    link: '/patchNotes',
+    text: '패치노트',
+  },
+  {
+    link: '/coupons',
+    text: '쿠폰',
+  },
+  {
+    link: '/characters',
+    text: '실험체',
+  },
+];
 
 function useSyncAuthToStore(): void {
   const setUser = useUserInfoStore((state) => state.setUser);
-  const {
-    user
-  } = useAuth();
+  const { user } = useAuth();
   useEffect(() => {
     setUser(user);
   }, [user, setUser]);
 }
 
 export default function Root(): ReactElement {
-  const {
-    user,
-    signIn,
-    signOut,
-    loading,
-    autoSignedOut,
-    clearAutoSignedOut
-  } = useAuth();
+  const { user, signIn, signOut, loading, autoSignedOut, clearAutoSignedOut } =
+    useAuth();
   const [showModal, setModal] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [toast, setToast] = useState<{ isShow: boolean; message: string | null; status: ToastStatus | null }>({
+  const [toast, setToast] = useState<{
+    isShow: boolean;
+    message: string | null;
+    status: ToastStatus | null;
+  }>({
     isShow: false,
     message: null,
     status: null,
@@ -69,17 +75,31 @@ export default function Root(): ReactElement {
     checkAndRedirectOnFirstVisit(navigate, location.pathname);
   }, []);
   useEffect(() => {
+    if (!user) setModal(false);
+  }, [user]);
+  useEffect(() => {
     if (autoSignedOut) {
-      setToast({ isShow: true, message: '로그아웃되었습니다', status: 'alert' });
+      setToast({
+        isShow: true,
+        message: '로그아웃되었습니다',
+        status: 'alert',
+      });
       clearAutoSignedOut();
     }
   }, [autoSignedOut, clearAutoSignedOut]);
   const toastHandler: ToastHandler = {
-    show: (data: { message: string; status: ToastStatus }) => setToast({ isShow: true, ...data }),
+    show: (data: { message: string; status: ToastStatus }) =>
+      setToast({ isShow: true, ...data }),
     hide: () => setToast({ isShow: false, message: '', status: 'failed' }),
-    alert: function (message: string) { this.show({ message, status: 'alert' }); },
-    success: function (message: string) { this.show({ message, status: 'successed' }); },
-    failed: function (message: string) { this.show({ message, status: 'failed' }); },
+    alert: function (message: string) {
+      this.show({ message, status: 'alert' });
+    },
+    success: function (message: string) {
+      this.show({ message, status: 'successed' });
+    },
+    failed: function (message: string) {
+      this.show({ message, status: 'failed' });
+    },
   };
   const toastData: ToastData = { ...toast, timer: timerRef };
   const showUserInfo = useCallback(() => setModal(true), []);
@@ -109,19 +129,28 @@ export default function Root(): ReactElement {
 
   const typedUser = user as User | null;
 
-  const userButtons = typedUser ? <>
+  const userButtons = typedUser ? (
+    <>
       <Button eventHandler={showUserInfo} text="프로필">
         <UserSVG />
       </Button>
       <Button eventHandler={handleLogout} text="로그아웃">
         <LogoutSVG />
       </Button>
-    </> : <KakaoLoginButton loginHandler={handleLogin} />;
-  return <Styled.Page>
+    </>
+  ) : (
+    <KakaoLoginButton loginHandler={handleLogin} />
+  );
+  return (
+    <Styled.Page>
       <Styled.TopBar>
-        <Styled.TopBarTitle as={Link} to="/">ELK</Styled.TopBarTitle>
+        <Styled.TopBarTitle as={Link} to="/">
+          ELK
+        </Styled.TopBarTitle>
         <SeasonMiniTimer variant="topbar" />
-        <Styled.HamburgerBtn onClick={() => setIsDrawerOpen(true)}>&#9776;</Styled.HamburgerBtn>
+        <Styled.HamburgerBtn onClick={() => setIsDrawerOpen(true)}>
+          &#9776;
+        </Styled.HamburgerBtn>
       </Styled.TopBar>
 
       <Styled.DrawerOverlay $isOpen={isDrawerOpen} onClick={closeDrawer} />
@@ -136,7 +165,9 @@ export default function Root(): ReactElement {
 
       <Styled.Sidebar>
         <Styled.SidebarTitleRow>
-          <Styled.SidebarTitle as={Link} to="/">ELK</Styled.SidebarTitle>
+          <Styled.SidebarTitle as={Link} to="/">
+            ELK
+          </Styled.SidebarTitle>
           <SeasonMiniTimer variant="sidebar" />
         </Styled.SidebarTitleRow>
         <Navigate info={links} direction="column" />
@@ -146,7 +177,11 @@ export default function Root(): ReactElement {
       <Styled.ContentWrapper>
         <BlindTransition />
         <Styled.SurveyContainer>
-          <Styled.FeedbackContainer href="https://forms.gle/hXXEEMWiiXeicxq2A" target="_blank" rel="noreferrer">
+          <Styled.FeedbackContainer
+            href="https://forms.gle/hXXEEMWiiXeicxq2A"
+            target="_blank"
+            rel="noreferrer"
+          >
             <FeedbackSVG />
             <span>피드백 설문하러 가기</span>
           </Styled.FeedbackContainer>
@@ -156,9 +191,21 @@ export default function Root(): ReactElement {
         </Styled.Content>
       </Styled.ContentWrapper>
 
-      {showModal && <Modal>
-          <UserInfo onClose={hideUserInfo} data={typedUser?.user_metadata as { avatar_url: string; user_name: string; email: string }} />
-        </Modal>}
+      {showModal && typedUser && (
+        <Modal>
+          <UserInfo
+            onClose={hideUserInfo}
+            data={
+              typedUser.user_metadata as {
+                avatar_url: string;
+                user_name: string;
+                email: string;
+              }
+            }
+          />
+        </Modal>
+      )}
       {toast.isShow && <Toast data={toastData} handler={toastHandler} />}
-    </Styled.Page>;
+    </Styled.Page>
+  );
 }

@@ -9,8 +9,18 @@ export const OAUTH_PROVIDERS: Record<string, OAuthProviderConfig> = {
     config: {
       redirectTo: `${window.location.origin}/coupons`
     }
+  },
+  DISCORD: {
+    name: 'discord',
+    displayName: 'Discord',
+    icon: '/icons/discord.svg',
+    scopes: 'identify email',
+    config: {
+      redirectTo: `${window.location.origin}/coupons`
+    }
   }
 };
+
 export const getProviderByName = (name: string): OAuthProviderConfig | undefined => {
   return OAUTH_PROVIDERS[name.toUpperCase()];
 };
