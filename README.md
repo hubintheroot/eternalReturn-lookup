@@ -19,7 +19,7 @@
 - **시즌 정보**: 현재 시즌 정보 및 종료까지 남은 시간 카운트다운 (사이드바/탑바 미니 타이머 포함)
 - **패치노트**: 패치노트 목록 및 상세 정보 (캐릭터·장비별 변경 사항)
 - **쿠폰 관리**: 로그인 시 쿠폰 등록/수정/삭제 기능 (CRUD)
-- **인증**: 카카오 소셜 로그인 지원
+- **인증**: 카카오 소셜 로그인 지원, 회원탈퇴
 - **반응형 레이아웃**: 세로(Topbar + Drawer 햄버거 메뉴) / 가로(Sidebar) 자동 전환
 - **페이지 전환 애니메이션**: 사이드바 메뉴 이동 시 블라인드 전환 효과 (BlindTransition)
 
@@ -72,7 +72,8 @@ src/
 │
 └── shared/            - 공유 리소스
     ├── api/           - Supabase 클라이언트 및 API
-    ├── lib/           - 유틸리티 함수 및 AuthProvider
+    ├── lib/           - 유틸리티 함수, AuthProvider, hybridTokenStorage
+    ├── workers/       - Web Worker (authWorker: 토큰 갱신 타이머)
     └── ui/            - 재사용 가능한 UI 컴포넌트
 ```
 
@@ -177,6 +178,22 @@ npm run test
 ```
 
 ## 개발 히스토리
+
+### 인증 구조 전면 재설계 (2026.04)
+
+인증 세션 관리를 localStorage 기반에서 커스텀 하이브리드 스토리지 방식으로 전면 재설계했습니다.
+
+- **hybridTokenStorage 도입**: Supabase `SupportedStorage` 인터페이스를 구현한 커스텀 스토리지. 세션 키(`-auth-token`)는 memoryCache + sessionStorage에 저장하여 새로고침 후 복원을 보장하고, PKCE code_verifier 등 비세션 키는 sessionStorage를 직접 사용하여 OAuth 리다이렉트 후에도 유실되지 않도록 처리.
+- **PKCE flow 지원**: `flowType: 'pkce'` 설정 시 OAuth 리다이렉트 사이에 code_verifier가 메모리에서 소실되던 문제 수정. 비세션 키를 sessionStorage에 직접 저장하는 분기 처리로 해결.
+- **Web Worker 역할 재정의**: access_token 보관 역할 제거. 토큰 만료 5분 전 메인 스레드에 갱신 요청을 보내는 타이머 역할만 수행하도록 단순화 (Worker round-trip 없이 동기 getItem 유지).
+- **브라우저 종료 시 자동 로그아웃**: sessionStorage 사용으로 브라우저 완전 종료 시 세션 자동 삭제.
+- **탭 독립성**: sessionStorage는 탭 단위로 격리되어 탭 간 세션 공유 없음.
+- **Discord OAuth 추가**: `oauthProviders.ts`에 Discord provider 추가.
+- **회원탈퇴 버그 수정**:
+  - 탈퇴 후 `signOut({ scope: 'local' })` 호출 시 서버가 403을 반환하면 SDK 내부 `_removeSession()`이 실행되지 않아 sessionStorage에 세션이 잔류하던 문제 수정. `clearHybridStorage()`로 스토리지를 직접 소멸.
+  - 탈퇴 처리 중 `setUser(null)` 리렌더링 타이밍으로 `UserInfo` 컴포넌트에서 `avatar_url` TypeError 발생하던 문제 수정. 모달 렌더링 조건에 `typedUser` 존재 여부 추가 및 `user` null 시 모달 자동 해제 useEffect 추가.
+
+---
 
 ### 인증 안정성 개선 (2026.04)
 
@@ -373,8 +390,11 @@ Claude CLI와 협업하여 체계적인 코드 품질 개선 작업 수행
 
 ### 예정
 
+- [ ] Discord 소셜 로그인 지원
+
 ### 완료
 
+- [x] 인증 구조 전면 재설계 (hybridTokenStorage, PKCE 지원, Discord OAuth, 회원탈퇴 버그 수정)
 - [x] 인증 안정성 개선 (로그아웃 403 처리, 자동 세션 만료 Toast 안내)
 - [x] 쿠폰 달력 UI 버그 수정 (요일 텍스트, 위치 고정, 달 구분)
 - [x] TypeScript 마이그레이션 (strict mode, any 0건)
