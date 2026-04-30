@@ -11,9 +11,7 @@ interface SeasonBoxProps {
   onReady?: () => void;
 }
 
-export default function SeasonBox({
-  onReady
-}: SeasonBoxProps): ReactElement {
+export default function SeasonBox({ onReady }: SeasonBoxProps): ReactElement {
   const seasonInfo = useSeasonInfoStore((state) => state.data);
   const setSeasonInfo = useSeasonInfoStore((state) => state.setSeasonInfo);
   const getDataCnt = useRef(0);
@@ -24,13 +22,21 @@ export default function SeasonBox({
     async function getData() {
       setIsLoading(true);
       try {
-        const currentRes = await supabase().from('seasonInfo').select('*').eq('isCurrent', true);
+        const currentRes = await supabase()
+          .from('seasonInfo')
+          .select('*')
+          .eq('isCurrent', true);
+
         if (currentRes.data && currentRes.data.length > 0) {
           setSeasonInfo(currentRes.data[0] as SeasonInfo);
         } else {
-          const previousRes = await supabase().from('seasonInfo').select('*').order('end', {
-            ascending: false
-          }).limit(1);
+          const previousRes = await supabase()
+            .from('seasonInfo')
+            .select('*')
+            .order('end', {
+              ascending: false,
+            })
+            .limit(1);
           if (previousRes.data && previousRes.data.length > 0) {
             setPreviousSeason(previousRes.data[0] as SeasonInfo);
           }
@@ -55,7 +61,8 @@ export default function SeasonBox({
       return null;
     }
     if (seasonInfo) {
-      return <Styled.ContentWrapper>
+      return (
+        <Styled.ContentWrapper>
           <Styled.TitleDiv className="season-title-box">
             <Styled.SeasonTitle>
               {seasonInfo.isPre ? '프리 시즌' : '시즌'} {seasonInfo.season}
@@ -73,47 +80,72 @@ export default function SeasonBox({
               <CountDown endDate={seasonInfo.end} lang="kr" />
             </div>
           </Styled.SeasonTimeLeft>
-        </Styled.ContentWrapper>;
+        </Styled.ContentWrapper>
+      );
     }
     if (previousSeason) {
-      return <Styled.ContentWrapper>
+      return (
+        <Styled.ContentWrapper>
           <Styled.PreviousSeasonWrapper>
             <Styled.TitleDiv className="season-title-box">
-              <Styled.SeasonTitle style={{
-              opacity: 0.6
-            }}>
+              <Styled.SeasonTitle
+                style={{
+                  opacity: 0.6,
+                }}
+              >
                 {previousSeason.isPre ? '프리 시즌' : '시즌'}{' '}
                 {previousSeason.season}
               </Styled.SeasonTitle>
-              <Styled.SeasonPeriodInfo style={{
-              opacity: 0.5
-            }}>
+              <Styled.SeasonPeriodInfo
+                style={{
+                  opacity: 0.5,
+                }}
+              >
                 {removeMinutes(previousSeason.start)} ~{' '}
                 {removeMinutes(previousSeason.end)}
               </Styled.SeasonPeriodInfo>
             </Styled.TitleDiv>
           </Styled.PreviousSeasonWrapper>
-          <EmptyState icon="" title="현재 진행 중인 시즌 정보가 없습니다" description="곧 새로운 시즌이 시작될 예정이니 조금만 기다려 주세요!" variant="default" />
-        </Styled.ContentWrapper>;
+          <EmptyState
+            icon=""
+            title="현재 진행 중인 시즌 정보가 없습니다"
+            description="곧 새로운 시즌이 시작될 예정이니 조금만 기다려 주세요!"
+            variant="default"
+          />
+        </Styled.ContentWrapper>
+      );
     }
-    return <Styled.ContentWrapper>
-        <EmptyState icon="🍅" title="시즌 정보를 불러오는 중입니다" description="잠시만 기다려 주세요." variant="subtle" />
-      </Styled.ContentWrapper>;
+    return (
+      <Styled.ContentWrapper>
+        <EmptyState
+          icon="🍅"
+          title="시즌 정보를 불러오는 중입니다"
+          description="잠시만 기다려 주세요."
+          variant="subtle"
+        />
+      </Styled.ContentWrapper>
+    );
   };
 
   const getBackgroundSeason = (): number => {
-    if (seasonInfo?.isPre) return seasonInfo.season - 1;
-    if (previousSeason?.isPre) return previousSeason.season - 1;
+    if (seasonInfo?.isPre) return seasonInfo.season;
+    if (previousSeason?.isPre) return previousSeason.season;
     return seasonInfo?.season || previousSeason?.season || 1;
   };
 
-  return <Styled.Container className="season-info-container">
+  return (
+    <Styled.Container className="season-info-container">
       <Styled.ImgBox>
-        <Styled.Image src={`//cdn.dak.gg/er/images/bg/bg-landing-search-v${getBackgroundSeason()}.jpg`} alt="season background wallpaper" />
+        <Styled.Image
+          src={`//cdn.dak.gg/er/images/bg/bg-landing-search-v${getBackgroundSeason()}.jpg`}
+          alt="season background wallpaper"
+        />
         <Styled.Overlay />
       </Styled.ImgBox>
       {renderContent()}
-    </Styled.Container>;
+    </Styled.Container>
+  );
 }
 
-const removeMinutes = (date: string): string => date.replace(/\d{2}:\d{2}/g, '');
+const removeMinutes = (date: string): string =>
+  date.replace(/\d{2}:\d{2}/g, '');
