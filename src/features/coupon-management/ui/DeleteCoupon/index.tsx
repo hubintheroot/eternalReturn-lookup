@@ -5,14 +5,17 @@ import { couponSort, formatDate } from '@/shared/lib/utils';
 import Button from '@/shared/ui/Button';
 import { XIconSVG } from '@/shared/ui/SVG';
 import type { Coupon, CouponHandler } from '@/shared/types';
+import { useState } from 'react';
 
-type DeleteResult = {
-  ok: true;
-  data: Coupon[];
-} | {
-  ok: false;
-  data: null;
-};
+type DeleteResult =
+  | {
+      ok: true;
+      data: Coupon[];
+    }
+  | {
+      ok: false;
+      data: null;
+    };
 
 async function del(id: number): Promise<DeleteResult> {
   try {
@@ -36,18 +39,28 @@ interface DeleteCouponProps {
   data: Coupon;
 }
 
-export default function DeleteCoupon({ handler, onClose, data }: DeleteCouponProps) {
+export default function DeleteCoupon({
+  handler,
+  onClose,
+  data,
+}: DeleteCouponProps) {
+  const [processing, setProcessing] = useState(false);
   const { t } = useTranslation('coupon');
   const deleteCoupon = async () => {
     if (window.confirm(t('delete.confirm'))) {
-      const res = await del(data.id);
-      if (res.ok) {
-        handler.toast.success(t('delete.success'));
-        handler.setData(res.data);
-      } else {
-        handler.toast.failed(t('error.unknown'));
+      setProcessing(true);
+      try {
+        const res = await del(data.id);
+        if (res.ok) {
+          handler.toast.success(t('delete.success'));
+          handler.setData(res.data);
+        } else {
+          handler.toast.failed(t('error.unknown'));
+        }
+      } finally {
+        setProcessing(false);
+        onClose();
       }
-      onClose();
     }
   };
   return (
@@ -88,6 +101,7 @@ export default function DeleteCoupon({ handler, onClose, data }: DeleteCouponPro
             hoverColor={'none'}
             backgroundColor={'#000'}
             hoverBackgroundColor={'rgb(51, 51, 51)'}
+            disabled={processing}
           />
         </Styled.DeleteBox>
       </div>
