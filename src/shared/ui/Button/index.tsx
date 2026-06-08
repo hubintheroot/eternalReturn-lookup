@@ -9,6 +9,7 @@ interface ButtonProps {
   hoverColor?: string | null;
   backgroundColor?: string | null;
   hoverBackgroundColor?: string | null;
+  disabled?: boolean;
 }
 
 export const Button = ({
@@ -19,6 +20,7 @@ export const Button = ({
   hoverColor = null,
   backgroundColor = null,
   hoverBackgroundColor = null,
+  disabled = false,
 }: ButtonProps) => {
   return (
     <Styled.Button
@@ -28,9 +30,12 @@ export const Button = ({
       $bgc={backgroundColor}
       $hbgc={hoverBackgroundColor}
       $hasText={text}
+      disabled={disabled}
     >
       {children}
-      {text && <Styled.Text $isContraction={!!(text && !children)}>{text}</Styled.Text>}
+      {text && (
+        <Styled.Text $isContraction={!!(text && !children)}>{text}</Styled.Text>
+      )}
     </Styled.Button>
   );
 };

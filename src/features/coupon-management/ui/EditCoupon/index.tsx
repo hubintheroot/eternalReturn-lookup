@@ -18,7 +18,10 @@ interface UpdateFailureResult {
 
 type UpdateResult = UpdateSuccessResult | UpdateFailureResult;
 
-async function update(nextData: CouponInsert, id: number): Promise<UpdateResult> {
+async function update(
+  nextData: CouponInsert,
+  id: number,
+): Promise<UpdateResult> {
   try {
     const { data, error } = await supabase()
       .from('Coupons')
@@ -43,11 +46,17 @@ interface EditCouponProps {
   data: Coupon;
 }
 
-export default function EditCoupon({ handler, onClose, data }: EditCouponProps) {
+export default function EditCoupon({
+  handler,
+  onClose,
+  data,
+}: EditCouponProps) {
   const { t } = useTranslation('coupon');
   const editCoupon = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = Object.fromEntries(new FormData(e.currentTarget).entries());
+    const formData = Object.fromEntries(
+      new FormData(e.currentTarget).entries(),
+    );
     const name = formData.coupon_name as string;
     const code = formData.coupon_code as string;
     const reward = formData.coupon_reward as string;
@@ -62,8 +71,10 @@ export default function EditCoupon({ handler, onClose, data }: EditCouponProps) 
     } else if (code.replace(/[a-zA-Z0-9]/g, '').length !== 0) {
       handler.toast.failed(t('validation.codeInvalid'));
       return;
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
-    } else if (handler.isDuplicatedCoupon(code) && (!data.code as unknown) === code) {
+    } else if (
+      handler.isDuplicatedCoupon(code) &&
+      data.code !== code.toUpperCase()
+    ) {
       handler.toast.failed(t('validation.codeDuplicate'));
       return;
     } else if (!reward.trim()) {

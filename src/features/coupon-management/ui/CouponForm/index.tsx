@@ -22,19 +22,25 @@ interface CouponFormText {
 
 interface CouponFormProps {
   text: CouponFormText;
-  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
   onClose: () => void;
   data?: Coupon;
 }
 
-export default function CouponForm({ text, onSubmit, onClose, data }: CouponFormProps) {
+export default function CouponForm({
+  text,
+  onSubmit,
+  onClose,
+  data,
+}: CouponFormProps) {
   const { t, i18n } = useTranslation('coupon');
   const locale = i18n.language; // 'ko' | 'en' | 'ja'
 
   const [noExpiry, setNoExpiry] = useState(data?.expires_at ? false : true);
   const [expiryDate, setExpiryDate] = useState<Date>(
-    data?.expires_at ? new Date(data.expires_at) : new Date()
+    data?.expires_at ? new Date(data.expires_at) : new Date(),
   );
+  const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
     setExpiryDate(data?.expires_at ? new Date(data.expires_at) : new Date());
@@ -44,7 +50,12 @@ export default function CouponForm({ text, onSubmit, onClose, data }: CouponForm
     setNoExpiry(!noExpiry);
   };
 
-  const handleRawChange = (e: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement> | undefined) => {
+  const handleRawChange = (
+    e:
+      | React.MouseEvent<HTMLElement>
+      | React.KeyboardEvent<HTMLElement>
+      | undefined,
+  ) => {
     const value = (e?.target as HTMLInputElement)?.value;
     if (typeof value !== 'string' || !value) return;
     const fmt = t('form.parseFmt');
@@ -65,7 +76,16 @@ export default function CouponForm({ text, onSubmit, onClose, data }: CouponForm
           <XIconSVG />
         </Styled.CloseButton>
       </Styled.TitleContainer>
-      <Styled.Form onSubmit={onSubmit}>
+      <Styled.Form
+        onSubmit={async (e) => {
+          setProcessing(true);
+          try {
+            await onSubmit(e);
+          } finally {
+            setProcessing(false);
+          }
+        }}
+      >
         <Styled.InputBox>
           <Styled.Label htmlFor="coupon-name">{t('form.name')}</Styled.Label>
           <Styled.Input
@@ -85,7 +105,9 @@ export default function CouponForm({ text, onSubmit, onClose, data }: CouponForm
           />
         </Styled.InputBox>
         <Styled.InputBox>
-          <Styled.Label htmlFor="coupon-reward">{t('form.reward')}</Styled.Label>
+          <Styled.Label htmlFor="coupon-reward">
+            {t('form.reward')}
+          </Styled.Label>
           <Styled.Input
             name="coupon_reward"
             id="coupon-reward"
@@ -101,7 +123,9 @@ export default function CouponForm({ text, onSubmit, onClose, data }: CouponForm
             id="coupon-noExpiry"
             checked={noExpiry}
           />
-          <Styled.Label htmlFor="coupon-noExpiry">{t('form.neverExpires')}</Styled.Label>
+          <Styled.Label htmlFor="coupon-noExpiry">
+            {t('form.neverExpires')}
+          </Styled.Label>
         </Styled.InputCheckBox>
         {!noExpiry && (
           <Styled.InputBox>
@@ -115,7 +139,9 @@ export default function CouponForm({ text, onSubmit, onClose, data }: CouponForm
             <Styled.DatePickerWrapper>
               <DatePicker
                 selected={expiryDate}
-                onChange={(date: Date | null) => setExpiryDate(date ?? new Date())}
+                onChange={(date: Date | null) =>
+                  setExpiryDate(date ?? new Date())
+                }
                 onChangeRaw={handleRawChange}
                 locale={locale}
                 showTimeSelect
@@ -131,7 +157,9 @@ export default function CouponForm({ text, onSubmit, onClose, data }: CouponForm
           </Styled.InputBox>
         )}
         <Styled.AddButtonBox>
-          <Styled.AddButton type="submit">{text.button}</Styled.AddButton>
+          <Styled.AddButton type="submit" disabled={processing}>
+            {text.button}
+          </Styled.AddButton>
         </Styled.AddButtonBox>
       </Styled.Form>
     </Styled.Container>
