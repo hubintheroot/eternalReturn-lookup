@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { Link } from 'react-router-dom';
 
 interface VariantProps {
@@ -157,7 +157,7 @@ export const TableWrapper = styled.div`
 export const TableTitle = styled.h3<VariantProps>`
   font-size: 1rem;
   font-weight: 600;
-  color: ${(props) => props.$variant === 'buff' ? '#3A9FA5' : '#E07060'};
+  color: ${(props) => (props.$variant === 'buff' ? '#3A9FA5' : '#E07060')};
   margin-bottom: 0.75rem;
   padding-left: 0.25rem;
 `;
@@ -190,7 +190,7 @@ export const Td = styled.td<TdProps>`
     if (props.$changeType === 'buff') return '#CBF1F5';
     return '#FFF0EE';
   }};
-  font-weight: ${(props) => props.$variant === 'after' ? '500' : 'normal'};
+  font-weight: ${(props) => (props.$variant === 'after' ? '500' : 'normal')};
 
   @media screen and (max-width: 768px) {
     font-size: 0.75rem;
@@ -242,9 +242,19 @@ export const TwoColumnGrid = styled.div`
 export const SectionHeader = styled.h3<VariantProps>`
   font-size: 0.9375rem;
   font-weight: 600;
-  color: ${(props) => props.$variant === 'buff' ? '#3A9FA5' : props.$variant === 'mixed' ? '#C8882A' : '#E07060'};
+  color: ${(props) =>
+    props.$variant === 'buff'
+      ? '#3A9FA5'
+      : props.$variant === 'mixed'
+        ? '#C8882A'
+        : '#E07060'};
   border-left: 3px solid
-    ${(props) => props.$variant === 'buff' ? '#71C9CE' : props.$variant === 'mixed' ? '#E8B86D' : '#E07060'};
+    ${(props) =>
+      props.$variant === 'buff'
+        ? '#71C9CE'
+        : props.$variant === 'mixed'
+          ? '#E8B86D'
+          : '#E07060'};
   padding-left: 0.625rem;
   margin-bottom: 0.75rem;
 `;
@@ -266,7 +276,7 @@ export const CharacterIconItem = styled.button<SelectedProps>`
   gap: 0.35rem;
   background: none;
   border: 2px solid
-    ${(props) => props.$selected ? '#71C9CE' : 'rgba(0,0,0,0.1)'};
+    ${(props) => (props.$selected ? '#71C9CE' : 'rgba(0,0,0,0.1)')};
   border-radius: 0.5rem;
   padding: 0.4rem 0.5rem;
   cursor: pointer;
@@ -274,7 +284,7 @@ export const CharacterIconItem = styled.button<SelectedProps>`
     transform 0.15s,
     border-color 0.15s,
     background-color 0.15s;
-  background-color: ${(props) => props.$selected ? '#E3FDFD' : 'transparent'};
+  background-color: ${(props) => (props.$selected ? '#E3FDFD' : 'transparent')};
 
   &:hover {
     transform: scale(1.08);
@@ -327,7 +337,7 @@ export const CharacterIconLabel = styled.span`
   text-overflow: ellipsis;
 `;
 export const AccordionBody = styled.div<IsOpenProps>`
-  max-height: ${(props) => props.$isOpen ? '2000px' : '0'};
+  max-height: ${(props) => (props.$isOpen ? '2000px' : '0')};
   overflow: hidden;
   transition: max-height 0.35s ease;
 `;
@@ -360,7 +370,7 @@ export const AccordionChevron = styled.span<IsOpenProps>`
   margin-left: auto;
   display: inline-block;
   transition: transform 0.25s ease;
-  transform: ${(props) => props.$isOpen ? 'rotate(180deg)' : 'rotate(0deg)'};
+  transform: ${(props) => (props.$isOpen ? 'rotate(180deg)' : 'rotate(0deg)')};
   font-size: 0.75rem;
   color: #666666;
 `;
@@ -375,8 +385,9 @@ export const VariantBadge = styled.span<VariantProps>`
   font-size: 0.6875rem;
   font-weight: 600;
   flex-shrink: 0;
-  background-color: ${(props) => props.$variant === 'buff' ? '#CBF1F5' : '#FFF0EE'};
-  color: ${(props) => props.$variant === 'buff' ? '#3A9FA5' : '#C0504A'};
+  background-color: ${(props) =>
+    props.$variant === 'buff' ? '#CBF1F5' : '#FFF0EE'};
+  color: ${(props) => (props.$variant === 'buff' ? '#3A9FA5' : '#C0504A')};
 `;
 export const ItemName = styled.span`
   font-weight: 500;
@@ -408,7 +419,7 @@ export const CharacterDetailPanel = styled.div<DetailPanelProps>`
   top: ${(props) => props.$top}px;
   left: ${(props) => props.$left}px;
   width: ${(props) => props.$width}px;
-  transform: ${(props) => props.$placeAbove ? 'translateY(-100%)' : 'none'};
+  transform: ${(props) => (props.$placeAbove ? 'translateY(-100%)' : 'none')};
   z-index: 200;
   background: #ffffff;
   border: 1px solid #d0d0d0;
@@ -432,5 +443,19 @@ export const CharacterTooltip = styled.div`
 
   @media (pointer: coarse) {
     display: none;
+  }
+`;
+const twinkle = keyframes`
+  50% { color: #71c9ce;}
+`;
+export const ToOriginPathNoteUrl = styled.a`
+  font-weight: bold;
+  font-size: 1em;
+  &:hover {
+    color: #71c9ce;
+  }
+
+  &:not(:hover) {
+    animation: ${twinkle} 1.5s ease-in-out infinite;
   }
 `;

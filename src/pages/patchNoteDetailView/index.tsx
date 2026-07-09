@@ -71,6 +71,7 @@ interface PatchNoteDetail {
   summarized_at: string;
   view_count: number;
   summary: PatchNoteSummary | null;
+  url: string;
 }
 
 export default function PatchNoteDetailView(): ReactElement {
@@ -84,7 +85,8 @@ export default function PatchNoteDetailView(): ReactElement {
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      (entries: IntersectionObserverEntry[]) => setShowScrollTop(!entries[0]?.isIntersecting),
+      (entries: IntersectionObserverEntry[]) =>
+        setShowScrollTop(!entries[0]?.isIntersecting),
       {
         threshold: 0,
       },
@@ -176,10 +178,13 @@ export default function PatchNoteDetailView(): ReactElement {
           <Styled.BackButton to="/patchNotes">목록으로</Styled.BackButton>
         </Styled.TopNav>
         <Styled.Header>
-          <Styled.Title>{patchNote.title}</Styled.Title>
+          <Styled.Title>{patchNote.title} 요약</Styled.Title>
           <Styled.Meta>
             <span>{formatDate(patchNote.summarized_at)}</span>
             <span>조회수 {patchNote.view_count}</span>
+            <Styled.ToOriginPathNoteUrl href={patchNote.url} target="_blank">
+              패치노트 보러가기
+            </Styled.ToOriginPathNoteUrl>
           </Styled.Meta>
         </Styled.Header>
         {patchNote.summary && (

@@ -19,12 +19,22 @@ export const TitleContainer = styled(Container)`
   display: flex;
   align-items: center;
   margin-bottom: 1rem;
+  position: relative;
 `;
 
 export const Title = styled.h1`
   font-size: 1.5rem;
   font-weight: 600;
   color: #000000;
+`;
+
+export const Desc = styled.span`
+  font-size: 0.8rem;
+  font-weight: normal;
+  color: #000;
+  position: absolute;
+  bottom: -0.25rem;
+  left: 1.5rem;
 `;
 
 export const ListContainer = styled.ul`
