@@ -400,7 +400,6 @@ export const NewCharacterCard = styled.div`
   padding: 1rem;
   background-color: #e3fdfd;
   border: 1px solid #a6e3e9;
-  border-left: 4px solid #71c9ce;
   border-radius: 0.5rem;
 `;
 export const WeaponTypePill = styled.span`
