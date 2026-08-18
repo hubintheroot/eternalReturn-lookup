@@ -40,7 +40,10 @@ export default function PatchNotesView(): ReactElement {
     <Styled.Section>
       <Styled.TitleContainer>
         <Styled.Title>패치노트</Styled.Title>
-        <Styled.Desc>AI로 요약된 패치노트를 제공합니다.</Styled.Desc>
+        <Styled.Desc>
+          패치노트 내용 중 신규 실험체, 실험체 및 아이템 변경점, 신규 시스템를
+          제공합니다.
+        </Styled.Desc>
       </Styled.TitleContainer>
       {loading ? (
         <Styled.LoadingContainer>
