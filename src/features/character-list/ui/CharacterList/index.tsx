@@ -178,7 +178,8 @@ export default function CharacterList(): ReactElement {
   const characterCards = useMemo(() => {
     cnt.current = 0;
     const filteredData = processedData.filter(
-      (v) => (v.skins[0]?.mini_size ?? '').length > 0,
+      (v) =>
+        (v.skins[0]?.mini_size ?? '').length > 0 && v.Story_Desc.length > 0,
     );
     const maxLength = filteredData.length;
 
