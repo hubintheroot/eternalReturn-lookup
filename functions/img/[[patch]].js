@@ -1,25 +1,24 @@
-export async function onRequestGet({ request, env, params, waitUntil }) {
+export async function onRequestGet({ request, env, waitUntil }) {
   const cache = caches.default;
   const cached = await cache.match(request);
   if (cached) return cached;
 
-  const key = Array.isArray(params.path) ? params.path.join('/') : params.path;
+  const url = new URL(request.url);
+  const key = decodeURIComponent(url.pathname.replace(/^\/img\//, ''));
   console.log('key:', key);
-
   if (!key) {
     return new Response('Not Found', { status: 404 });
   }
 
   const object = await env.IMAGES.get(key);
   console.log('object:', object);
-
   if (!object) {
     return new Response('Not Found', { status: 404 });
   }
 
   const headers = new Headers();
   headers.set('Content-Type', 'image/webp');
-  headers.set('Cache-Control', 'public, max-age=31536000');
+  headers.set('Cache-Control', 'public, max-age=31536000, immutable');
   headers.set('ETag', object.httpEtag);
 
   const response = new Response(object.body, { headers });
