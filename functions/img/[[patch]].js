@@ -5,13 +5,11 @@ export async function onRequestGet({ request, env, waitUntil }) {
 
   const url = new URL(request.url);
   const key = decodeURIComponent(url.pathname.replace(/^\/img\//, ''));
-  console.log('key:', key);
   if (!key) {
     return new Response('Not Found', { status: 404 });
   }
 
   const object = await env.IMAGES.get(key);
-  console.log('object:', object);
   if (!object) {
     return new Response('Not Found', { status: 404 });
   }
