@@ -4,14 +4,14 @@ export async function onRequestGet({ request, env, params, waitUntil }) {
   if (cached) return cached;
 
   const key = Array.isArray(params.path) ? params.path.join('/') : params.path;
-  console.log(key);
+  console.log('key:', key);
 
   if (!key) {
     return new Response('Not Found', { status: 404 });
   }
 
   const object = await env.IMAGES.get(key);
-  console.log(object);
+  console.log('object:', object);
 
   if (!object) {
     return new Response('Not Found', { status: 404 });
